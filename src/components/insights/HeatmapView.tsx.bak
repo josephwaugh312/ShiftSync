@@ -1,0 +1,159 @@
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+
+const HeatmapView: React.FC = () => {
+  const { shifts } = useSelector((state: RootState) => state.shifts);
+  const [heatmapData, setHeatmapData] = useState<number[][]>([]);
+  
+  // Days of the week labels
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  
+  // Hours of the day for our heatmap
+  const hours = Array.from({ length: 24 }, (_, i) => 
+    i === 0 ? '12 AM' : 
+    i < 12 ? `${i} AM` : 
+    i === 12 ? '12 PM' : 
+    `${i - 12} PM`
+  );
+  
+  useEffect(() => {
+    // Initialize a 7x24 grid (days of week x hours) with zeros
+    const grid: number[][] = Array(7).fill(0).map(() => Array(24).fill(0));
+    
+    // Create a map to track shifts by day and hour to avoid double counting
+    // We'll use a Map where keys are "day-hour" and values are Sets of shift IDs
+    const shiftMap = new Map<string, Set<string>>();
+    
+    // Populate the shift map
+    shifts.forEach(shift => {
+      const date = new Date(shift.date);
+      const dayOfWeek = date.getDay(); // 0-6, where 0 is Sunday
+      
+      // Parse start and end times more accurately
+      const [startHour, startMinute] = shift.startTime.split(':').map(Number);
+      let [endHour, endMinute] = shift.endTime.split(':').map(Number);
+      
+      // Handle overnight shifts
+      if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
+        endHour += 24;
+      }
+      
+      // Convert times to decimal for more accurate calculation
+      const startTimeDecimal = startHour + (startMinute / 60);
+      const endTimeDecimal = endHour + (endMinute / 60);
+      
+      // Find all hours that this shift spans
+      const startHourFloor = Math.floor(startTimeDecimal);
+      const endHourCeil = Math.ceil(endTimeDecimal);
+      
+      // Add the shift to each hour it spans
+      for (let h = startHourFloor; h < endHourCeil; h++) {
+        const hour = h % 24;
+        const key = `${dayOfWeek}-${hour}`;
+        
+        // Initialize the set if it doesn't exist
+        if (!shiftMap.has(key)) {
+          shiftMap.set(key, new Set<string>());
+        }
+        
+        // Add this shift's ID to the set for this hour
+        shiftMap.get(key)?.add(shift.id);
+      }
+    });
+    
+    // Convert the shift map to the grid
+    shiftMap.forEach((shiftIds, key) => {
+      const [day, hour] = key.split('-').map(Number);
+      grid[day][hour] = shiftIds.size; // Count of unique shifts for this hour
+    });
+    
+    setHeatmapData(grid);
+  }, [shifts]);
+  
+  // Find the maximum value for scaling
+  const maxValue = heatmapData.length > 0 
+    ? Math.max(...heatmapData.flatMap(row => row))
+    : 0;
+  
+  // Get color intensity based on value (0-1 scale)
+  const getColorIntensity = (value: number) => {
+    if (maxValue === 0) return 'bg-blue-50 dark:bg-dark-800';
+    
+    const intensity = value / maxValue;
+    
+    if (intensity === 0) return 'bg-blue-50 dark:bg-dark-800';
+    if (intensity < 0.2) return 'bg-blue-100 dark:bg-blue-900';
+    if (intensity < 0.4) return 'bg-blue-200 dark:bg-blue-800';
+    if (intensity < 0.6) return 'bg-blue-300 dark:bg-blue-700';
+    if (intensity < 0.8) return 'bg-blue-400 dark:bg-blue-600';
+    return 'bg-blue-500 dark:bg-blue-500';
+  };
+  
+  // If there are no shifts, display a message
+  if (shifts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <svg className="w-16 h-16 text-gray-400 dark:text-gray-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <h3 className="text-xl font-medium text-gray-700 dark:text-gray-300 mb-2">No Data Available</h3>
+        <p className="text-gray-500 dark:text-gray-400 text-center max-w-md">
+          Schedule shifts to see the heatmap of activity throughout the week.
+        </p>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="overflow-x-auto">
+      <div className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+        <p>This heatmap shows the number of shifts scheduled during each hour of the week. Darker colors indicate more shifts.</p>
+      </div>
+      
+      <div className="relative min-w-[800px]">
+        {/* Hour labels (on top) */}
+        <div className="flex mb-1">
+          <div className="w-24 flex-shrink-0"></div>
+          {hours.map((hour, index) => (
+            <div key={index} className="text-xs text-gray-500 dark:text-gray-400 font-medium w-12 flex-shrink-0 text-center">
+              {index % 3 === 0 ? hour : ''}
+            </div>
+          ))}
+        </div>
+        
+        {/* Day rows with heatmap cells */}
+        {daysOfWeek.map((day, dayIndex) => (
+          <div key={day} className="flex mb-1">
+            <div className="w-24 flex-shrink-0 text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+              {day}
+            </div>
+            <div className="flex flex-1">
+              {heatmapData[dayIndex]?.map((value, hourIndex) => (
+                <div
+                  key={hourIndex}
+                  className={`w-12 h-10 flex-shrink-0 flex items-center justify-center text-xs font-medium rounded-sm m-px ${getColorIntensity(value)}`}
+                >
+                  {value > 0 ? value : ''}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        
+        {/* Legend */}
+        <div className="mt-6 flex items-center">
+          <span className="text-xs text-gray-600 dark:text-gray-400 mr-2">Less</span>
+          <div className="flex">
+            {['bg-blue-50 dark:bg-dark-800', 'bg-blue-100 dark:bg-blue-900', 'bg-blue-200 dark:bg-blue-800', 'bg-blue-300 dark:bg-blue-700', 'bg-blue-400 dark:bg-blue-600', 'bg-blue-500 dark:bg-blue-500'].map((color, i) => (
+              <div key={i} className={`w-6 h-4 ${color}`}></div>
+            ))}
+          </div>
+          <span className="text-xs text-gray-600 dark:text-gray-400 ml-2">More</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default HeatmapView; 

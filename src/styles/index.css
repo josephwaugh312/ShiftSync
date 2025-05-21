@@ -1,0 +1,350 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import dyslexia-friendly font */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  /* Only apply transitions to theme changes, not to all elements */
+  .theme-transitioning, 
+  .theme-transitioning *,
+  .theme-transitioning *::before,
+  .theme-transitioning *::after {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-duration: 500ms;
+    transition-timing-function: ease-in-out;
+  }
+  
+  body {
+    @apply bg-gray-50 dark:bg-dark-800 text-gray-900 dark:text-white;
+  }
+  
+  /* Dyslexia-friendly font */
+  .dyslexic-font {
+    font-family: 'Lexend', sans-serif !important;
+    line-height: 1.5 !important;
+    letter-spacing: 0.03em !important;
+    word-spacing: 0.1em !important;
+  }
+}
+
+/* High contrast mode styles */
+.high-contrast.light {
+  --high-contrast-bg: white;
+  --high-contrast-text: black;
+  --high-contrast-border: black;
+  --high-contrast-focus: #0051ff;
+  --high-contrast-button: #0051ff;
+  --high-contrast-button-text: white;
+  --high-contrast-accent: #ffcc19;
+}
+
+.high-contrast.dark {
+  --high-contrast-bg: black;
+  --high-contrast-text: white;
+  --high-contrast-border: yellow;
+  --high-contrast-focus: #ffcc19;
+  --high-contrast-button: yellow;
+  --high-contrast-button-text: black;
+  --high-contrast-accent: #ffcc19;
+}
+
+.high-contrast.light {
+  background-color: var(--high-contrast-bg) !important;
+  color: var(--high-contrast-text) !important;
+}
+
+.high-contrast.dark {
+  background-color: var(--high-contrast-bg) !important;
+  color: var(--high-contrast-text) !important;
+}
+
+.high-contrast .card,
+.high-contrast .bg-white {
+  background-color: var(--high-contrast-bg) !important;
+  border: 2px solid var(--high-contrast-border) !important;
+}
+
+.high-contrast .dark\:bg-dark-700,
+.high-contrast .dark\:bg-dark-800 {
+  background-color: var(--high-contrast-bg) !important;
+}
+
+.high-contrast button,
+.high-contrast .btn,
+.high-contrast a {
+  border: 2px solid var(--high-contrast-border) !important;
+}
+
+.high-contrast button:focus,
+.high-contrast a:focus,
+.high-contrast input:focus,
+.high-contrast select:focus,
+.high-contrast textarea:focus {
+  outline: 3px solid var(--high-contrast-focus) !important;
+  outline-offset: 2px !important;
+}
+
+.high-contrast .btn-primary,
+.high-contrast button[type="submit"] {
+  background-color: var(--high-contrast-button) !important;
+  color: var(--high-contrast-button-text) !important;
+  border: 2px solid var(--high-contrast-border) !important;
+}
+
+.high-contrast .text-gray-500,
+.high-contrast .text-gray-600,
+.high-contrast .text-gray-700 {
+  color: var(--high-contrast-text) !important;
+}
+
+.high-contrast .border-gray-200,
+.high-contrast .border-gray-300 {
+  border-color: var(--high-contrast-border) !important;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-600 hover:bg-primary-700 text-white focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-secondary-100 hover:bg-secondary-200 text-secondary-900 focus:ring-secondary-500;
+  }
+  
+  .btn-success {
+    @apply btn bg-success-600 hover:bg-success-700 text-white focus:ring-success-500;
+  }
+  
+  .btn-danger {
+    @apply btn bg-danger-600 hover:bg-danger-700 text-white focus:ring-danger-500;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-dark-700 rounded-lg shadow-md overflow-hidden;
+  }
+  
+  .shift-card {
+    @apply card my-2 cursor-pointer;
+  }
+  
+  .role-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .nav-item {
+    @apply flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors;
+  }
+  
+  .nav-item-active {
+    @apply nav-item bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-200;
+  }
+  
+  .nav-item-inactive {
+    @apply nav-item text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-600;
+  }
+}
+
+/* Animation classes */
+.slide-in-right {
+  animation: slideInRight 0.2s ease-out forwards;
+}
+
+.slide-out-right {
+  animation: slideOutRight 0.2s ease-in forwards;
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+/* Dark mode toggle animation */
+.theme-transition {
+  transition: background-color 500ms ease, color 500ms ease, border-color 500ms ease;
+}
+
+/* Playful stripes background for shift durations */
+.bg-stripes {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.5) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.5) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
+.bg-stripes-white {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.4) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.4) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
+/* Decorative circle animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+}
+
+.floating-circle {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Mobile optimizations */
+@layer utilities {
+  .touch-action-manipulation {
+    touch-action: manipulation;
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+  }
+  
+  /* Minimum touch target size for better mobile accessibility */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Disable user selection on mobile elements */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+/* CSS for mobile-specific gestures */
+@media (max-width: 768px) {
+  .mobile-swipe-hint {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .mobile-swipe-hint::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(77, 130, 255, 0.7), transparent);
+    animation: swipeHint 2s infinite;
+  }
+  
+  @keyframes swipeHint {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
+
+/* Tutorial styles */
+.tutorial-interactive {
+  pointer-events: auto !important;
+  z-index: 50 !important;
+  position: relative !important;
+  cursor: pointer !important;
+}
+
+/* Special treatment for the employees link */
+a[href="/employees"].tutorial-interactive {
+  z-index: 101 !important;
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+.tutorial-interactive:hover {
+  /* Remove transform to prevent zoom effect */
+  /* transform: scale(1.05); */
+  /* transition: transform 0.2s ease; */
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5);
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+} 
