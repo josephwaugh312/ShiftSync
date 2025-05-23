@@ -22,8 +22,22 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
   
   const canProceed = checkRequiredAction();
   
+  // Check if we're on mobile
+  const isMobile = window.innerWidth <= 768;
+  
   // Calculate position based on the target element
   const getPopoverPosition = () => {
+    // Force center positioning for problematic steps on mobile
+    if (isMobile && (step.id === 'employee-management' || step.id === 'shift-templates' || step.id === 'insights')) {
+      return {
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        maxWidth: '90vw', // Ensure it fits on mobile screens
+        width: '320px'
+      };
+    }
+    
     if (!targetElement || step.position === 'center') {
       // Special handling for the calendar step
       if (step.id === 'calendar') {
@@ -31,7 +45,8 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
           top: '30%',  // Position it more towards the top
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          maxWidth: '400px'  // Make it wider for better visibility
+          maxWidth: isMobile ? '90vw' : '400px',  // Make it responsive
+          width: isMobile ? '320px' : undefined
         };
       }
       
@@ -41,24 +56,28 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          maxWidth: '450px'  // Make it wider for better visibility
+          maxWidth: isMobile ? '90vw' : '450px',  // Make it responsive
+          width: isMobile ? '320px' : undefined
         };
       }
       
       return {
         top: '50%',
         left: '50%',
-        transform: 'translate(-50%, -50%)'
+        transform: 'translate(-50%, -50%)',
+        maxWidth: isMobile ? '90vw' : undefined,
+        width: isMobile ? '320px' : undefined
       };
     }
     
     // Handle center-bottom position
     if (step.position === 'center-bottom') {
       return {
-        bottom: '100px',
+        bottom: isMobile ? '120px' : '100px', // Account for mobile navbar height
         left: '50%',
         transform: 'translateX(-50%)',
-        maxWidth: step.id === 'calendar' ? '450px' : undefined
+        maxWidth: isMobile ? '90vw' : (step.id === 'calendar' ? '450px' : undefined),
+        width: isMobile ? '320px' : undefined
       };
     }
     
@@ -66,6 +85,16 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
     
     // Special handling for help button to prevent off-screen rendering
     if (step.id === 'help') {
+      if (isMobile) {
+        // On mobile, center the tooltip
+        return {
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          maxWidth: '90vw',
+          width: '320px'
+        };
+      }
       return {
         top: `${rect.bottom + 10}px`,
         left: `${rect.left - 200}px`,  // Move it significantly to the left
@@ -77,6 +106,18 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
     if (step.id === 'shift-templates' || 
         step.id === 'recurring-shifts' || 
         step.id === 'insights') {
+      
+      if (isMobile) {
+        // On mobile, center these tooltips to prevent off-screen issues
+        return {
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          maxWidth: '90vw',
+          width: '320px'
+        };
+      }
+      
       // Position it at the bottom of the button, centered
       return {
         top: `${rect.bottom + 20}px`,
@@ -88,31 +129,55 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
     // Special handling for steps with pointing fingers
     if (step.showPointer) {
       // Add extra margin to avoid covering the finger
-      const extraMargin = 100; // pixels
+      const extraMargin = isMobile ? 60 : 100; // Reduce margin on mobile
       
       switch (step.position) {
         case 'top':
           return {
-            top: `${rect.top - 170}px`, // Extra space for finger
+            top: `${rect.top - (isMobile ? 120 : 170)}px`, // Reduce space on mobile
             left: `${rect.left + rect.width / 2}px`,
-            transform: 'translate(-50%, -100%)'
+            transform: 'translate(-50%, -100%)',
+            maxWidth: isMobile ? '90vw' : undefined,
+            width: isMobile ? '320px' : undefined
           };
         case 'bottom':
           return {
-            top: `${rect.bottom + extraMargin}px`, // Extra space for finger
+            top: `${rect.bottom + extraMargin}px`,
             left: `${rect.left + rect.width / 2}px`,
-            transform: 'translate(-50%, 0)'
+            transform: 'translate(-50%, 0)',
+            maxWidth: isMobile ? '90vw' : undefined,
+            width: isMobile ? '320px' : undefined
           };
         case 'left':
+          if (isMobile) {
+            // On mobile, avoid left positioning which often goes off-screen
+            return {
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              maxWidth: '90vw',
+              width: '320px'
+            };
+          }
           return {
             top: `${rect.top + rect.height / 2}px`,
-            left: `${rect.left - 170}px`, // Extra space for finger
+            left: `${rect.left - 170}px`,
             transform: 'translate(-100%, -50%)'
           };
         case 'right':
+          if (isMobile) {
+            // On mobile, avoid right positioning which often goes off-screen
+            return {
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              maxWidth: '90vw',
+              width: '320px'
+            };
+          }
           return {
             top: `${rect.top + rect.height / 2}px`,
-            left: `${rect.right + extraMargin}px`, // Extra space for finger
+            left: `${rect.right + extraMargin}px`,
             transform: 'translate(0, -50%)'
           };
       }
@@ -124,21 +189,43 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
         return {
           top: `${rect.top - 10}px`,
           left: `${rect.left + rect.width / 2}px`,
-          transform: 'translate(-50%, -100%)'
+          transform: 'translate(-50%, -100%)',
+          maxWidth: isMobile ? '90vw' : undefined,
+          width: isMobile ? '320px' : undefined
         };
       case 'bottom':
         return {
           top: `${rect.bottom + 10}px`,
           left: `${rect.left + rect.width / 2}px`,
-          transform: 'translate(-50%, 0)'
+          transform: 'translate(-50%, 0)',
+          maxWidth: isMobile ? '90vw' : undefined,
+          width: isMobile ? '320px' : undefined
         };
       case 'left':
+        if (isMobile) {
+          return {
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            maxWidth: '90vw',
+            width: '320px'
+          };
+        }
         return {
           top: `${rect.top + rect.height / 2}px`,
           left: `${rect.left - 10}px`,
           transform: 'translate(-100%, -50%)'
         };
       case 'right':
+        if (isMobile) {
+          return {
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            maxWidth: '90vw',
+            width: '320px'
+          };
+        }
         return {
           top: `${rect.top + rect.height / 2}px`,
           left: `${rect.right + 10}px`,
@@ -148,12 +235,14 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
         return {
           top: '50%',
           left: '50%',
-          transform: 'translate(-50%, -50%)'
+          transform: 'translate(-50%, -50%)',
+          maxWidth: isMobile ? '90vw' : undefined,
+          width: isMobile ? '320px' : undefined
         };
     }
   };
   
-  // Function to ensure popover stays within viewport
+  // Function to ensure popover stays within viewport - enhanced for mobile
   const constrainToViewport = (position: any) => {
     // Create a shallow copy of the position object
     const constrained = { ...position };
@@ -162,9 +251,10 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     
-    // Assume popover is approximately 320px wide
-    const popoverWidth = 320;
-    const popoverHeight = 250;
+    // Assume popover is approximately 320px wide on mobile, larger on desktop
+    const popoverWidth = isMobile ? 320 : 400;
+    const popoverHeight = isMobile ? 200 : 250;
+    const margin = isMobile ? 10 : 20;
     
     // Parse position values if they're strings with px units
     let left = typeof constrained.left === 'string' && constrained.left.endsWith('px') 
@@ -178,26 +268,26 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
     // Constrain left position if it's a pixel value
     if (left !== null) {
       // If popover would go off right edge
-      if (left + popoverWidth > viewportWidth - 20) {
-        constrained.left = `${viewportWidth - popoverWidth - 20}px`;
+      if (left + popoverWidth > viewportWidth - margin) {
+        constrained.left = `${viewportWidth - popoverWidth - margin}px`;
       }
       
       // If popover would go off left edge
-      if (left < 20) {
-        constrained.left = '20px';
+      if (left < margin) {
+        constrained.left = `${margin}px`;
       }
     }
     
     // Constrain top position if it's a pixel value
     if (top !== null) {
       // If popover would go off bottom edge
-      if (top + popoverHeight > viewportHeight - 20) {
-        constrained.top = `${viewportHeight - popoverHeight - 20}px`;
+      if (top + popoverHeight > viewportHeight - margin) {
+        constrained.top = `${viewportHeight - popoverHeight - margin}px`;
       }
       
       // If popover would go off top edge
-      if (top < 20) {
-        constrained.top = '20px';
+      if (top < margin) {
+        constrained.top = `${margin}px`;
       }
     }
     
@@ -229,7 +319,7 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
   
   return (
     <motion.div
-      className="absolute z-[9999] bg-white dark:bg-dark-800 rounded-lg shadow-xl p-5 max-w-sm"
+      className={`absolute z-[9999] bg-white dark:bg-dark-800 rounded-lg shadow-xl p-5 ${isMobile ? 'max-w-[90vw]' : 'max-w-sm'}`}
       style={{
         ...popoverPosition,
         boxShadow: '0 0 0 4px rgba(59, 130, 246, 0.5), 0 10px 15px -3px rgba(0, 0, 0, 0.3)'
@@ -250,7 +340,7 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{step.title}</h3>
       <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">{step.content}</p>
       
-      {step.keyboardShortcut && (
+      {step.keyboardShortcut && !isMobile && (
         <div className="mb-4 p-2 rounded bg-gray-100 dark:bg-dark-700 text-sm">
           <span className="font-bold">Keyboard shortcut: </span>
           <kbd className="px-2 py-1 text-xs font-semibold bg-gray-200 dark:bg-dark-600 rounded border border-gray-300 dark:border-gray-500 shadow">

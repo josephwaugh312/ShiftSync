@@ -51,6 +51,7 @@ const TutorialOverlay: React.FC = () => {
     if (!isActive) return;
     
     const step = tutorialSteps[currentStep];
+    const isMobile = window.innerWidth <= 768;
     
     // Clear previous highlights and targets first
     setTargetElement(null);
@@ -296,8 +297,8 @@ const TutorialOverlay: React.FC = () => {
           left: rect.left - 8 + window.scrollX,
         }]);
         
-        // Set pointer position
-        if (step.showPointer) {
+        // Set pointer position - on mobile, don't show pointer since tooltip is centered
+        if (step.showPointer && !isMobile) {
           setPointerStyles({
             left: rect.left + rect.width / 2 - 40 + window.scrollX,
             top: rect.top - 70 + window.scrollY, // Point from above
@@ -394,11 +395,13 @@ const TutorialOverlay: React.FC = () => {
           left: rect.left - 8 + window.scrollX,
         }]);
         
-        // Set pointer position
-        setPointerStyles({
-          left: rect.left + rect.width / 2 - 40 + window.scrollX,
-          top: rect.top - 70 + window.scrollY, // Point from above
-        });
+        // Set pointer position - on mobile, don't show pointer since tooltip is centered
+        if (!isMobile) {
+          setPointerStyles({
+            left: rect.left + rect.width / 2 - 40 + window.scrollX,
+            top: rect.top - 70 + window.scrollY, // Point from above
+          });
+        }
       } else {
         console.warn('Could not find insights button!');
       }
@@ -430,26 +433,34 @@ const TutorialOverlay: React.FC = () => {
           let pointerX = 0;
           let pointerY = 0;
           
-          switch (step.position) {
-            case 'left':
-              pointerX = rect.left - 70;
-              pointerY = rect.top + rect.height / 2 - 30;
-              break;
-            case 'right':
-              pointerX = rect.right + 10;
-              pointerY = rect.top + rect.height / 2 - 30;
-              break;
-            case 'top':
-              pointerX = rect.left + rect.width / 2 - 30;
-              pointerY = rect.top - 70;
-              break;
-            case 'bottom':
-              pointerX = rect.left + rect.width / 2 - 30;
-              pointerY = rect.bottom + 10;
-              break;
-            default:
-              pointerX = rect.left + rect.width / 2 - 30;
-              pointerY = rect.top + rect.height / 2 - 30;
+          // Special handling for employee-management step on mobile
+          if (step.id === 'employee-management' && isMobile) {
+            // On mobile, the employees link is in the bottom navbar
+            // Position pointer to point at the bottom navbar
+            pointerX = rect.left + rect.width / 2 - 40;
+            pointerY = rect.top - 80; // Point from above the navbar
+          } else {
+            switch (step.position) {
+              case 'left':
+                pointerX = rect.left - 70;
+                pointerY = rect.top + rect.height / 2 - 30;
+                break;
+              case 'right':
+                pointerX = rect.right + 10;
+                pointerY = rect.top + rect.height / 2 - 30;
+                break;
+              case 'top':
+                pointerX = rect.left + rect.width / 2 - 30;
+                pointerY = rect.top - 70;
+                break;
+              case 'bottom':
+                pointerX = rect.left + rect.width / 2 - 30;
+                pointerY = rect.bottom + 10;
+                break;
+              default:
+                pointerX = rect.left + rect.width / 2 - 30;
+                pointerY = rect.top + rect.height / 2 - 30;
+            }
           }
           
           setPointerStyles({
@@ -677,90 +688,104 @@ const TutorialOverlay: React.FC = () => {
       {/* More visible interactive pointer finger - show it on top of everything */}
       <AnimatePresence mode="wait">
         {targetElement && shouldShowPointer && currentTutorialStep.id !== 'recurring-shifts' && currentTutorialStep.id !== 'add-shift' && (
-          <motion.div 
-            key={`pointer-${currentStep}`}
-            className="absolute z-[9500] pointer-events-none"
-            style={{
-              top: pointerStyles.top,
-              left: pointerStyles.left,
-              width: '80px',
-              height: '80px'
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ 
-                opacity: 1, 
-                rotate: [0, -10, 0, 10, 0],
-              }}
-              transition={{ 
-                opacity: { duration: 0.3 },
-                rotate: { duration: 1.5, repeat: Infinity }
-              }}
-              style={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              {/* Large glowing circle behind the pointer */}
-              <div 
+          (() => {
+            const isMobile = window.innerWidth <= 768;
+            // Hide pointer on mobile for steps that have centered tooltips
+            const hidePointerOnMobile = isMobile && (
+              currentTutorialStep.id === 'shift-templates' || 
+              currentTutorialStep.id === 'insights' ||
+              currentTutorialStep.id === 'help'
+            );
+            
+            if (hidePointerOnMobile) return null;
+            
+            return (
+              <motion.div 
+                key={`pointer-${currentStep}`}
+                className="absolute z-[9500] pointer-events-none"
                 style={{
-                  position: 'absolute',
-                  top: '-10px',
-                  left: '-10px',
-                  width: '100px',
-                  height: '100px',
-                  borderRadius: '50%',
-                  background: 'rgba(59, 130, 246, 0.5)',
-                  filter: 'blur(10px)',
-                  zIndex: -1
+                  top: pointerStyles.top,
+                  left: pointerStyles.left,
+                  width: '80px',
+                  height: '80px'
                 }}
-              />
-              
-              {/* Actual pointer icon */}
-              <svg 
-                width="80" 
-                height="80" 
-                viewBox="0 0 24 24" 
-                fill="#FFFFFF"
-                stroke="#000000"
-                strokeWidth="1"
-                style={{
-                  filter: 'drop-shadow(0px 0px 8px rgba(0,0,0,0.5))'
-                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
               >
-                <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
-                <line x1="16" y1="8" x2="2" y2="22"></line>
-                <line x1="17.5" y1="15" x2="9" y2="15"></line>
-              </svg>
-              
-              {/* Pulsing point for extra emphasis */}
-              <motion.div
-                style={{
-                  position: 'absolute',
-                  bottom: '15px',
-                  right: '15px',
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
-                  backgroundColor: '#FF5555',
-                }}
-                animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.8, 1, 0.8],
-                }}
-                transition={{
-                  duration: 1,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-            </motion.div>
-          </motion.div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ 
+                    opacity: 1, 
+                    rotate: [0, -10, 0, 10, 0],
+                  }}
+                  transition={{ 
+                    opacity: { duration: 0.3 },
+                    rotate: { duration: 1.5, repeat: Infinity }
+                  }}
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '100%',
+                  }}
+                >
+                  {/* Large glowing circle behind the pointer */}
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: '-10px',
+                      left: '-10px',
+                      width: '100px',
+                      height: '100px',
+                      borderRadius: '50%',
+                      background: 'rgba(59, 130, 246, 0.5)',
+                      filter: 'blur(10px)',
+                      zIndex: -1
+                    }}
+                  />
+                  
+                  {/* Actual pointer icon */}
+                  <svg 
+                    width="80" 
+                    height="80" 
+                    viewBox="0 0 24 24" 
+                    fill="#FFFFFF"
+                    stroke="#000000"
+                    strokeWidth="1"
+                    style={{
+                      filter: 'drop-shadow(0px 0px 8px rgba(0,0,0,0.5))'
+                    }}
+                  >
+                    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                    <line x1="16" y1="8" x2="2" y2="22"></line>
+                    <line x1="17.5" y1="15" x2="9" y2="15"></line>
+                  </svg>
+                  
+                  {/* Pulsing point for extra emphasis */}
+                  <motion.div
+                    style={{
+                      position: 'absolute',
+                      bottom: '15px',
+                      right: '15px',
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      backgroundColor: '#FF5555',
+                    }}
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.8, 1, 0.8],
+                    }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                </motion.div>
+              </motion.div>
+            );
+          })()
         )}
       </AnimatePresence>
       
