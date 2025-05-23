@@ -158,16 +158,16 @@ const ListView: React.FC = () => {
   
   return (
     <motion.div 
-      className="list-view pb-16"
+      className="list-view pb-24"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-center md:justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-gray-800 dark:text-white">
           Shifts for {formatDate(selectedDate)}
         </h2>
-        <div className="flex-1 max-w-md ml-4">
+        <div className="flex-1 max-w-md ml-4 hidden md:block">
           <div className="relative">
             <input 
               type="text"

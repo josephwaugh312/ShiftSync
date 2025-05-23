@@ -1,15 +1,46 @@
 {
   "short_name": "ShiftSync",
   "name": "ShiftSync - Modern Shift Scheduling",
+  "description": "Create, manage, and publish staff schedules with ease. Perfect for small teams and businesses.",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    },
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "theme_color": "#2766ff",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "categories": ["business", "productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Add Shift",
+      "short_name": "Add Shift",
+      "description": "Quickly add a new shift to the schedule",
+      "url": "/?action=addShift",
+      "icons": [{ "src": "icon.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "View Calendar",
+      "short_name": "Calendar",
+      "description": "View the shift calendar",
+      "url": "/?view=calendar",
+      "icons": [{ "src": "icon.svg", "sizes": "192x192" }]
+    }
+  ]
 } 

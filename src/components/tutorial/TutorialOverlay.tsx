@@ -23,7 +23,7 @@ const TutorialOverlay: React.FC = () => {
   // Safely scroll element into view without causing zoom
   const safeScrollIntoView = (element: HTMLElement) => {
     // Get the current page zoom level
-    const currentZoom = document.documentElement.style.zoom || '100%';
+    const currentZoom = (document.documentElement.style as any).zoom || '100%';
     
     // Temporarily store the current window scroll position
     const scrollX = window.scrollX;
@@ -41,8 +41,8 @@ const TutorialOverlay: React.FC = () => {
     }
     
     // If there was a zoom change, restore the original zoom
-    if (document.documentElement.style.zoom !== currentZoom) {
-      document.documentElement.style.zoom = currentZoom;
+    if ((document.documentElement.style as any).zoom !== currentZoom) {
+      (document.documentElement.style as any).zoom = currentZoom;
     }
   };
 
@@ -185,33 +185,25 @@ const TutorialOverlay: React.FC = () => {
           safeScrollIntoView(mainTarget);
         }, 100);
         
-        // Apply minimal styling to all buttons
+        // Apply minimal styling to all buttons - NO BORDER
         targetButtons.forEach((button, index) => {
           const btn = button as HTMLElement;
           console.log(`Styling button ${index}:`, btn);
           
-          // Simple scaling effect only, without borders
+          // Simple scaling effect only, without any border or shadows
           btn.style.transform = 'scale(1.02)';
           btn.style.transition = 'all 0.3s ease';
           btn.style.zIndex = '50';
+          btn.style.border = 'none';
+          btn.style.boxShadow = 'none';
           btn.classList.add('tutorial-enhanced');
         });
         
-        // Create a single highlight box that surrounds all buttons
-        const highlights: HighlightBox[] = targetButtons.map(button => {
-          const rect = button.getBoundingClientRect();
-          return {
-            width: rect.width + 4, // Very slight padding
-            height: rect.height + 4, // Very slight padding
-            top: rect.top - 2 + window.scrollY,
-            left: rect.left - 2 + window.scrollX,
-          };
-        });
-        
-        setHighlightStyles(highlights);
-        
-        // Get the bounding rect of the main target for the pointer positioning
+        // Don't create any highlight box around the buttons for add-shift
         const rect = mainTarget.getBoundingClientRect();
+        
+        // Empty the highlight styles to avoid borders
+        setHighlightStyles([]);
         
         // For add-shift step, we should still have a pointer pointing to the button
         // even though the tooltip is centered on the screen
@@ -230,34 +222,78 @@ const TutorialOverlay: React.FC = () => {
     }
     // Special handling for shift templates button (step 6)
     else if (step.id === 'shift-templates') {
-      // Find the shift templates button
-      const templateButtons = document.querySelectorAll(step.target);
+      // Find the shift templates button with multiple selectors to ensure we find it
+      const templateButtons = document.querySelectorAll('button[aria-label="Shift templates"]');
+      
+      // If the button wasn't found with the first selector, try alternative selectors
+      let templateButton: HTMLElement | null = null;
       
       if (templateButtons.length > 0) {
-        const templateButton = templateButtons[0] as HTMLElement;
+        templateButton = templateButtons[0] as HTMLElement;
+      } else {
+        // Try various selectors to find the templates button
+        const alternativeSelectors = [
+          'button:has(svg + span:contains("Templates"))', 
+          '.calendar-header button:has(svg)',
+          '.flex.space-x-3 button:nth-child(2)'
+        ];
+        
+        for (const selector of alternativeSelectors) {
+          try {
+            const buttons = document.querySelectorAll(selector);
+            if (buttons.length > 0) {
+              // Convert NodeList to Array before using for...of
+              const buttonsArray = Array.from(buttons);
+              for (const btn of buttonsArray) {
+                if (btn instanceof HTMLElement && 
+                    (btn.textContent?.includes('Template') || 
+                     btn.innerHTML.includes('template'))) {
+                  templateButton = btn;
+                  console.log('Found templates button with alternative selector');
+                  break;
+                }
+              }
+            }
+          } catch (e) {
+            console.log('Selector error:', e);
+          }
+        }
+        
+        // If still not found, try finding by content
+        if (!templateButton) {
+          document.querySelectorAll('button').forEach(btn => {
+            if (btn.textContent?.toLowerCase().includes('template')) {
+              templateButton = btn as HTMLElement;
+            }
+          });
+        }
+      }
+      
+      if (templateButton) {
+        console.log('Found templates button:', templateButton);
         setTargetElement(templateButton);
         
-        // Add bright blue border styling
+        // Add MORE PROMINENT bright blue border styling (WITHOUT animation)
         templateButton.style.transition = 'all 0.3s ease';
-        templateButton.style.transform = 'scale(1.05)';
-        templateButton.style.boxShadow = '0 0 0 3px #2563EB';
-        templateButton.style.zIndex = '50';
+        templateButton.style.transform = 'scale(1.1)';
+        templateButton.style.boxShadow = '0 0 0 4px #2563EB';
+        templateButton.style.zIndex = '9999';
         templateButton.style.position = 'relative';
+        templateButton.style.border = '1px solid #2563EB';
         templateButton.classList.add('tutorial-enhanced');
         
         // Use safe scroll instead
         window.setTimeout(() => {
-          safeScrollIntoView(templateButton);
+          safeScrollIntoView(templateButton!);
         }, 100);
         
-        // Get the element's position and size
+        // Still create a visible highlight but without animation effects
         const rect = templateButton.getBoundingClientRect();
-        
         setHighlightStyles([{
-          width: rect.width + 10,
-          height: rect.height + 10,
-          top: rect.top - 5 + window.scrollY,
-          left: rect.left - 5 + window.scrollX,
+          width: rect.width + 16,
+          height: rect.height + 16,
+          top: rect.top - 8 + window.scrollY,
+          left: rect.left - 8 + window.scrollX,
         }]);
         
         // Set pointer position
@@ -267,38 +303,95 @@ const TutorialOverlay: React.FC = () => {
             top: rect.top - 70 + window.scrollY, // Point from above
           });
         }
+      } else {
+        console.warn('Could not find templates button!');
       }
     }
     // Special handling for insights button (step 7)
     else if (step.id === 'insights') {
-      // Find the insights button
-      const insightButtons = document.querySelectorAll(step.target);
+      // Find the insights button with multiple selectors to ensure we find it
+      const insightButtons = document.querySelectorAll('button[aria-label="View insights"]');
+      
+      // If the button wasn't found with the first selector, try alternative selectors
+      let insightButton: HTMLElement | null = null;
       
       if (insightButtons.length > 0) {
-        const insightButton = insightButtons[0] as HTMLElement;
+        insightButton = insightButtons[0] as HTMLElement;
+      } else {
+        // Try various selectors to find the insights button
+        const alternativeSelectors = [
+          'button:has(svg + span:contains("Insights"))', 
+          '.calendar-header button:has(svg path[d*="M16 8v8m-4-5v5m-4-2v2"])',
+          '.flex.space-x-3 button:nth-child(3)',
+          'button.relative.z-10'
+        ];
+        
+        for (const selector of alternativeSelectors) {
+          try {
+            const buttons = document.querySelectorAll(selector);
+            if (buttons.length > 0) {
+              // Convert NodeList to Array before using for...of
+              const buttonsArray = Array.from(buttons);
+              for (const btn of buttonsArray) {
+                if (btn instanceof HTMLElement && 
+                    (btn.textContent?.includes('Insight') || 
+                     btn.innerHTML.includes('insight'))) {
+                  insightButton = btn;
+                  console.log('Found insights button with alternative selector');
+                  break;
+                }
+              }
+            }
+          } catch (e) {
+            console.log('Selector error:', e);
+          }
+        }
+        
+        // If still not found, try finding by content or SVG path
+        if (!insightButton) {
+          document.querySelectorAll('button').forEach(btn => {
+            // Check for insights text
+            if (btn.textContent?.toLowerCase().includes('insight')) {
+              insightButton = btn as HTMLElement;
+            }
+            
+            // Check for chart icon
+            const svg = btn.querySelector('svg');
+            if (svg && !insightButton) {
+              const path = svg.querySelector('path[d*="M16 8v8m-4-5v5m-4-2v2"]');
+              if (path) {
+                insightButton = btn as HTMLElement;
+              }
+            }
+          });
+        }
+      }
+      
+      if (insightButton) {
+        console.log('Found insights button:', insightButton);
         setTargetElement(insightButton);
         
-        // Add bright blue border styling
+        // Add MORE PROMINENT bright blue border styling
         insightButton.style.transition = 'all 0.3s ease';
-        insightButton.style.transform = 'scale(1.05)';
-        insightButton.style.boxShadow = '0 0 0 3px #2563EB';
-        insightButton.style.zIndex = '50';
+        insightButton.style.transform = 'scale(1.1)';
+        insightButton.style.boxShadow = '0 0 0 4px #2563EB, 0 0 15px 2px rgba(37, 99, 235, 0.7)';
+        insightButton.style.zIndex = '9999';
         insightButton.style.position = 'relative';
+        insightButton.style.border = '1px solid #2563EB';
         insightButton.classList.add('tutorial-enhanced');
         
         // Use safe scroll instead
         window.setTimeout(() => {
-          safeScrollIntoView(insightButton);
+          safeScrollIntoView(insightButton!);
         }, 100);
         
-        // Get the element's position and size
+        // Create a larger, more visible highlight
         const rect = insightButton.getBoundingClientRect();
-        
         setHighlightStyles([{
-          width: rect.width + 10,
-          height: rect.height + 10,
-          top: rect.top - 5 + window.scrollY,
-          left: rect.left - 5 + window.scrollX,
+          width: rect.width + 16,
+          height: rect.height + 16,
+          top: rect.top - 8 + window.scrollY,
+          left: rect.left - 8 + window.scrollX,
         }]);
         
         // Set pointer position
@@ -306,6 +399,8 @@ const TutorialOverlay: React.FC = () => {
           left: rect.left + rect.width / 2 - 40 + window.scrollX,
           top: rect.top - 70 + window.scrollY, // Point from above
         });
+      } else {
+        console.warn('Could not find insights button!');
       }
     }
     else {
@@ -558,15 +653,21 @@ const TutorialOverlay: React.FC = () => {
             className={`absolute rounded-lg pointer-events-none`}
             style={{
               ...style,
-              border: currentTutorialStep.id === 'add-shift' ? '1px solid rgba(59, 130, 246, 0.4)' : 
-                     (currentTutorialStep.id === 'shift-templates' || currentTutorialStep.id === 'insights') ? '3px solid #2563EB' : 
+              border: currentTutorialStep.id === 'add-shift' ? 'none' : // Remove border completely for add-shift
+                     currentTutorialStep.id === 'shift-templates' ? '3px solid #2563EB' : 
+                     currentTutorialStep.id === 'insights' ? '3px solid #2563EB' : 
                      '2px solid rgba(59, 130, 246, 0.8)',
-              boxShadow: (currentTutorialStep.id === 'shift-templates' || currentTutorialStep.id === 'insights') ? '0 0 10px 2px rgba(37, 99, 235, 0.5)' :
-                         currentTutorialStep.id === 'add-shift' ? '0 0 4px 0px rgba(59, 130, 246, 0.3)' : 
+              boxShadow: currentTutorialStep.id === 'shift-templates' ? '0 0 8px 2px rgba(37, 99, 235, 0.5)' :
+                         currentTutorialStep.id === 'insights' ? '0 0 15px 3px rgba(37, 99, 235, 0.7)' :
+                         currentTutorialStep.id === 'add-shift' ? 'none' : // Remove shadow completely for add-shift
                          '0 0 8px 1px rgba(59, 130, 246, 0.3)'
             }}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={{ 
+              opacity: 1,
+              // No animated effects for templates step
+              scale: currentTutorialStep.id === 'shift-templates' ? 1 : undefined 
+            }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           />

@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedDate } from '../../store/shiftsSlice';
 import { setModalOpen, addNotification } from '../../store/uiSlice';
 import { RootState } from '../../store';
 import ShiftForm from '../forms/ShiftForm';
 import EmptyState from '../common/EmptyState';
+import NewUserGuidance from '../common/NewUserGuidance';
 import { motion } from 'framer-motion';
 import ShiftCard from '../shifts/ShiftCard';
 import ShiftCardSkeleton from '../shifts/ShiftCardSkeleton';
@@ -26,6 +27,7 @@ const CalendarView: React.FC = () => {
   const dispatch = useDispatch();
   const { shifts, selectedDate } = useSelector((state: RootState) => state.shifts);
   const { modalOpen, currentView, notificationPreferences } = useSelector((state: RootState) => state.ui);
+  const { employees } = useSelector((state: RootState) => state.employees);
   
   // Use a ref to track if component is mounted
   const isMounted = useRef(true);
@@ -150,13 +152,11 @@ const CalendarView: React.FC = () => {
     }
   }, [dispatch, notificationPreferences]);
   
-  const handleDayClick = useCallback((day: Date) => {
-    // Format date using our consistent formatter
-    const dateString = formatToISODate(day);
-    console.log('Day clicked:', day, 'Formatted as:', dateString);
+  const handleDayClick = useCallback((day: string) => {
+    console.log('Day clicked:', day);
     
     // Set the date directly
-    dispatch(setSelectedDate(dateString));
+    dispatch(setSelectedDate(day));
   }, [dispatch]);
   
   const handleDatePickerToggle = useCallback(() => {
@@ -326,12 +326,42 @@ const CalendarView: React.FC = () => {
     console.log('showCelebration state changed to:', showCelebration);
   }, [showCelebration]);
 
+  // Function to render the view based on current view type
   const renderView = () => {
+    // Check if this is a new account with no shifts or employees
+    const shiftsExist = shifts && shifts.length > 0;
+    const employeesExist = employees && employees.length > 0;
+    const isNewAccount = !shiftsExist && !employeesExist;
+    
+    // Check if onboarding is in progress but not completed
+    const onboardingDismissed = localStorage.getItem('shiftsync_onboarding_dismissed') === 'true';
+    const onboardingCompleted = localStorage.getItem('shiftsync_onboarding_completed') === 'true';
+    const onboardingInProgress = localStorage.getItem('shiftsync_onboarding_current_step') && 
+                                !onboardingCompleted && 
+                                !onboardingDismissed;
+    
+    // Show guidance for new users or if onboarding is in progress
+    if (isNewAccount || onboardingInProgress) {
+      return <NewUserGuidance />;
+    }
+    
     switch (currentView) {
       case 'daily':
-        return <DailyView />;
+        return (
+          <DailyView 
+            selectedDate={selectedDate}
+            handleAddShift={handleAddShift} 
+          />
+        );
       case 'weekly':
-        return <WeeklyView />;
+        return (
+          <WeeklyView 
+            days={days}
+            selectedDate={selectedDate}
+            handleDayClick={handleDayClick}
+            handleAddShift={handleAddShift}
+          />
+        );
       case 'staff':
         return <StaffView />;
       case 'list':
@@ -339,7 +369,14 @@ const CalendarView: React.FC = () => {
       case 'grid':
         return <GridView />;
       default:
-        return <WeeklyView />;
+        return (
+          <WeeklyView 
+            days={days}
+            selectedDate={selectedDate}
+            handleDayClick={handleDayClick}
+            handleAddShift={handleAddShift}
+          />
+        );
     }
   };
 
@@ -349,7 +386,7 @@ const CalendarView: React.FC = () => {
       <div className="px-4 sm:px-6 lg:px-8 pt-4">
         <ViewToggle />
       </div>
-      <div className="flex-1 px-4 sm:px-6 lg:px-8 pb-4">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 md:pb-4 pb-24">
         {renderView()}
       </div>
 

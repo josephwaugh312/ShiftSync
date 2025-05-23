@@ -137,7 +137,7 @@ const StaffView: React.FC = () => {
   };
 
   return (
-    <div className="staff-view pb-16">
+    <div className="staff-view pb-24">
       <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
         Staff Schedule for {formatDate(selectedDate)}
       </h2>

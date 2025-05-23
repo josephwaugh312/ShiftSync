@@ -59,14 +59,8 @@ const TutorialProviderInternal: React.FC<{
       console.error('Error loading viewed tutorial steps:', error);
     }
     
-    // Auto-start for first-time users
-    if (!hasSeenTutorial) {
-      // Wait for app to fully load
-      const timer = setTimeout(() => {
-        setIsActive(true);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
+    // Do NOT auto-start for first-time users since we now have onboarding and tutorial prompt
+    // The tutorial will only start when explicitly triggered via toggleTutorial event
   }, []);
   
   // Track page changes for required actions
@@ -225,18 +219,30 @@ const TutorialProviderInternal: React.FC<{
   // Listen for keyboard shortcut to toggle tutorial
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Toggle tutorial with Alt+T
-      if (e.altKey && e.key === 't') {
+      console.log('Key pressed:', e.key, 'Shift key:', e.shiftKey);
+      
+      // Toggle tutorial with Shift+T
+      if (e.shiftKey && (e.key === 't' || e.key === 'T')) {
+        console.log('Shift+T detected! Toggling tutorial...');
         e.preventDefault();
         toggleTutorial();
       }
     };
     
+    // Handle custom event from KeyboardShortcuts component
+    const handleToggleTutorial = () => {
+      console.log('Custom toggleTutorial event received');
+      toggleTutorial();
+    };
+    
     window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('toggleTutorial', handleToggleTutorial);
+    
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('toggleTutorial', handleToggleTutorial);
     };
-  }, [isActive, hasSeenTutorial]);
+  }, [isActive, hasSeenTutorial, toggleTutorial]);
   
   return (
     <TutorialContext.Provider

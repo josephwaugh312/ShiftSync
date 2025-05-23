@@ -61,6 +61,14 @@ const KeyboardShortcuts: React.FC = () => {
       },
     },
     {
+      key: 'shift+m',
+      description: 'Open templates',
+      action: () => {
+        console.log('Executing shortcut: Open templates');
+        dispatch(setModalOpen({ modal: 'templates', isOpen: true }));
+      },
+    },
+    {
       key: 'shift+s',
       description: 'Go to settings',
       action: () => {
@@ -115,6 +123,15 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+/',
       description: 'Show keyboard shortcuts',
       action: showKeyboardShortcuts,
+    },
+    {
+      key: 'shift+t',
+      description: 'Toggle tutorial',
+      action: () => {
+        console.log('Executing shortcut: Toggle tutorial');
+        // Dispatch a custom event that the TutorialContext will listen for
+        document.dispatchEvent(new CustomEvent('toggleTutorial'));
+      },
     },
   ];
 
@@ -172,7 +189,7 @@ const KeyboardShortcuts: React.FC = () => {
       keyup: false,
       keydown: true,
     },
-    [navigate]
+    [dispatch]
   );
 
   useHotkeys(
@@ -208,13 +225,14 @@ const KeyboardShortcuts: React.FC = () => {
     (event) => {
       event.preventDefault();
       shortcuts[6].action();
+      console.log('Executing Shift+H shortcut via useHotkeys');
     },
     { 
       enableOnFormTags: true,
       keyup: false,
       keydown: true,
     },
-    []
+    [navigate]
   );
 
   useHotkeys(
@@ -276,6 +294,20 @@ const KeyboardShortcuts: React.FC = () => {
     []
   );
 
+  useHotkeys(
+    shortcuts[10].key,
+    (event) => {
+      event.preventDefault();
+      shortcuts[10].action();
+    },
+    { 
+      enableOnFormTags: true,
+      keyup: false,
+      keydown: true,
+    },
+    []
+  );
+
   // Register special keyboard event listener for question mark key
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -292,6 +324,32 @@ const KeyboardShortcuts: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  // Extra event listener for Shift+H to ensure it works
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Extra check for Shift+H
+      if (event.shiftKey && (event.key === 'h' || event.key === 'H')) {
+        console.log('Shift+H detected via raw event listener');
+        event.preventDefault();
+        console.log('Executing shortcut: Go to home/calendar');
+        navigate('/');
+      }
+      
+      // Extra check for Shift+T
+      if (event.shiftKey && (event.key === 't' || event.key === 'T')) {
+        console.log('Shift+T detected via raw event listener');
+        event.preventDefault();
+        console.log('Executing shortcut: Toggle tutorial');
+        document.dispatchEvent(new CustomEvent('toggleTutorial'));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [navigate]);
 
   // Export shortcut information to window for tooltips
   useEffect(() => {

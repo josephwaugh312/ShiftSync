@@ -21,7 +21,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className={`sidebar bg-white dark:bg-dark-700 shadow-md h-screen overflow-y-auto fixed md:sticky top-0 w-64 transition-all duration-300 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+    <div className="sidebar bg-white dark:bg-dark-700 shadow-md h-screen overflow-y-auto sticky top-0 w-64 hidden md:block">
       <div className="p-4 flex flex-col h-full">
         <div className="flex-grow">
           <div className="space-y-2 mb-8">

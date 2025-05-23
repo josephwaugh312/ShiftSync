@@ -72,7 +72,7 @@ Save frequently used shift patterns as templates. Access them from the Templates
 
 ### Interactive Tutorial
 
-New users will benefit from our step-by-step interactive tutorial that highlights key features of ShiftSync. The tutorial can be toggled on/off using the Alt+T keyboard shortcut.
+New users will benefit from our step-by-step interactive tutorial that highlights key features of ShiftSync. The tutorial can be toggled on/off using the Shift+T keyboard shortcut.
 
 ### Theme Preferences
 
@@ -87,13 +87,15 @@ Toggle between light and dark mode using the sun/moon icon in the header. Your p
 ## ⌨️ Keyboard Shortcuts
 
 ShiftSync supports various keyboard shortcuts for power users:
-- `Alt+T` - Toggle tutorial
-- `Alt+C` - Focus calendar
-- `Alt+A` - Add new shift
-- `Alt+E` - Go to employee management
-- `Alt+R` - Create recurring shift
-- `Alt+I` - View insights dashboard
-- `Alt+H` - Access help menu
+- `Shift+T` - Toggle tutorial
+- `Shift+N` - Add new shift
+- `Shift+E` - Go to employees
+- `Shift+H` - Go to home/calendar
+- `Shift+I` - View insights dashboard
+- `Shift+M` - Open templates
+- `Shift+P` - Publish schedule
+- `Shift+/` or `?` - Show keyboard shortcuts
+- `Esc` - Close modals
 
 ## 📝 License
 

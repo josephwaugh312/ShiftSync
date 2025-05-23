@@ -238,7 +238,7 @@ const TemplatesPage: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className="mt-1.5">
+                      <div className="mt-1.5 hidden sm:block">
                         <div className="flex items-center flex-wrap gap-1">
                           <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${template.color} text-white`}>
                             {template.role}

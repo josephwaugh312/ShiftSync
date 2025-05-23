@@ -8,9 +8,14 @@ import ShiftCard from '../shifts/ShiftCard';
 import ShiftCardSkeleton from '../shifts/ShiftCardSkeleton';
 import EmptyState from '../common/EmptyState';
 
-const DailyView: React.FC = () => {
+interface DailyViewProps {
+  selectedDate: string;
+  handleAddShift: () => void;
+}
+
+const DailyView: React.FC<DailyViewProps> = ({ selectedDate, handleAddShift }) => {
   const dispatch = useDispatch();
-  const { shifts, selectedDate } = useSelector((state: RootState) => state.shifts);
+  const { shifts } = useSelector((state: RootState) => state.shifts);
   const [shiftsLoading, setShiftsLoading] = React.useState(false);
   
   // Animation variants
@@ -33,10 +38,6 @@ const DailyView: React.FC = () => {
     return () => clearTimeout(timer);
   }, [selectedDate]);
   
-  const handleAddShift = () => {
-    dispatch(setModalOpen({ modal: 'addShift', isOpen: true }));
-  };
-  
   // Get shifts for the selected date with additional logging
   const shiftsForDay = useMemo(() => {
     console.log('DailyView - Filtering shifts for date:', selectedDate);
@@ -58,7 +59,7 @@ const DailyView: React.FC = () => {
   
   return (
     <motion.div
-      className="daily-view"
+      className="daily-view pb-24"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

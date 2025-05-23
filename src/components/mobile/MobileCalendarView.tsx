@@ -90,7 +90,7 @@ const MobileCalendarView: React.FC = () => {
   };
   
   return (
-    <div className="pb-16">
+    <div className="pb-24">
       {/* Date selector (horizontally scrollable) */}
       <div className="mb-4 overflow-x-auto pb-2 hide-scrollbar">
         <div className="flex space-x-2 min-w-max">

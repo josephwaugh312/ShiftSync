@@ -266,6 +266,15 @@
     touch-action: manipulation;
   }
   
+  .touch-action-pan-y {
+    touch-action: pan-y;
+  }
+  
+  .momentum-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
   .hide-scrollbar {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */

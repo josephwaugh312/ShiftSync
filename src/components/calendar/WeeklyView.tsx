@@ -8,50 +8,27 @@ import { formatDate, formatToISODate, createDateFromISO } from '../../utils/date
 import ShiftCard from '../shifts/ShiftCard';
 import EmptyState from '../common/EmptyState';
 
-const WeeklyView: React.FC = () => {
+interface WeeklyViewProps {
+  days: Date[];
+  selectedDate: string;
+  handleDayClick: (day: string) => void;
+  handleAddShift: () => void;
+}
+
+const WeeklyView: React.FC<WeeklyViewProps> = ({ 
+  days, 
+  selectedDate, 
+  handleDayClick, 
+  handleAddShift 
+}) => {
   const dispatch = useDispatch();
-  const { shifts, selectedDate } = useSelector((state: RootState) => state.shifts);
+  const { shifts } = useSelector((state: RootState) => state.shifts);
   
   // Get array of days for current week with consistent LOCAL date handling
   const weekDays = useMemo(() => {
-    console.log('WeeklyView - Calculating week days for selected date:', selectedDate);
-    
-    // Parse the selected date
-    const dateObj = createDateFromISO(selectedDate);
-    console.log('WeeklyView - Parsed date object:', dateObj);
-    
-    // Get local components - using local dates throughout
-    const day = dateObj.getDay(); // Local day of week (0 = Sunday)
-    
-    // Calculate the start of the week (Monday)
-    // If today is Sunday (0), go back 6 days to get to Monday
-    // If any other day, go back (day - 1) days to get to Monday
-    const diff = (day === 0) ? -6 : (1 - day);
-    
-    // Create a new date for the Monday of this week
-    const weekStart = new Date(dateObj);
-    weekStart.setDate(dateObj.getDate() + diff);
-    console.log('WeeklyView - Week start date:', weekStart);
-    
-    const days = [];
-    
-    // Generate all days of the week using local date methods
-    for (let i = 0; i < 7; i++) {
-      const nextDate = new Date(weekStart);
-      nextDate.setDate(weekStart.getDate() + i);
-      
-      // Create direct YYYY-MM-DD string to avoid any conversion issues
-      const year = nextDate.getFullYear();
-      const month = String(nextDate.getMonth() + 1).padStart(2, '0');
-      const dayNum = String(nextDate.getDate()).padStart(2, '0');
-      const formattedDate = `${year}-${month}-${dayNum}`;
-      
-      days.push(formattedDate);
-    }
-    
-    console.log('WeeklyView - Generated week days:', days);
-    return days;
-  }, [selectedDate]);
+    // Format the days array to YYYY-MM-DD strings
+    return days.map(day => formatToISODate(day));
+  }, [days]);
   
   // Group shifts by day
   const shiftsByDay = useMemo(() => {
@@ -72,15 +49,10 @@ const WeeklyView: React.FC = () => {
     return grouped;
   }, [shifts, weekDays]);
   
-  // Handle day click
-  const handleDayClick = (day: string) => {
-    dispatch(setSelectedDate(day));
-  };
-  
-  // Handle add shift
-  const handleAddShift = (date: string) => {
+  // Handle add shift for a specific day
+  const handleAddShiftForDay = (date: string) => {
     dispatch(setSelectedDate(date));
-    dispatch(setModalOpen({ modal: 'addShift', isOpen: true }));
+    handleAddShift();
   };
   
   // Animation variants
@@ -121,7 +93,7 @@ const WeeklyView: React.FC = () => {
   
   return (
     <motion.div
-      className="weekly-view"
+      className="weekly-view pb-24"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -181,7 +153,7 @@ const WeeklyView: React.FC = () => {
                     <EmptyState 
                       message="No shifts"
                       actionLabel="Add"
-                      onAction={() => handleAddShift(day)}
+                      onAction={() => handleAddShiftForDay(day)}
                       isCompact={true}
                     />
                   </div>

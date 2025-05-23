@@ -38,8 +38,8 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.2 }}
-        className="fixed bottom-16 md:bottom-4 left-4 right-4 md:left-[calc(16rem+1rem)] md:right-4 bg-white dark:bg-dark-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-dark-600 flex flex-col"
-        style={{ maxHeight: 'calc(100vh - 12rem)' }}
+        className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-[calc(16rem+1rem)] md:right-4 bg-white dark:bg-dark-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-dark-600 flex flex-col"
+        style={{ maxHeight: 'calc(100vh - 8rem)' }}
       >
         <div className="p-4 border-b border-gray-200 dark:border-dark-600 flex justify-between items-center sticky top-0 bg-white dark:bg-dark-800 z-20">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
@@ -87,9 +87,9 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 exit="exit"
                 variants={tabContentVariants}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                className="h-full overflow-y-auto"
+                className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4">
+                <div className="p-4 pb-6">
                   <DashboardView />
                 </div>
               </motion.div>
@@ -103,9 +103,9 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 exit="exit"
                 variants={tabContentVariants}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                className="h-full overflow-y-auto"
+                className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4">
+                <div className="p-4 pb-6">
                   <HeatmapView />
                 </div>
               </motion.div>
@@ -119,9 +119,9 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 exit="exit"
                 variants={tabContentVariants}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                className="h-full overflow-y-auto"
+                className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4">
+                <div className="p-4 pb-6">
                   <StaffingLevelsView />
                 </div>
               </motion.div>
@@ -135,9 +135,9 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 exit="exit"
                 variants={tabContentVariants}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                className="h-full overflow-y-auto"
+                className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4">
+                <div className="p-4 pb-6">
                   <EmployeeHoursView />
                 </div>
               </motion.div>
@@ -151,9 +151,9 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 exit="exit"
                 variants={tabContentVariants}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                className="h-full overflow-y-auto"
+                className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4">
+                <div className="p-4 pb-6">
                   <TimelineView />
                 </div>
               </motion.div>

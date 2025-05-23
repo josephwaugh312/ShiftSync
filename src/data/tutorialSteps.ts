@@ -15,9 +15,9 @@ export const tutorialSteps: TutorialStep[] = [
     id: 'welcome',
     target: 'body', // Initially target the whole page
     title: 'Welcome to ShiftSync!',
-    content: 'This tutorial will guide you through the key features to help you schedule shifts efficiently. Press Alt+T anytime to toggle the tutorial on/off.',
+    content: 'This tutorial will guide you through the key features to help you schedule shifts efficiently. Press Shift+T anytime to toggle the tutorial on/off.',
     position: 'center',
-    keyboardShortcut: 'Alt+T',
+    keyboardShortcut: 'Shift+T',
   },
   {
     id: 'calendar',
@@ -25,7 +25,7 @@ export const tutorialSteps: TutorialStep[] = [
     title: 'Calendar View',
     content: 'This is your main schedule view where you can see all shifts organized by day or week. Use the navigation controls to move between dates or change the view.',
     position: 'center-bottom', // Position at bottom center to avoid hiding behind the calendar
-    keyboardShortcut: 'Alt+C',
+    keyboardShortcut: 'Shift+C',
   },
   {
     id: 'employee-management',
@@ -34,7 +34,7 @@ export const tutorialSteps: TutorialStep[] = [
     content: 'Before adding shifts, you\'ll need to add employees to your team. This page allows you to manage staff members, roles, and contact information.',
     position: 'right',
     showPointer: true,
-    keyboardShortcut: 'Alt+E',
+    keyboardShortcut: 'Shift+E',
   },
   {
     id: 'add-shift',
@@ -43,7 +43,7 @@ export const tutorialSteps: TutorialStep[] = [
     content: 'Click any of the highlighted "Add Shift" buttons to create a new shift. You can assign an employee to a specific time slot along with their role and other important details.',
     position: 'center',
     showPointer: true,
-    keyboardShortcut: 'Alt+A',
+    keyboardShortcut: 'Shift+N',
   },
   {
     id: 'recurring-shifts',
@@ -52,7 +52,6 @@ export const tutorialSteps: TutorialStep[] = [
     content: 'Need the same shift repeated? Use the recurring feature to create daily, weekly, or monthly patterns. This saves time when scheduling regular shifts.',
     position: 'center',
     showPointer: true,
-    keyboardShortcut: 'Alt+R',
   },
   {
     id: 'shift-templates',
@@ -61,7 +60,7 @@ export const tutorialSteps: TutorialStep[] = [
     content: 'Create templates for common shifts with predefined roles, hours, and break times. Apply templates with just a few clicks to quickly schedule your team.',
     position: 'bottom',
     showPointer: true,
-    keyboardShortcut: 'Alt+T',
+    keyboardShortcut: 'Shift+M',
   },
   {
     id: 'insights',
@@ -69,7 +68,7 @@ export const tutorialSteps: TutorialStep[] = [
     title: 'Insights Dashboard',
     content: 'View analytics about your scheduling patterns, staffing levels, and employee hours. Use these insights to optimize your scheduling and labor costs.',
     position: 'bottom',
-    keyboardShortcut: 'Alt+I',
+    keyboardShortcut: 'Shift+I',
   },
   {
     id: 'help',
@@ -77,7 +76,6 @@ export const tutorialSteps: TutorialStep[] = [
     title: 'Need Help?',
     content: 'You can restart this tutorial anytime from the Help menu. We\'ve also included tooltips and keyboard shortcuts throughout the app to help you work faster.',
     position: 'bottom', // Changed from 'left' to 'bottom' to prevent rendering off-screen
-    keyboardShortcut: 'Alt+H',
   },
   {
     id: 'finish',

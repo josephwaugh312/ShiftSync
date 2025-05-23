@@ -276,6 +276,20 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
             type: 'success',
             category: 'shifts'
           }));
+          
+          // If this is the first shift added (only check for non-edit mode)
+          if (!isEdit && shifts.length === 0) {
+            // Show the advanced features notification
+            setTimeout(() => {
+              dispatch(addNotification({
+                message: "Ready to explore advanced features? You've completed the basics!",
+                type: 'info',
+                category: 'general'
+              }));
+              
+              document.dispatchEvent(new CustomEvent('showTutorialPrompt'));
+            }, 1500); // Show this notification with a delay after the first one
+          }
         }
         
         // Check for shift reminders

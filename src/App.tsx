@@ -20,6 +20,7 @@ import { applyThemeColor } from './utils/colorUtils';
 import { notificationService } from './services/NotificationService';
 import { TutorialProvider } from './contexts/TutorialContext';
 import TutorialOverlay from './components/tutorial/TutorialOverlay';
+import TutorialPrompt from './components/tutorial/TutorialPrompt';
 import HelpButton from './components/common/HelpButton';
 import DarkModeToggle from './components/common/DarkModeToggle';
 
@@ -143,7 +144,7 @@ const App: React.FC = () => {
     <TutorialProvider>
       <div className={classes}>
         <Sidebar />
-        <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-screen">
           <header className="bg-white dark:bg-dark-700 shadow-sm h-16 flex-shrink-0 z-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
               <div className="flex justify-between items-center h-full">
@@ -155,7 +156,7 @@ const App: React.FC = () => {
               </div>
             </div>
           </header>
-          <main className="flex-1 overflow-y-auto relative">
+          <main className="flex-1 overflow-y-auto relative momentum-scroll touch-action-pan-y">
             <Routes>
               <Route path="/" element={<CalendarView />} />
               <Route path="/employees" element={<EmployeesPage />} />
@@ -187,6 +188,9 @@ const App: React.FC = () => {
         
         {/* Tutorial Overlay */}
         <TutorialOverlay />
+        
+        {/* Tutorial Prompt for New Users */}
+        <TutorialPrompt />
       </div>
     </TutorialProvider>
   );

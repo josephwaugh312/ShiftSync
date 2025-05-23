@@ -259,14 +259,14 @@ const CalendarHeader: React.FC = () => {
   return (
     <div className="calendar-header px-4 sm:px-6 lg:px-8 pt-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white max-[320px]:hidden">
           {createDateFromISO(selectedDate).toLocaleDateString('en-US', { 
             month: 'long', 
             year: 'numeric' 
           })}
         </h1>
         
-        <div className="flex space-x-3">
+        <div className="flex space-x-3 max-[320px]:w-full max-[320px]:justify-center">
           <Tooltip content="Add Shift" shortcut="shift+n" position="top">
             <CustomFocusButton 
               onClick={handleAddShift}
@@ -359,7 +359,7 @@ const CalendarHeader: React.FC = () => {
       </div>
       
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 space-y-2 md:space-y-0">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-center md:justify-start space-x-2">
           <Tooltip content="Previous Week" shortcut="←" position="top">
             <CustomFocusButton 
               onClick={handlePreviousWeek}
@@ -490,6 +490,7 @@ const CalendarHeader: React.FC = () => {
               aria-label="Go to today"
               variant="outline"
               sound="click"
+              className="hidden md:block"
             >
               Today
             </CustomFocusButton>

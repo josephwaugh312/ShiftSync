@@ -74,6 +74,28 @@ const cleanDateString = (dateStr: string): string => {
   return cleanedStr;
 };
 
+// Load shifts from localStorage
+const loadShiftsFromStorage = (): Shift[] => {
+  try {
+    const storedShifts = localStorage.getItem('shifts');
+    if (storedShifts) {
+      return JSON.parse(storedShifts);
+    }
+  } catch (error) {
+    console.error('Error loading shifts from localStorage:', error);
+  }
+  return [];
+};
+
+// Save shifts to localStorage
+const saveShiftsToStorage = (shifts: Shift[]) => {
+  try {
+    localStorage.setItem('shifts', JSON.stringify(shifts));
+  } catch (error) {
+    console.error('Error saving shifts to localStorage:', error);
+  }
+};
+
 // Load templates from localStorage
 const loadTemplatesFromStorage = (): ShiftTemplate[] => {
   try {
@@ -97,7 +119,7 @@ const saveTemplatesToStorage = (templates: ShiftTemplate[]) => {
 };
 
 const initialState: ShiftsState = {
-  shifts: [],
+  shifts: loadShiftsFromStorage(),
   templates: loadTemplatesFromStorage(),
   selectedDate: getTodayDateString(),
   error: null
@@ -163,6 +185,7 @@ const shiftsSlice = createSlice({
       // Ensure we don't duplicate shifts with the same ID
       if (!state.shifts.some(shift => shift.id === newShift.id)) {
         state.shifts.push(newShift);
+        saveShiftsToStorage(state.shifts);
       } else {
         console.warn('Attempted to add a shift with an ID that already exists:', newShift.id);
       }
@@ -185,13 +208,16 @@ const shiftsSlice = createSlice({
         
         console.log('Updating shift with date:', updatedShift.date);
         state.shifts[index] = updatedShift;
+        saveShiftsToStorage(state.shifts);
       }
     },
     deleteShift: (state, action: PayloadAction<string>) => {
       state.shifts = state.shifts.filter(shift => shift.id !== action.payload);
+      saveShiftsToStorage(state.shifts);
     },
     clearShifts: (state) => {
       state.shifts = [];
+      saveShiftsToStorage(state.shifts);
     },
     // Template related actions
     addTemplate: (state, action: PayloadAction<ShiftTemplate>) => {
@@ -229,6 +255,7 @@ const shiftsSlice = createSlice({
           color: template.color
         };
         state.shifts.push(shift);
+        saveShiftsToStorage(state.shifts);
       }
     }
   }

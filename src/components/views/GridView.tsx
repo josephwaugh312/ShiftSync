@@ -149,7 +149,7 @@ const GridView: React.FC = () => {
   
   return (
     <motion.div
-      className="grid-view pb-16"
+      className="grid-view pb-24"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

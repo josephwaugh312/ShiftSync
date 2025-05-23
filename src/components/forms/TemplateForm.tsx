@@ -270,7 +270,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({ isEdit }) => {
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center"
+        className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center momentum-scroll touch-action-pan-y"
         role="dialog"
         aria-modal="true"
         aria-labelledby="template-form-title"
@@ -308,7 +308,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({ isEdit }) => {
               </button>
             </div>
             
-            <div className="p-4 overflow-y-auto flex-grow">
+            <div className="p-4 overflow-y-auto flex-grow momentum-scroll touch-action-pan-y">
               <form onSubmit={handleSubmit} className="flex flex-col h-full">
                 <div className="space-y-3 flex-grow">
                   {/* Template Name */}
@@ -508,7 +508,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({ isEdit }) => {
                   
                   {/* Template Preview - minimized on smaller screens */}
                   <div 
-                    className="bg-gray-50 dark:bg-dark-700 p-2 rounded-md border border-gray-200 dark:border-dark-600"
+                    className="bg-gray-50 dark:bg-dark-700 p-2 rounded-md border border-gray-200 dark:border-dark-600 hidden sm:block"
                     aria-label="Template preview"
                   >
                     <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Preview</div>

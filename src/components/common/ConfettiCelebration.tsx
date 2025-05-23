@@ -86,16 +86,19 @@ const ConfettiCelebration = forwardRef<HTMLDivElement, ConfettiCelebrationProps>
           >
             {renderConfetti()}
             
-            <motion.div
-              className="absolute top-[40%] left-[40%] transform -translate-x-1/2 -translate-y-1/2 bg-success-500 text-white px-8 py-6 rounded-lg shadow-xl text-center z-50"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ type: "spring", bounce: 0.5 }}
-            >
-              <h2 className="text-3xl font-bold mb-2">Schedule Published!</h2>
-              <p className="text-lg">All team members have been notified</p>
-            </motion.div>
+            {/* Centered container using flexbox */}
+            <div className="absolute inset-0 flex items-center justify-center p-4">
+              <motion.div
+                className="bg-success-500 text-white px-4 sm:px-8 py-4 sm:py-6 rounded-lg shadow-xl text-center z-50 max-w-sm w-full"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ type: "spring", bounce: 0.5 }}
+              >
+                <h2 className="text-xl sm:text-3xl font-bold mb-2">Schedule Published!</h2>
+                <p className="text-sm sm:text-lg">All team members have been notified</p>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
