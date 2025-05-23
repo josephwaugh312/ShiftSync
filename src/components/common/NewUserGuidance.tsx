@@ -252,7 +252,7 @@ const NewUserGuidance: React.FC = () => {
 
   return (
     <motion.div 
-      className="w-full max-w-4xl mx-auto bg-white dark:bg-dark-800 rounded-lg shadow-sm overflow-hidden mt-8"
+      className="w-full max-w-4xl mx-auto bg-white dark:bg-dark-800 rounded-lg shadow-sm overflow-hidden mt-8 mb-24 lg:mb-8"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}

@@ -59,7 +59,7 @@ const DailyView: React.FC<DailyViewProps> = ({ selectedDate, handleAddShift }) =
   
   return (
     <motion.div
-      className="daily-view pb-28"
+      className="daily-view pb-24"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

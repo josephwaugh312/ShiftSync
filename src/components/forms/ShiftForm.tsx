@@ -333,7 +333,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-32 md:pb-20 text-center sm:block sm:p-0">
+        <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-28 md:pb-20 text-center sm:block sm:p-0">
           {/* Backdrop - make sure the z-index is lower than the form */}
           <div 
             className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 

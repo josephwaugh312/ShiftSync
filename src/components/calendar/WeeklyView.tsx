@@ -93,7 +93,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
   
   return (
     <motion.div
-      className="weekly-view pb-28"
+      className="weekly-view pb-24"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

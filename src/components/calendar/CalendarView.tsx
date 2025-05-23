@@ -413,7 +413,7 @@ const CalendarView: React.FC = () => {
       <div className="px-4 sm:px-6 lg:px-8 pt-4">
         <ViewToggle />
       </div>
-      <div className="flex-1 px-4 sm:px-6 lg:px-8 md:pb-4 pb-28">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 md:pb-4 pb-24">
         {renderView()}
       </div>
 
