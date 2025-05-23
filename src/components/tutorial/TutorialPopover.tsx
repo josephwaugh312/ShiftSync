@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { TutorialStep, tutorialSteps } from '../../data/tutorialSteps';
 import { useTutorial } from '../../contexts/TutorialContext';
@@ -22,8 +22,21 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
   
   const canProceed = checkRequiredAction();
   
-  // Check if we're on mobile
-  const isMobile = window.innerWidth <= 768;
+  // Check if we're on mobile - properly handle SSR/hydration
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(typeof window !== 'undefined' && window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
   
   // Calculate position based on the target element
   const getPopoverPosition = () => {

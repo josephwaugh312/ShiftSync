@@ -51,7 +51,7 @@ const TutorialOverlay: React.FC = () => {
     if (!isActive) return;
     
     const step = tutorialSteps[currentStep];
-    const isMobile = window.innerWidth <= 768;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
     
     // Clear previous highlights and targets first
     setTargetElement(null);
@@ -689,7 +689,7 @@ const TutorialOverlay: React.FC = () => {
       <AnimatePresence mode="wait">
         {targetElement && shouldShowPointer && currentTutorialStep.id !== 'recurring-shifts' && currentTutorialStep.id !== 'add-shift' && (
           (() => {
-            const isMobile = window.innerWidth <= 768;
+            const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
             // Hide pointer on mobile for steps that have centered tooltips
             const hidePointerOnMobile = isMobile && (
               currentTutorialStep.id === 'shift-templates' || 
