@@ -24,10 +24,14 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
   
   // Check if we're on mobile - properly handle SSR/hydration
   const [isMobile, setIsMobile] = useState(false);
+  const [isVerySmallScreen, setIsVerySmallScreen] = useState(false);
   
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(typeof window !== 'undefined' && window.innerWidth <= 768);
+      const width = typeof window !== 'undefined' ? window.innerWidth : 0;
+      setIsMobile(width <= 768);
+      setIsVerySmallScreen(width <= 350); // Increased threshold for better coverage
+      console.log('Screen width:', width, 'isVerySmallScreen:', width <= 350);
     };
     
     checkMobile();
@@ -313,6 +317,9 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === tutorialSteps.length - 1;
   
+  // Debug logging
+  console.log('Rendering progress bar - isVerySmallScreen:', isVerySmallScreen, 'showing progress bar:', !isVerySmallScreen);
+  
   // Remove all hover effects from the tutorial-interactive class
   useEffect(() => {
     // Add a style element to disable hover transformations
@@ -342,7 +349,7 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Progress bar */}
+      {/* Progress bar - always show */}
       <div className="w-full bg-gray-200 dark:bg-dark-600 h-1 mb-4 rounded-full overflow-hidden">
         <div 
           className="bg-primary-500 h-full rounded-full" 
@@ -368,8 +375,8 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
         </div>
       )}
       
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
+      <div className="flex justify-between items-center mt-6">
+        <div className="flex items-center space-x-2 mr-2">
           <button
             onClick={skipTutorial}
             className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
@@ -377,30 +384,32 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
             Skip tutorial
           </button>
           
-          {/* Step indicator with viewed status */}
-          <div className="flex items-center">
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              {currentStep + 1}/{tutorialSteps.length}
-            </span>
-            <div className="ml-2 flex space-x-1">
-              {tutorialSteps.map((tutorialStep, idx) => (
-                <div 
-                  key={tutorialStep.id}
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    idx === currentStep 
-                      ? 'bg-primary-500' 
-                      : viewedSteps.includes(tutorialStep.id)
-                        ? 'bg-gray-400 dark:bg-gray-600' 
-                        : 'bg-gray-200 dark:bg-gray-800'
-                  }`}
-                  title={tutorialStep.title}
-                />
-              ))}
+          {/* Step indicator with viewed status - hide on very small screens */}
+          {!isVerySmallScreen && (
+            <div className="flex items-center">
+              <span className="text-xs text-gray-400 dark:text-gray-500">
+                {currentStep + 1}/{tutorialSteps.length}
+              </span>
+              <div className="ml-2 flex space-x-1">
+                {tutorialSteps.map((tutorialStep, idx) => (
+                  <div 
+                    key={tutorialStep.id}
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      idx === currentStep 
+                        ? 'bg-primary-500' 
+                        : viewedSteps.includes(tutorialStep.id)
+                          ? 'bg-gray-400 dark:bg-gray-600' 
+                          : 'bg-gray-200 dark:bg-gray-800'
+                    }`}
+                    title={tutorialStep.title}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
         
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 flex-shrink-0">
           {!isFirstStep && (
             <button
               onClick={prevStep}
