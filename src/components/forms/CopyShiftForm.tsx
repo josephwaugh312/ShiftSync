@@ -298,16 +298,16 @@ const CopyShiftForm: React.FC = () => {
   
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 sm:p-0">
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="bg-white dark:bg-dark-800 rounded-xl shadow-xl overflow-hidden w-full max-w-md mx-auto"
+          className="bg-white dark:bg-dark-800 rounded-xl shadow-xl overflow-hidden w-full max-w-[95vw] sm:max-w-lg mx-auto max-h-[85vh] flex flex-col"
         >
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          <div className="p-4 sm:p-6 flex-1 overflow-y-auto">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
               Copy Shift
               <button
                 type="button"
@@ -315,7 +315,7 @@ const CopyShiftForm: React.FC = () => {
                 className="float-right text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
                 aria-label="Close"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -326,26 +326,26 @@ const CopyShiftForm: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400">Error: Could not find the shift to copy</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit}>
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              <form>
+                <div className="mb-4 sm:mb-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     Original Shift Details
                   </h3>
-                  <div className="bg-gray-100 dark:bg-dark-700 rounded-lg p-4">
-                    <div className="flex justify-between">
+                  <div className="bg-gray-100 dark:bg-dark-700 rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
                       <div>
-                        <p className="font-bold text-gray-800 dark:text-gray-100">
+                        <p className="font-bold text-gray-800 dark:text-gray-100 text-sm sm:text-base">
                           {originalShift.employeeName}
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                           {originalShift.role}
                         </p>
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-left sm:text-right">
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                           {new Date(originalShift.date).toLocaleDateString()}
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                           {originalShift.timeRange}
                         </p>
                       </div>
@@ -357,10 +357,10 @@ const CopyShiftForm: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Copy Mode
                   </label>
-                  <div className="flex space-x-4 mb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
                     <button
                       type="button"
-                      className={`px-4 py-2 rounded-md ${
+                      className={`px-3 py-2 rounded-md text-sm ${
                         copyMode === 'single' 
                           ? 'bg-primary-500 text-white' 
                           : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -371,7 +371,7 @@ const CopyShiftForm: React.FC = () => {
                     </button>
                     <button
                       type="button"
-                      className={`px-4 py-2 rounded-md ${
+                      className={`px-3 py-2 rounded-md text-sm ${
                         copyMode === 'multiple' 
                           ? 'bg-primary-500 text-white' 
                           : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -382,7 +382,7 @@ const CopyShiftForm: React.FC = () => {
                     </button>
                     <button
                       type="button"
-                      className={`px-4 py-2 rounded-md ${
+                      className={`px-3 py-2 rounded-md text-sm ${
                         copyMode === 'recurring' 
                           ? 'bg-primary-500 text-white' 
                           : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -482,10 +482,10 @@ const CopyShiftForm: React.FC = () => {
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Frequency
                         </label>
-                        <div className="flex space-x-4">
+                        <div className="grid grid-cols-2 gap-2">
                           <button
                             type="button"
-                            className={`px-4 py-2 rounded-md ${
+                            className={`px-3 py-2 rounded-md text-sm ${
                               recurringOptions.frequency === 'daily' 
                                 ? 'bg-primary-500 text-white' 
                                 : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -499,7 +499,7 @@ const CopyShiftForm: React.FC = () => {
                           </button>
                           <button
                             type="button"
-                            className={`px-4 py-2 rounded-md ${
+                            className={`px-3 py-2 rounded-md text-sm ${
                               recurringOptions.frequency === 'weekly' 
                                 ? 'bg-primary-500 text-white' 
                                 : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -519,12 +519,12 @@ const CopyShiftForm: React.FC = () => {
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Days of Week
                           </label>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="grid grid-cols-7 gap-1">
                             {[0, 1, 2, 3, 4, 5, 6].map(dayIndex => (
                               <button
                                 key={dayIndex}
                                 type="button"
-                                className={`px-3 py-1 rounded-md text-sm ${
+                                className={`px-2 py-2 rounded-md text-xs font-medium ${
                                   recurringOptions.daysOfWeek.includes(dayIndex) 
                                     ? 'bg-primary-500 text-white' 
                                     : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -598,19 +598,23 @@ const CopyShiftForm: React.FC = () => {
                     </div>
                   )}
                 </div>
-                
-                <div className="mt-6">
-                  <LoadingButton
-                    type="submit"
-                    isLoading={isSubmitting}
-                    className="w-full"
-                  >
-                    Copy Shift
-                  </LoadingButton>
-                </div>
               </form>
             )}
           </div>
+          
+          {/* Sticky footer with submit button */}
+          {originalShift && (
+            <div className="border-t border-gray-200 dark:border-dark-600 p-4 bg-white dark:bg-dark-800">
+              <LoadingButton
+                type="submit"
+                isLoading={isSubmitting}
+                className="w-full"
+                onClick={handleSubmit}
+              >
+                Copy Shift to {selectedDates.length} Date{selectedDates.length !== 1 ? 's' : ''}
+              </LoadingButton>
+            </div>
+          )}
         </motion.div>
       </div>
     </AnimatePresence>

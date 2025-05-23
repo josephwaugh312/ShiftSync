@@ -90,7 +90,7 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
     // Handle center-bottom position
     if (step.position === 'center-bottom') {
       return {
-        bottom: isMobile ? '120px' : '100px', // Account for mobile navbar height
+        bottom: isMobile ? '130px' : '100px', // Account for mobile navbar height + margin
         left: '50%',
         transform: 'translateX(-50%)',
         maxWidth: isMobile ? '90vw' : (step.id === 'calendar' ? '450px' : undefined),

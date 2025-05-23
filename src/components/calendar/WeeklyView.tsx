@@ -93,7 +93,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
   
   return (
     <motion.div
-      className="weekly-view pb-24"
+      className="weekly-view pb-28"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -152,9 +152,15 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                   <div className="h-full flex items-center justify-center">
                     <EmptyState 
                       message="No shifts"
+                      description={`Add a shift for ${dayName}`}
                       actionLabel="Add"
                       onAction={() => handleAddShiftForDay(day)}
                       isCompact={true}
+                      icon={
+                        <svg className="w-12 h-12 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      }
                     />
                   </div>
                 )}

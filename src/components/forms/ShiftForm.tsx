@@ -333,7 +333,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-28 md:pb-20 text-center sm:block sm:p-0">
+        <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-32 md:pb-20 text-center sm:block sm:p-0">
           {/* Backdrop - make sure the z-index is lower than the form */}
           <div 
             className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
@@ -346,14 +346,14 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
           
           {/* Modal content - make sure the z-index is higher than the backdrop */}
           <motion.div
-            className="inline-block align-bottom bg-white dark:bg-dark-700 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative"
+            className="inline-block align-bottom bg-white dark:bg-dark-700 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-[90vw] sm:max-w-xl relative"
             style={{ zIndex: 101 }}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
-            <div className="bg-white dark:bg-dark-700 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div className="bg-white dark:bg-dark-700 px-6 pt-6 pb-4 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                   <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4" id="modal-title">
@@ -487,9 +487,9 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
                     )}
                     
                     {currentStep === 2 && (
-                      <div className="space-y-4">
+                      <div className="space-y-6">
                         <div>
-                          <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                          <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Start Time
                           </label>
                           <input
@@ -499,7 +499,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
                             value={formData.startTime}
                             onChange={handleChange}
                             required
-                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-dark-600 dark:bg-dark-800 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-dark-600 dark:bg-dark-800 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 text-base"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                 e.preventDefault();
@@ -509,7 +509,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
                         </div>
                         
                         <div>
-                          <label htmlFor="endTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                          <label htmlFor="endTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             End Time
                           </label>
                           <input
@@ -519,7 +519,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
                             value={formData.endTime}
                             onChange={handleChange}
                             required
-                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-dark-600 dark:bg-dark-800 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-dark-600 dark:bg-dark-800 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 h-12 text-base"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                 e.preventDefault();
@@ -530,13 +530,14 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
                       </div>
                     )}
                     
-                    <div className="mt-6 flex justify-between">
+                    <div className="mt-8 flex justify-between gap-3">
                       {currentStep > 1 ? (
                         <CustomFocusButton
                           onClick={moveToPreviousStep}
                           variant="outline"
                           sound="click"
                           type="button"
+                          className="flex-1 sm:flex-none"
                         >
                           Previous
                         </CustomFocusButton>
@@ -546,6 +547,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
                           variant="outline"
                           sound="click"
                           type="button"
+                          className="flex-1 sm:flex-none"
                         >
                           Cancel
                         </CustomFocusButton>
@@ -558,6 +560,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
                           sound="click"
                           type="button"
                           preventFormSubmit={true}
+                          className="flex-1 sm:flex-none"
                         >
                           Next
                         </CustomFocusButton>
@@ -567,6 +570,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({ isEdit }) => {
                           disabled={isSubmitting}
                           variant="primary"
                           sound="success"
+                          className="flex-1 sm:flex-none"
                         >
                           {isSubmitting ? 'Saving...' : isEdit ? 'Update Shift' : 'Add Shift'}
                         </CustomFocusButton>

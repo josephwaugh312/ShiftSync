@@ -8,6 +8,7 @@ interface EmptyStateProps {
   onAction?: () => void;
   icon?: JSX.Element;
   isCompact?: boolean;
+  tips?: string[];
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({
@@ -16,7 +17,8 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   actionLabel,
   onAction,
   icon,
-  isCompact = false
+  isCompact = false,
+  tips
 }) => {
   const defaultIcon = (
     <svg 
@@ -80,6 +82,20 @@ const EmptyState: React.FC<EmptyStateProps> = ({
             </>
           )}
         </motion.button>
+      )}
+      
+      {tips && tips.length > 0 && !isCompact && (
+        <div className="mt-4 max-w-md">
+          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quick Tips:</h4>
+          <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+            {tips.map((tip, index) => (
+              <li key={index} className="flex items-start">
+                <span className="mr-2 text-primary-500">•</span>
+                <span>{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </motion.div>
   );

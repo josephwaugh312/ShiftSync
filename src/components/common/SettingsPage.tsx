@@ -59,7 +59,7 @@ const SettingsPage: React.FC = () => {
   };
   
   return (
-    <div className="max-w-3xl mx-auto pb-24">
+    <div className="max-w-3xl mx-auto pb-28">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Settings</h1>
       
       <div className="bg-white dark:bg-dark-700 rounded-lg shadow-md overflow-hidden mb-6">

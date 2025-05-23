@@ -41,6 +41,11 @@ const CalendarView: React.FC = () => {
   // Add state for insights button hover effect
   const [insightsHovered, setInsightsHovered] = useState(false);
   
+  // Add state for onboarding status to trigger re-render
+  const [onboardingDismissed, setOnboardingDismissed] = useState(
+    localStorage.getItem('shiftsync_onboarding_dismissed') === 'true'
+  );
+  
   // Clean up on unmount
   useEffect(() => {
     return () => {
@@ -326,6 +331,28 @@ const CalendarView: React.FC = () => {
     console.log('showCelebration state changed to:', showCelebration);
   }, [showCelebration]);
 
+  // Listen for storage changes to update onboarding status
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const dismissed = localStorage.getItem('shiftsync_onboarding_dismissed') === 'true';
+      setOnboardingDismissed(dismissed);
+    };
+    
+    // Listen for the custom event when onboarding is dismissed
+    const handleOnboardingDismissed = () => {
+      setOnboardingDismissed(true);
+    };
+    
+    // Add event listeners
+    window.addEventListener('storage', handleStorageChange);
+    document.addEventListener('onboardingDismissed', handleOnboardingDismissed);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      document.removeEventListener('onboardingDismissed', handleOnboardingDismissed);
+    };
+  }, []);
+
   // Function to render the view based on current view type
   const renderView = () => {
     // Check if this is a new account with no shifts or employees
@@ -333,18 +360,18 @@ const CalendarView: React.FC = () => {
     const employeesExist = employees && employees.length > 0;
     const isNewAccount = !shiftsExist && !employeesExist;
     
-    // Check if onboarding is in progress but not completed
-    const onboardingDismissed = localStorage.getItem('shiftsync_onboarding_dismissed') === 'true';
+    // Check onboarding state
     const onboardingCompleted = localStorage.getItem('shiftsync_onboarding_completed') === 'true';
     const onboardingInProgress = localStorage.getItem('shiftsync_onboarding_current_step') && 
                                 !onboardingCompleted && 
                                 !onboardingDismissed;
     
-    // Show guidance for new users or if onboarding is in progress
-    if (isNewAccount || onboardingInProgress) {
+    // Only show onboarding guidance if it's a new account AND onboarding hasn't been dismissed AND not completed
+    if (isNewAccount && !onboardingDismissed && !onboardingCompleted) {
       return <NewUserGuidance />;
     }
     
+    // Otherwise show the normal calendar views
     switch (currentView) {
       case 'daily':
         return (
@@ -386,7 +413,7 @@ const CalendarView: React.FC = () => {
       <div className="px-4 sm:px-6 lg:px-8 pt-4">
         <ViewToggle />
       </div>
-      <div className="flex-1 px-4 sm:px-6 lg:px-8 md:pb-4 pb-24">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 md:pb-4 pb-28">
         {renderView()}
       </div>
 

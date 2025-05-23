@@ -230,6 +230,9 @@ const NewUserGuidance: React.FC = () => {
   const handleDismiss = () => {
     localStorage.setItem(ONBOARDING_DISMISSED, 'true');
     setDismissed(true);
+    
+    // Dispatch custom event to notify CalendarView
+    document.dispatchEvent(new CustomEvent('onboardingDismissed'));
   };
 
   // Handle manual step navigation

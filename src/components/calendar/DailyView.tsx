@@ -59,7 +59,7 @@ const DailyView: React.FC<DailyViewProps> = ({ selectedDate, handleAddShift }) =
   
   return (
     <motion.div
-      className="daily-view pb-24"
+      className="daily-view pb-28"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -98,8 +98,22 @@ const DailyView: React.FC<DailyViewProps> = ({ selectedDate, handleAddShift }) =
             <div className="mt-4">
               <EmptyState 
                 message="No shifts scheduled"
+                description={`Add a shift for ${(() => {
+                  const dateObj = createDateFromISO(selectedDate);
+                  return dateObj.toLocaleDateString('en-US', { 
+                    weekday: 'long',
+                    month: 'long', 
+                    day: 'numeric'
+                  });
+                })()}`}
                 actionLabel="Add Shift"
                 onAction={handleAddShift}
+                icon={
+                  <svg className="w-16 h-16 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v12a2 2 0 002 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 11v6m0 0v-6m0 6h6m-6 0H6" />
+                  </svg>
+                }
               />
             </div>
           )}

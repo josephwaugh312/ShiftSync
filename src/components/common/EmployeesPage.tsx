@@ -182,7 +182,7 @@ const EmployeesPage: React.FC = () => {
   };
   
   return (
-    <div className="max-w-4xl mx-auto pt-6 pb-24">
+    <div className="max-w-4xl mx-auto pt-6 pb-28">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Employees</h1>
         <div className="flex space-x-2">
