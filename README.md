@@ -1,4 +1,4 @@
-# �� ShiftSync - Modern Progressive Web App for Shift Scheduling
+# 📆 ShiftSync - Modern Progressive Web App for Shift Scheduling
 
 > **Solving Real Business Problems**: 20-30% of small businesses struggle with employee scheduling challenges, including last-minute call-outs, lack of real-time visibility, and manual scheduling inefficiencies. ShiftSync addresses these pain points with a modern, offline-capable solution.
 
