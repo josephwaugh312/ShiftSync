@@ -355,19 +355,22 @@ const CalendarView: React.FC = () => {
 
   // Function to render the view based on current view type
   const renderView = () => {
-    // Check if this is a new account with no shifts or employees
+    // Check if this is a completely new account with no data
     const shiftsExist = shifts && shifts.length > 0;
     const employeesExist = employees && employees.length > 0;
-    const isNewAccount = !shiftsExist && !employeesExist;
+    const isCompletelyNew = !shiftsExist && !employeesExist;
     
     // Check onboarding state
     const onboardingCompleted = localStorage.getItem('shiftsync_onboarding_completed') === 'true';
-    const onboardingInProgress = localStorage.getItem('shiftsync_onboarding_current_step') && 
-                                !onboardingCompleted && 
-                                !onboardingDismissed;
+    const hasStartedOnboarding = localStorage.getItem('shiftsync_onboarding_current_step') !== null;
     
-    // Only show onboarding guidance if it's a new account AND onboarding hasn't been dismissed AND not completed
-    if (isNewAccount && !onboardingDismissed && !onboardingCompleted) {
+    // Show onboarding guidance if:
+    // 1. User is completely new and hasn't dismissed onboarding, OR
+    // 2. User has started onboarding but hasn't completed it and hasn't dismissed it
+    const shouldShowOnboarding = !onboardingCompleted && !onboardingDismissed && 
+      (isCompletelyNew || hasStartedOnboarding);
+    
+    if (shouldShowOnboarding) {
       return <NewUserGuidance />;
     }
     

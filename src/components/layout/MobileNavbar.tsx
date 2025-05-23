@@ -102,15 +102,15 @@ const MobileNavbar: React.FC = () => {
 
         <button
           onClick={handleAddShift}
-          className="flex-1 flex flex-col items-center justify-center p-2 text-primary-600 dark:text-primary-400"
+          className="flex-1 flex flex-col items-center justify-start p-1 text-primary-600 dark:text-primary-400 pt-1"
         >
           <div className="flex flex-col items-center">
-            <div className="bg-primary-600 rounded-full p-2 shadow-lg">
+            <div className="bg-primary-600 rounded-full p-1.5 shadow-lg">
               <svg className="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </div>
-            <span className="text-xs font-bold mt-0.5">Add Shift</span>
+            <span className="text-xs font-bold mt-1">Add Shift</span>
           </div>
         </button>
 
