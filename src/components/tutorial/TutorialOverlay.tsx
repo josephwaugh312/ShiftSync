@@ -482,6 +482,9 @@ const TutorialOverlay: React.FC = () => {
     if (!isActive || !targetElement) return;
     
     const updatePositions = () => {
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+      const step = tutorialSteps[currentStep];
+      
       // Re-calculate positions after scroll/resize
       const rect = targetElement.getBoundingClientRect();
       
@@ -493,30 +496,38 @@ const TutorialOverlay: React.FC = () => {
         }))
       );
       
-      if (tutorialSteps[currentStep].showPointer) {
+      if (step.showPointer) {
         let pointerX = 0;
         let pointerY = 0;
         
-        switch (tutorialSteps[currentStep].position) {
-          case 'left':
-            pointerX = rect.left - 70;
-            pointerY = rect.top + rect.height / 2 - 30;
-            break;
-          case 'right':
-            pointerX = rect.right + 10;
-            pointerY = rect.top + rect.height / 2 - 30;
-            break;
-          case 'top':
-            pointerX = rect.left + rect.width / 2 - 30;
-            pointerY = rect.top - 70;
-            break;
-          case 'bottom':
-            pointerX = rect.left + rect.width / 2 - 30;
-            pointerY = rect.bottom + 10;
-            break;
-          default:
-            pointerX = rect.left + rect.width / 2 - 30;
-            pointerY = rect.top + rect.height / 2 - 30;
+        // Special handling for employee-management step on mobile
+        if (step.id === 'employee-management' && isMobile) {
+          // On mobile, the employees link is in the bottom navbar
+          // Position pointer to point at the bottom navbar
+          pointerX = rect.left + rect.width / 2 - 40;
+          pointerY = rect.top - 80; // Point from above the navbar
+        } else {
+          switch (step.position) {
+            case 'left':
+              pointerX = rect.left - 70;
+              pointerY = rect.top + rect.height / 2 - 30;
+              break;
+            case 'right':
+              pointerX = rect.right + 10;
+              pointerY = rect.top + rect.height / 2 - 30;
+              break;
+            case 'top':
+              pointerX = rect.left + rect.width / 2 - 30;
+              pointerY = rect.top - 70;
+              break;
+            case 'bottom':
+              pointerX = rect.left + rect.width / 2 - 30;
+              pointerY = rect.bottom + 10;
+              break;
+            default:
+              pointerX = rect.left + rect.width / 2 - 30;
+              pointerY = rect.top + rect.height / 2 - 30;
+          }
         }
         
         setPointerStyles({
