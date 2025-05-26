@@ -1,0 +1,177 @@
+import React, { PropsWithChildren } from 'react';
+import { render } from '@testing-library/react';
+import type { RenderOptions } from '@testing-library/react';
+import { configureStore } from '@reduxjs/toolkit';
+import type { PreloadedState } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+
+import type { AppStore, RootState } from '../store';
+import shiftsSlice from '../store/shiftsSlice';
+import employeeSlice from '../store/employeeSlice';
+import uiSlice from '../store/uiSlice';
+
+// This type interface extends the default options for render from RTL, as well
+// as allows the user to specify other things such as initialState, store.
+interface ExtendedRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  preloadedState?: PreloadedState<RootState>;
+  store?: AppStore;
+}
+
+export function renderWithProviders(
+  ui: React.ReactElement,
+  {
+    preloadedState = {},
+    // Automatically create a store instance if no store was passed in
+    store = configureStore({
+      reducer: {
+        shifts: shiftsSlice,
+        employees: employeeSlice,
+        ui: uiSlice,
+      },
+      preloadedState,
+    }),
+    ...renderOptions
+  }: ExtendedRenderOptions = {}
+) {
+  function Wrapper({ children }: PropsWithChildren<{}>): JSX.Element {
+    return (
+      <Provider store={store}>
+        <BrowserRouter>
+          {children}
+        </BrowserRouter>
+      </Provider>
+    );
+  }
+
+  // Return an object with the store and all of RTL's query functions
+  return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
+}
+
+// Create mock data for testing
+export const mockShifts = [
+  {
+    id: '1',
+    employeeId: 'emp1',
+    date: '2024-01-15',
+    startTime: '09:00',
+    endTime: '17:00',
+    role: 'Manager',
+    notes: 'Opening shift',
+    recurring: null,
+    status: 'scheduled' as const,
+  },
+  {
+    id: '2',
+    employeeId: 'emp2',
+    date: '2024-01-15',
+    startTime: '13:00',
+    endTime: '21:00',
+    role: 'Barista',
+    notes: 'Afternoon shift',
+    recurring: null,
+    status: 'scheduled' as const,
+  },
+];
+
+export const mockEmployees = [
+  {
+    id: 'emp1',
+    name: 'John Doe',
+    email: 'john@example.com',
+    phone: '555-0101',
+    role: 'Manager',
+    avatar: '',
+    isActive: true,
+  },
+  {
+    id: 'emp2',
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    phone: '555-0102',
+    role: 'Barista',
+    avatar: '',
+    isActive: true,
+  },
+];
+
+export const mockInitialState: PreloadedState<RootState> = {
+  shifts: {
+    shifts: mockShifts,
+    templates: [],
+    selectedDate: '2024-01-15',
+    error: null,
+  },
+  employees: {
+    employees: mockEmployees,
+    error: null,
+  },
+  ui: {
+    modalOpen: {
+      addShift: false,
+      editShift: false,
+      templates: false,
+      copyShift: false,
+      insights: false,
+    },
+    currentView: 'weekly',
+    selectedShift: null,
+    selectedEmployee: null,
+    darkMode: false,
+    theme: {
+      id: 'blue',
+      name: 'Professional Blue',
+      primary: '#2563eb',
+      primaryHover: '#1d4ed8',
+      accent: '#3b82f6',
+    },
+    notificationPreferences: {
+      enabled: true,
+      types: {
+        shifts: true,
+        employees: true,
+        schedules: true,
+        publication: true,
+        reminders: true,
+        conflicts: true,
+        updates: true,
+      },
+      methods: {
+        inApp: true,
+        email: false,
+        push: false,
+      },
+      timing: {
+        immediate: true,
+        digest: false,
+        scheduled: false,
+      },
+    },
+    notifications: [],
+  },
+};
+
+// Helper function to create a clean store for each test
+export function createTestStore(preloadedState?: PreloadedState<RootState>) {
+  return configureStore({
+    reducer: {
+      shifts: shiftsSlice,
+      employees: employeeSlice,
+      ui: uiSlice,
+    },
+    preloadedState: preloadedState || mockInitialState,
+  });
+}
+
+// Mock user events helper
+export const mockUserEvent = {
+  click: jest.fn(),
+  type: jest.fn(),
+  clear: jest.fn(),
+  selectOptions: jest.fn(),
+  upload: jest.fn(),
+  hover: jest.fn(),
+  unhover: jest.fn(),
+  tab: jest.fn(),
+  keyboard: jest.fn(),
+}; 
