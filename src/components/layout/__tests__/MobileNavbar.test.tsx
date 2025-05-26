@@ -10,6 +10,28 @@ jest.mock('../../../hooks/useSoundEffects', () => ({
   }),
 }));
 
+// Mock react-router-dom
+const mockNavigate = jest.fn();
+const mockLocation = { pathname: '/' };
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+  useLocation: () => mockLocation,
+  NavLink: ({ children, to, className, onClick, end, ...props }: any) => {
+    const computedClassName = typeof className === 'function' 
+      ? className({ isActive: to === mockLocation.pathname })
+      : className;
+    // Filter out router-specific props that shouldn't go to DOM
+    const { caseSensitive, ...domProps } = props;
+    return (
+      <a href={to} className={computedClassName} onClick={onClick} {...domProps}>
+        {children}
+      </a>
+    );
+  },
+}));
+
 // Mock navigator.vibrate
 const mockVibrate = jest.fn();
 Object.defineProperty(navigator, 'vibrate', {
@@ -20,6 +42,9 @@ Object.defineProperty(navigator, 'vibrate', {
 describe('MobileNavbar', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockNavigate.mockClear();
+    // Reset to default location
+    mockLocation.pathname = '/';
   });
 
   it('renders all navigation items', () => {
@@ -67,23 +92,20 @@ describe('MobileNavbar', () => {
   });
 
   it('navigates to calendar page before opening modal when on different page', () => {
-    // Mock useLocation to return a different path
-    const mockLocation = { pathname: '/employees' };
-    const mockNavigate = jest.fn();
+    // Update mock location to employees page
+    mockLocation.pathname = '/employees';
     
-    jest.doMock('react-router-dom', () => ({
-      ...jest.requireActual('react-router-dom'),
-      useLocation: () => mockLocation,
-      useNavigate: () => mockNavigate,
-    }));
-
-    renderWithProviders(<MobileNavbar />);
+    const { store } = renderWithProviders(<MobileNavbar />);
 
     const addShiftButton = screen.getByText('Add Shift');
     fireEvent.click(addShiftButton);
 
     // Should navigate to home first
     expect(mockNavigate).toHaveBeenCalledWith('/');
+    
+    // Should also open modal
+    const state = store.getState();
+    expect(state.ui.modalOpen.addShift).toBe(true);
   });
 
   describe('responsive design', () => {
