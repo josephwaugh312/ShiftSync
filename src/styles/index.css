@@ -335,11 +335,30 @@
   cursor: pointer !important;
 }
 
+/* Mobile-specific override: prevent tutorial styles from affecting navbar */
+@media (max-width: 768px) {
+  .fixed.bottom-0 .tutorial-interactive {
+    position: static !important;
+    z-index: auto !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+}
+
 /* Special treatment for the employees link */
 a[href="/employees"].tutorial-interactive {
   z-index: 101 !important;
   position: relative !important;
   pointer-events: auto !important;
+}
+
+/* Mobile override for employee links in navbar */
+@media (max-width: 768px) {
+  .fixed.bottom-0 a[href="/employees"].tutorial-interactive {
+    position: static !important;
+    z-index: auto !important;
+    pointer-events: auto !important;
+  }
 }
 
 .tutorial-interactive:hover {

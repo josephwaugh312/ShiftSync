@@ -620,6 +620,7 @@ const TutorialOverlay: React.FC = () => {
     if (!isActive) return;
     
     const step = tutorialSteps[currentStep];
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
     
     // Allow interaction with highlighted elements by making them clickable through the overlay
     const allowInteractionWithHighlightedElements = () => {
@@ -633,6 +634,17 @@ const TutorialOverlay: React.FC = () => {
       
       // Special handling for links we need users to click
       if (step.id === 'employee-management') {
+        // Skip all employee link processing on mobile to prevent navbar compression
+        if (isMobile) {
+          console.log('Mobile detected - skipping employee link interaction setup');
+          return () => {
+            highlightedElements.forEach((el) => {
+              el.classList.remove('tutorial-interactive');
+            });
+          };
+        }
+        
+        // Desktop only - employee link interaction setup
         const employeeLinks = document.querySelectorAll('a[href="/employees"]');
         employeeLinks.forEach(link => {
           // Make the link higher z-index
