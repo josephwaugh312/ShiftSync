@@ -240,34 +240,26 @@ const TutorialOverlay: React.FC = () => {
     else if (step.id === 'employee-management') {
       console.log('Processing employee-management step...');
       
-      let employeeElement: HTMLElement | null = null;
-      
       if (isMobile) {
-        // For mobile navbar, don't touch the element at all to avoid flexbox layout issues
-        // We'll handle the visual highlighting through a separate positioned overlay
+        // For mobile, skip all element finding and processing entirely
+        // Just rely on the special overlay to handle the visual highlighting
+        console.log('Mobile detected - skipping element processing, using overlay only');
+        return;
       } else {
-        // Desktop logic (existing)
+        // Desktop logic only
+        let employeeElement: HTMLElement | null = null;
         const employeeLinks = document.querySelectorAll('a[href="/employees"]');
         console.log('Found employee links with basic selector:', employeeLinks.length);
         if (employeeLinks.length > 0) {
           employeeElement = employeeLinks[0] as HTMLElement;
         }
-      }
-      
-      if (employeeElement) {
-        const rect = employeeElement.getBoundingClientRect();
-        console.log('Final employee element rect:', rect);
-        console.log('Final employee element:', employeeElement);
         
-        if (rect.width > 0 && rect.height > 0) {
-          // For mobile navbar, don't modify the element's styles directly as it breaks flexbox layout
-          // Instead, just add the tutorial classes and let the highlight overlay handle the visual effect
-          if (isMobile) {
-            // For mobile, don't set target element or highlight styles to avoid navbar compression
-            // The special mobile overlay will handle the visual highlighting
-            setTargetElement(null);
-            setHighlightStyles([]);
-          } else {
+        if (employeeElement) {
+          const rect = employeeElement.getBoundingClientRect();
+          console.log('Final employee element rect:', rect);
+          console.log('Final employee element:', employeeElement);
+          
+          if (rect.width > 0 && rect.height > 0) {
             employeeElement.style.cssText += `
               transform: scale(1.02);
               transition: 0.3s;
@@ -275,24 +267,24 @@ const TutorialOverlay: React.FC = () => {
               border: none !important;
               box-shadow: none;
             `;
+            
+            setTargetElement(employeeElement);
+            safeScrollIntoView(employeeElement);
+            
+            const highlightBox: HighlightBox = {
+              top: rect.top,
+              left: rect.left,
+              width: rect.width,
+              height: rect.height,
+            };
+            setHighlightStyles([highlightBox]);
+            console.log('Successfully highlighted employee element!');
+          } else {
+            console.log('Employee element has no dimensions, cannot highlight');
           }
-          
-          setTargetElement(employeeElement);
-          safeScrollIntoView(employeeElement);
-          
-          const highlightBox: HighlightBox = {
-            top: rect.top,
-            left: rect.left,
-            width: rect.width,
-            height: rect.height,
-          };
-          setHighlightStyles([highlightBox]);
-          console.log('Successfully highlighted employee element!');
         } else {
-          console.log('Employee element has no dimensions, cannot highlight');
+          console.log('No employee element found for highlighting');
         }
-      } else {
-        console.log('No employee element found for highlighting');
       }
     }
     // Special handling for shift templates button (step 6)
@@ -783,22 +775,22 @@ const TutorialOverlay: React.FC = () => {
             key="mobile-employee-highlight"
             className="fixed pointer-events-none z-[9100]"
             style={{
-              bottom: '20px', // Position over the mobile navbar
-              left: '25%', // Position over the employee tab (navbar has 4 items, so 25% is the second one)
-              width: '25%', // Width of one navbar item
-              height: '60px', // Height to cover the navbar item
-              border: '4px solid #2563EB',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(37, 99, 235, 0.15)',
-              boxShadow: '0 0 0 4px rgba(37, 99, 235, 0.3), 0 0 20px 2px rgba(37, 99, 235, 0.8)',
+              bottom: '22px', // More precise positioning over the mobile navbar
+              left: 'calc(25% + 2px)', // Slightly offset to center better
+              width: 'calc(25% - 4px)', // Slightly smaller to not overflow
+              height: '56px', // More precise height to match navbar content
+              border: '3px solid #2563EB',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(37, 99, 235, 0.12)',
+              boxShadow: '0 0 0 2px rgba(37, 99, 235, 0.2), 0 0 12px 1px rgba(37, 99, 235, 0.6)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
           />
         )}
       </AnimatePresence>
