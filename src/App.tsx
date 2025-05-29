@@ -16,6 +16,7 @@ import InsightsPanel from './components/insights/InsightsPanel';
 import KeyboardShortcutsHelp from './components/common/KeyboardShortcutsHelp';
 import KeyboardShortcuts from './components/common/KeyboardShortcuts';
 import CopyShiftForm from './components/forms/CopyShiftForm';
+import DeleteConfirmModal from './components/common/DeleteConfirmModal';
 import { applyThemeColor } from './utils/colorUtils';
 import { notificationService } from './services/NotificationService';
 import { TutorialProvider } from './contexts/TutorialContext';
@@ -168,6 +169,7 @@ const App: React.FC = () => {
             onClose={() => handleCloseModal('insights')} 
           />
         )}
+        <DeleteConfirmModal />
         
         {/* Utility Components */}
         <KeyboardShortcutsHelp />
