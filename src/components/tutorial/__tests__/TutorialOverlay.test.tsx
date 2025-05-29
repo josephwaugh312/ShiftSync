@@ -242,7 +242,6 @@ export const applyEmployeeElementStyling = (element: HTMLElement, isMobile: bool
   
   if (isMobile) {
     element.style.cssText += `
-      transform: scale(1.15) !important;
       box-shadow: 0 0 0 4px rgb(37, 99, 235), 0 0 20px 2px rgba(37, 99, 235, 0.8) !important;
       border-radius: 12px !important;
       background-color: rgba(37, 99, 235, 0.15) !important;
