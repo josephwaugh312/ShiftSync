@@ -13,8 +13,31 @@ const MobileNavbar: React.FC = () => {
 
   // Haptic feedback function (if available)
   const triggerHapticFeedback = () => {
-    if (navigator.vibrate) {
-      navigator.vibrate(15); // Short vibration for feedback
+    try {
+      if (navigator.vibrate) {
+        navigator.vibrate(15); // Short vibration for feedback
+      }
+    } catch (error) {
+      // Silently handle haptic feedback errors
+      console.debug('Haptic feedback not available:', error);
+    }
+  };
+
+  const safePlaySound = (sound: string, volume?: number) => {
+    try {
+      playSound(sound, volume);
+    } catch (error) {
+      // Silently handle sound playback errors
+      console.debug('Sound playback failed:', error);
+    }
+  };
+
+  const safeNavigate = (path: string) => {
+    try {
+      navigate(path);
+    } catch (error) {
+      // Silently handle navigation errors
+      console.debug('Navigation failed:', error);
     }
   };
 
@@ -23,11 +46,11 @@ const MobileNavbar: React.FC = () => {
     triggerHapticFeedback();
     
     // Play sound effect
-    playSound('click');
+    safePlaySound('click');
     
     // If not on the calendar page, navigate to it first
     if (location.pathname !== '/') {
-      navigate('/');
+      safeNavigate('/');
     }
     
     // Then open the add shift modal
@@ -36,31 +59,31 @@ const MobileNavbar: React.FC = () => {
 
   const handleSwipeLeft = () => {
     // Play swipe sound
-    playSound('notification', 0.3);
+    safePlaySound('notification', 0.3);
     
     // Go to next page in sequence
     if (location.pathname === '/') {
-      navigate('/employees');
+      safeNavigate('/employees');
     } else if (location.pathname === '/employees') {
-      navigate('/settings');
+      safeNavigate('/settings');
     }
   };
 
   const handleSwipeRight = () => {
     // Play swipe sound
-    playSound('notification', 0.3);
+    safePlaySound('notification', 0.3);
     
     // Go to previous page in sequence
     if (location.pathname === '/settings') {
-      navigate('/employees');
+      safeNavigate('/employees');
     } else if (location.pathname === '/employees') {
-      navigate('/');
+      safeNavigate('/');
     }
   };
 
   const handleNavClick = () => {
     triggerHapticFeedback();
-    playSound('click');
+    safePlaySound('click');
   };
 
   return (

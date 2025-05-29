@@ -22,11 +22,15 @@ root.render(
 );
 
 // Register service worker for PWA functionality
-serviceWorkerRegistration.register({
-  onSuccess: () => {
-    console.log('ShiftSync PWA: App cached successfully for offline use');
-  },
-  onUpdate: () => {
-    console.log('ShiftSync PWA: New version available, refresh to update');
-  }
-}); 
+try {
+  serviceWorkerRegistration.register({
+    onSuccess: () => {
+      console.log('ShiftSync PWA: App cached successfully for offline use');
+    },
+    onUpdate: () => {
+      console.log('ShiftSync PWA: New version available, refresh to update');
+    }
+  });
+} catch (error) {
+  console.debug('Service worker registration failed:', error);
+} 

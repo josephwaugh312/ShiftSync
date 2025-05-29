@@ -38,34 +38,76 @@ const GridView: React.FC = () => {
     
     // Convert shifts to grid format
     return shiftsForDate.map(shift => {
-      // Parse time range (e.g., "9:00 AM - 5:00 PM")
-      const [startTime, endTime] = shift.timeRange.split(' - ');
-      
-      // Calculate duration in hours
-      const getHours = (timeStr: string) => {
-        const [hourMinute, period] = timeStr.split(' ');
-        let [hour, minute] = hourMinute.split(':').map(Number);
+      try {
+        // Parse time range (e.g., "9:00 AM - 5:00 PM")
+        const timeRangeParts = shift.timeRange.split(' - ');
+        if (timeRangeParts.length !== 2) {
+          // Invalid format, use fallback values
+          return {
+            id: shift.id,
+            employeeName: shift.employeeName,
+            role: shift.role,
+            startTime: shift.timeRange,
+            endTime: '',
+            duration: 1, // Default to 1 hour
+            color: shift.color,
+            status: shift.status,
+          };
+        }
         
-        if (period === 'PM' && hour !== 12) hour += 12;
-        if (period === 'AM' && hour === 12) hour = 0;
+        const [startTime, endTime] = timeRangeParts;
         
-        return hour + minute / 60;
-      };
-      
-      const startHour = getHours(startTime);
-      const endHour = getHours(endTime);
-      const duration = endHour - startHour;
-      
-      return {
-        id: shift.id,
-        employeeName: shift.employeeName,
-        role: shift.role,
-        startTime,
-        endTime,
-        duration,
-        color: shift.color,
-        status: shift.status,
-      };
+        // Calculate duration in hours
+        const getHours = (timeStr: string) => {
+          try {
+            const timeParts = timeStr.split(' ');
+            if (timeParts.length !== 2) return 0; // Invalid format
+            
+            const [hourMinute, period] = timeParts;
+            const hourMinuteParts = hourMinute.split(':');
+            if (hourMinuteParts.length !== 2) return 0; // Invalid format
+            
+            let [hour, minute] = hourMinuteParts.map(Number);
+            
+            // Check for invalid numbers
+            if (isNaN(hour) || isNaN(minute)) return 0;
+            
+            if (period === 'PM' && hour !== 12) hour += 12;
+            if (period === 'AM' && hour === 12) hour = 0;
+            
+            return hour + minute / 60;
+          } catch {
+            return 0; // Return 0 for any parsing errors
+          }
+        };
+        
+        const startHour = getHours(startTime);
+        const endHour = getHours(endTime);
+        const duration = Math.max(endHour - startHour, 1); // Ensure at least 1 hour duration
+        
+        return {
+          id: shift.id,
+          employeeName: shift.employeeName,
+          role: shift.role,
+          startTime,
+          endTime,
+          duration,
+          color: shift.color,
+          status: shift.status,
+        };
+      } catch (error) {
+        // If any error occurs, return a fallback shift object
+        return {
+          id: shift.id,
+          employeeName: shift.employeeName,
+          role: shift.role,
+          startTime: shift.timeRange,
+          endTime: '',
+          duration: 1,
+          color: shift.color,
+          status: shift.status,
+        };
+      }
     });
   }, [shifts, selectedDate]);
   

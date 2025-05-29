@@ -46,8 +46,13 @@ const TutorialProviderInternal: React.FC<{
   
   // Check if this is first time
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial') === 'true';
-    setHasSeenTutorial(hasSeenTutorial);
+    try {
+      const hasSeenTutorial = localStorage.getItem('hasSeenTutorial') === 'true';
+      setHasSeenTutorial(hasSeenTutorial);
+    } catch (error) {
+      console.error('Error loading tutorial seen state:', error);
+      setHasSeenTutorial(false);
+    }
     
     // Load viewed steps from localStorage
     try {
@@ -118,7 +123,11 @@ const TutorialProviderInternal: React.FC<{
       if (!viewedSteps.includes(currentStepId)) {
         const updatedViewedSteps = [...viewedSteps, currentStepId];
         setViewedSteps(updatedViewedSteps);
-        localStorage.setItem('viewedTutorialSteps', JSON.stringify(updatedViewedSteps));
+        try {
+          localStorage.setItem('viewedTutorialSteps', JSON.stringify(updatedViewedSteps));
+        } catch (error) {
+          console.error('Error saving viewed tutorial steps:', error);
+        }
       }
     }
   }, [isActive, currentStep, viewedSteps]);
@@ -131,14 +140,20 @@ const TutorialProviderInternal: React.FC<{
   };
   
   const resumeTutorial = () => {
-    const lastStep = localStorage.getItem('lastCompletedStep');
-    if (lastStep) {
-      const stepNumber = parseInt(lastStep, 10);
-      // Start from the next step after the last completed one
-      const nextStep = Math.min(stepNumber + 1, tutorialSteps.length - 1);
-      setCurrentStep(nextStep);
-    } else {
-      // If no last step is found, start from the beginning
+    try {
+      const lastStep = localStorage.getItem('lastCompletedStep');
+      if (lastStep) {
+        const stepNumber = parseInt(lastStep, 10);
+        // Start from the next step after the last completed one
+        const nextStep = Math.min(stepNumber + 1, tutorialSteps.length - 1);
+        setCurrentStep(nextStep);
+      } else {
+        // If no last step is found, start from the beginning
+        setCurrentStep(0);
+      }
+    } catch (error) {
+      console.error('Error loading last completed step:', error);
+      // If there's an error, start from the beginning
       setCurrentStep(0);
     }
     setIsActive(true);
@@ -157,9 +172,13 @@ const TutorialProviderInternal: React.FC<{
     setIsActive(false);
     setCurrentStep(0);
     setCompletedActions([]);
-    localStorage.setItem('hasSeenTutorial', 'true');
-    // Save last completed step to resume from later if needed
-    localStorage.setItem('lastCompletedStep', currentStep.toString());
+    try {
+      localStorage.setItem('hasSeenTutorial', 'true');
+      // Save last completed step to resume from later if needed
+      localStorage.setItem('lastCompletedStep', currentStep.toString());
+    } catch (error) {
+      console.error('Error saving tutorial completion state:', error);
+    }
   };
   
   const nextStep = () => {

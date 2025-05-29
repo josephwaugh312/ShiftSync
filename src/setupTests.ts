@@ -213,4 +213,13 @@ afterAll(() => {
 // Clear all mocks between tests
 beforeEach(() => {
   jest.clearAllMocks();
-}); 
+});
+
+// Clean up after all tests to prevent memory leaks
+afterEach(() => {
+  // Clean up any timers that might be hanging
+  jest.clearAllTimers();
+});
+
+// Remove the problematic global timer mocks that conflict with individual test files
+// Individual test files should handle their own timer mocking as needed 

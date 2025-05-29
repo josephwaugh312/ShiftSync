@@ -28,10 +28,9 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
   
   useEffect(() => {
     const checkMobile = () => {
-      const width = typeof window !== 'undefined' ? window.innerWidth : 0;
+      const width = window.innerWidth;
       setIsMobile(width <= 768);
-      setIsVerySmallScreen(width <= 350); // Increased threshold for better coverage
-      console.log('Screen width:', width, 'isVerySmallScreen:', width <= 350);
+      setIsVerySmallScreen(width <= 350);
     };
     
     checkMobile();
@@ -317,9 +316,6 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === tutorialSteps.length - 1;
   
-  // Debug logging
-  console.log('Rendering progress bar - isVerySmallScreen:', isVerySmallScreen, 'showing progress bar:', !isVerySmallScreen);
-  
   // Remove all hover effects from the tutorial-interactive class
   useEffect(() => {
     // Add a style element to disable hover transformations
@@ -436,4 +432,4 @@ const TutorialPopover: React.FC<TutorialPopoverProps> = ({ step, targetElement }
   );
 };
 
-export default TutorialPopover; 
+export default TutorialPopover;

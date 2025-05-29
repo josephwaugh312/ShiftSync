@@ -57,35 +57,42 @@ const Tooltip: React.FC<TooltipProps> = ({
   // Calculate tooltip position based on child element's position
   const calculatePosition = () => {
     if (childRef.current) {
-      const rect = childRef.current.getBoundingClientRect();
-      let top = 0;
-      let left = 0;
+      try {
+        const rect = childRef.current.getBoundingClientRect();
+        let top = 0;
+        let left = 0;
 
-      // Calculate position based on specified direction
-      switch (position) {
-        case 'top':
-          top = rect.top;
-          left = rect.left + rect.width / 2;
-          break;
-        case 'bottom':
-          top = rect.bottom;
-          left = rect.left + rect.width / 2;
-          break;
-        case 'left':
-          top = rect.top + rect.height / 2;
-          left = rect.left;
-          break;
-        case 'right':
-          top = rect.top + rect.height / 2;
-          left = rect.right;
-          break;
-        default:
-          top = rect.bottom;
-          left = rect.left + rect.width / 2;
+        // Calculate position based on specified direction
+        switch (position) {
+          case 'top':
+            top = rect.top;
+            left = rect.left + rect.width / 2;
+            break;
+          case 'bottom':
+            top = rect.bottom;
+            left = rect.left + rect.width / 2;
+            break;
+          case 'left':
+            top = rect.top + rect.height / 2;
+            left = rect.left;
+            break;
+          case 'right':
+            top = rect.top + rect.height / 2;
+            left = rect.right;
+            break;
+          default:
+            top = rect.bottom;
+            left = rect.left + rect.width / 2;
+        }
+
+        setTooltipPosition({ top, left });
+      } catch (error) {
+        // If getBoundingClientRect fails, don't show the tooltip
+        console.warn('Failed to calculate tooltip position:', error);
+        return false;
       }
-
-      setTooltipPosition({ top, left });
     }
+    return true;
   };
 
   // Handle mouse enter
@@ -95,8 +102,11 @@ const Tooltip: React.FC<TooltipProps> = ({
       clearTimeout(timeoutRef.current);
     }
     
-    // Calculate position before showing
-    calculatePosition();
+    // Calculate position before showing - only proceed if successful
+    const positionCalculated = calculatePosition();
+    if (!positionCalculated) {
+      return; // Don't show tooltip if position calculation failed
+    }
     
     // Set a timeout to show the tooltip after the delay
     timeoutRef.current = setTimeout(() => {

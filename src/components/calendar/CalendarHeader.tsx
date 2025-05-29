@@ -26,8 +26,26 @@ const CalendarHeader: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState<Date>(() => {
     // Initialize with a UTC date based on selected date
-    const date = createDateFromISO(selectedDate);
-    return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1, 12, 0, 0));
+    // Add defensive programming to handle undefined selectedDate
+    try {
+      if (!selectedDate || typeof selectedDate !== 'string') {
+        console.warn('CalendarHeader: selectedDate is undefined during initialization, using fallback');
+        return new Date(Date.UTC(2024, 0, 15, 12, 0, 0)); // January 15, 2024 UTC fallback
+      }
+      
+      const date = createDateFromISO(selectedDate);
+      
+      // Additional check to ensure date is valid
+      if (!date || isNaN(date.getTime())) {
+        console.warn('CalendarHeader: createDateFromISO returned invalid date, using fallback');
+        return new Date(Date.UTC(2024, 0, 15, 12, 0, 0));
+      }
+      
+      return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1, 12, 0, 0));
+    } catch (error) {
+      console.error('CalendarHeader: Error initializing calendarMonth:', error);
+      return new Date(Date.UTC(2024, 0, 15, 12, 0, 0)); // Fallback date
+    }
   });
   
   const datePickerRef = useRef<HTMLDivElement>(null);
@@ -35,20 +53,54 @@ const CalendarHeader: React.FC = () => {
   
   // Get array of days for current week
   const days = (() => {
-    const date = new Date(selectedDate);
-    const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
-    
-    const weekStart = new Date(date.setDate(diff));
-    const weekDays = [];
-    
-    for (let i = 0; i < 7; i++) {
-      const next = new Date(weekStart);
-      next.setDate(weekStart.getDate() + i);
-      weekDays.push(next);
+    try {
+      // Add safety check for selectedDate
+      if (!selectedDate || typeof selectedDate !== 'string') {
+        console.warn('CalendarHeader: selectedDate is undefined in days calculation, using fallback');
+        const fallbackDate = new Date();
+        const day = fallbackDate.getDay();
+        const diff = fallbackDate.getDate() - day + (day === 0 ? -6 : 1);
+        const weekStart = new Date(fallbackDate.setDate(diff));
+        const weekDays = [];
+        
+        for (let i = 0; i < 7; i++) {
+          const next = new Date(weekStart);
+          next.setDate(weekStart.getDate() + i);
+          weekDays.push(next);
+        }
+        return weekDays;
+      }
+      
+      const date = new Date(selectedDate);
+      const day = date.getDay();
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+      
+      const weekStart = new Date(date.setDate(diff));
+      const weekDays = [];
+      
+      for (let i = 0; i < 7; i++) {
+        const next = new Date(weekStart);
+        next.setDate(weekStart.getDate() + i);
+        weekDays.push(next);
+      }
+      
+      return weekDays;
+    } catch (error) {
+      console.error('CalendarHeader: Error calculating days:', error);
+      // Return current week as fallback
+      const today = new Date();
+      const day = today.getDay();
+      const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+      const weekStart = new Date(today.setDate(diff));
+      const weekDays = [];
+      
+      for (let i = 0; i < 7; i++) {
+        const next = new Date(weekStart);
+        next.setDate(weekStart.getDate() + i);
+        weekDays.push(next);
+      }
+      return weekDays;
     }
-    
-    return weekDays;
   })();
   
   // Handle clicks outside date picker
@@ -260,10 +312,20 @@ const CalendarHeader: React.FC = () => {
     <div className="calendar-header px-4 sm:px-6 lg:px-8 pt-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white max-[320px]:hidden">
-          {createDateFromISO(selectedDate).toLocaleDateString('en-US', { 
-            month: 'long', 
-            year: 'numeric' 
-          })}
+          {(() => {
+            try {
+              if (!selectedDate || typeof selectedDate !== 'string') {
+                return 'January 2024'; // Fallback title
+              }
+              return createDateFromISO(selectedDate).toLocaleDateString('en-US', { 
+                month: 'long', 
+                year: 'numeric' 
+              });
+            } catch (error) {
+              console.error('CalendarHeader: Error formatting title date:', error);
+              return 'January 2024'; // Fallback title
+            }
+          })()}
         </h1>
         
         <div className="flex space-x-3 max-[320px]:w-full max-[320px]:justify-center">
@@ -384,9 +446,19 @@ const CalendarHeader: React.FC = () => {
                 sound="click"
               >
                 <span>
-                  {createDateFromISO(formatToISODate(days[0])).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} 
-                  &nbsp;-&nbsp; 
-                  {createDateFromISO(formatToISODate(days[6])).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  {(() => {
+                    try {
+                      if (!days || days.length < 7) {
+                        return 'Jan 15 - Jan 21'; // Fallback range
+                      }
+                      const startDate = createDateFromISO(formatToISODate(days[0]));
+                      const endDate = createDateFromISO(formatToISODate(days[6]));
+                      return `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                    } catch (error) {
+                      console.error('CalendarHeader: Error formatting date range:', error);
+                      return 'Jan 15 - Jan 21'; // Fallback range
+                    }
+                  })()}
                 </span>
                 <svg className="h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />

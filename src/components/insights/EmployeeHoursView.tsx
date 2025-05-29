@@ -12,7 +12,7 @@ interface EmployeeData {
 }
 
 const EmployeeHoursView: React.FC = () => {
-  const { shifts } = useSelector((state: RootState) => state.shifts);
+  const { shifts, selectedDate } = useSelector((state: RootState) => state.shifts);
   const [timeframe, setTimeframe] = useState<'week' | 'month'>('week');
   const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
   const [sortBy, setSortBy] = useState<'name' | 'hours' | 'shifts'>('hours');
@@ -91,7 +91,7 @@ const EmployeeHoursView: React.FC = () => {
     }
     
     // Get current date using local time
-    const currentDate = new Date();
+    const currentDate = selectedDate ? createDateFromYYYYMMDD(selectedDate) : new Date();
     debugDate(currentDate, 'Current date');
     
     // Calculate start date based on timeframe
@@ -297,7 +297,7 @@ const EmployeeHoursView: React.FC = () => {
     
     setEmployeeData(employees);
     console.log('******** EMPLOYEE HOURS VIEW EFFECT COMPLETE ********');
-  }, [shifts, timeframe, sortBy, sortDirection, OVERTIME_THRESHOLD]);
+  }, [shifts, timeframe, sortBy, sortDirection, OVERTIME_THRESHOLD, selectedDate]);
   
   // Sort employee data
   const sortEmployeeData = (

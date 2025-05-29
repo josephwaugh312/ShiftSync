@@ -6,8 +6,13 @@ export type SoundEffectType = 'success' | 'error' | 'click' | 'notification' | '
 export const useSoundEffects = () => {
   const [soundEnabled, setSoundEnabled] = useState(() => {
     // Initialize from localStorage if available
-    const savedPreference = localStorage.getItem('soundEffectsEnabled');
-    return savedPreference !== null ? savedPreference === 'true' : true;
+    try {
+      const savedPreference = localStorage.getItem('soundEffectsEnabled');
+      return savedPreference !== null ? savedPreference === 'true' : true;
+    } catch (error) {
+      console.error('Error reading sound preference from localStorage:', error);
+      return true; // Default fallback
+    }
   });
   
   // Store AudioContext in a ref to avoid recreation
@@ -52,7 +57,11 @@ export const useSoundEffects = () => {
   
   // Update localStorage when sound preference changes
   useEffect(() => {
-    localStorage.setItem('soundEffectsEnabled', soundEnabled.toString());
+    try {
+      localStorage.setItem('soundEffectsEnabled', soundEnabled.toString());
+    } catch (error) {
+      console.error('Error saving sound preference to localStorage:', error);
+    }
   }, [soundEnabled]);
   
   // Function to generate different types of sounds

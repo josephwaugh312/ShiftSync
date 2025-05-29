@@ -2,7 +2,7 @@ import React, { useState, forwardRef } from 'react';
 import { motion } from 'framer-motion';
 import { useSoundEffects } from '../../hooks/useSoundEffects';
 
-interface CustomFocusButtonProps {
+interface CustomFocusButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'type' | 'disabled' | 'className'> {
   children: React.ReactNode;
   onClick?: (e?: React.MouseEvent<HTMLButtonElement>) => void;
   type?: 'button' | 'submit' | 'reset';
@@ -25,7 +25,8 @@ const CustomFocusButton = forwardRef<HTMLButtonElement, CustomFocusButtonProps>(
   className = '',
   sound = 'click',
   withRipple = true,
-  preventFormSubmit = false
+  preventFormSubmit = false,
+  ...rest
 }, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
@@ -51,21 +52,26 @@ const CustomFocusButton = forwardRef<HTMLButtonElement, CustomFocusButtonProps>(
   const handleRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!withRipple || disabled) return;
     
-    const button = e.currentTarget;
-    const rect = button.getBoundingClientRect();
-    
-    // Calculate ripple position relative to button
-    setRipplePosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    });
-    
-    setShowRipple(true);
-    
-    // Remove ripple after animation completes
-    setTimeout(() => {
-      setShowRipple(false);
-    }, 600);
+    try {
+      const button = e.currentTarget;
+      const rect = button.getBoundingClientRect();
+      
+      // Calculate ripple position relative to button
+      setRipplePosition({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+      
+      setShowRipple(true);
+      
+      // Remove ripple after animation completes
+      setTimeout(() => {
+        setShowRipple(false);
+      }, 600);
+    } catch (error) {
+      // If getBoundingClientRect fails, skip the ripple effect
+      console.warn('Failed to calculate ripple position:', error);
+    }
   };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -120,6 +126,7 @@ const CustomFocusButton = forwardRef<HTMLButtonElement, CustomFocusButtonProps>(
           ? 'inset 0 3px 5px rgba(0, 0, 0, 0.2)'
           : '0 1px 2px rgba(0, 0, 0, 0.1)'
       }}
+      {...rest}
     >
       <motion.span
         animate={{

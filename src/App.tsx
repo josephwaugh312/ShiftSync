@@ -62,18 +62,6 @@ const App: React.FC = () => {
     };
   }, []);
 
-  // Helper function to test notification service
-  const testNotifications = () => {
-    console.log('Testing notification service...');
-    notificationService.debugTestReminder();
-  };
-
-  // Helper function to reset notification tracking state
-  const resetNotifications = () => {
-    console.log('Resetting notification tracking state...');
-    notificationService.resetProcessedReminders();
-  };
-
   // Apply dark mode to the html element to ensure it propagates to all components
   useEffect(() => {
     if (darkMode) {

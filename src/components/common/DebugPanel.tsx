@@ -5,8 +5,8 @@ import { clearShifts } from '../../store/shiftsSlice';
 
 const DebugPanel: React.FC = () => {
   const dispatch = useDispatch();
-  const shifts = useSelector((state: RootState) => state.shifts.shifts);
-  const employees = useSelector((state: RootState) => state.employees.employees);
+  const shifts = useSelector((state: RootState) => state.shifts.shifts) || [];
+  const employees = useSelector((state: RootState) => state.employees.employees) || [];
   const [showConfirm, setShowConfirm] = useState(false);
   
   const handleClearShifts = () => {
