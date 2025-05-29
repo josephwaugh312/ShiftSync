@@ -1,10 +1,12 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setModalOpen, setSelectedShiftId } from '../../store/uiSlice';
+import { setModalOpen, setSelectedShiftId, addNotification } from '../../store/uiSlice';
+import { deleteShift } from '../../store/shiftsSlice';
 import { Shift } from '../../types';
 import { RootState } from '../../store';
 import { formatDate } from '../../utils/dateUtils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useSoundEffects } from '../../hooks/useSoundEffects';
 
 interface ShiftCardProps {
   shift: Shift;
@@ -14,6 +16,11 @@ interface ShiftCardProps {
 const ShiftCard: React.FC<ShiftCardProps> = ({ shift, isCompact = false }) => {
   const dispatch = useDispatch();
   const { shifts } = useSelector((state: RootState) => state.shifts);
+  const { notificationPreferences } = useSelector((state: RootState) => state.ui);
+  const { playSound } = useSoundEffects();
+  
+  // State for delete confirmation modal
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Log the shift to debug
   console.log('Rendering ShiftCard with shift:', shift);
@@ -32,6 +39,40 @@ const ShiftCard: React.FC<ShiftCardProps> = ({ shift, isCompact = false }) => {
     
     // Open the copy shift modal
     dispatch(setModalOpen({ modal: 'copyShift', isOpen: true }));
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    // Prevent propagation to avoid triggering edit modal
+    e.stopPropagation();
+    
+    // Show delete confirmation modal
+    setShowDeleteConfirm(true);
+    playSound('click');
+  };
+
+  const handleConfirmDelete = () => {
+    // Delete the shift
+    dispatch(deleteShift(shift.id));
+    
+    // Close confirmation modal
+    setShowDeleteConfirm(false);
+    
+    // Play delete sound
+    playSound('delete');
+    
+    // Show success notification
+    if (notificationPreferences.enabled && notificationPreferences.types.shifts) {
+      dispatch(addNotification({
+        message: `Shift for ${shift.employeeName} deleted successfully`,
+        type: 'success',
+        category: 'shifts'
+      }));
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+    playSound('click');
   };
 
   const getRoleGradient = (role: string): string => {
@@ -385,15 +426,31 @@ const ShiftCard: React.FC<ShiftCardProps> = ({ shift, isCompact = false }) => {
             </div>
           </div>
           <div className="mt-2 sm:mt-0">
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
               {getStatusBadge(shift.status)}
               {hasOverlap && <OverlapWarningBadge />}
+              
+              {/* Copy Button */}
               <div 
                 onClick={handleCopyClick}
                 className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 dark:bg-dark-700 text-gray-600 dark:text-gray-400 cursor-pointer hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors"
+                title="Copy shift"
+                aria-label="Copy shift"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </div>
+              
+              {/* Delete Button */}
+              <div 
+                onClick={handleDeleteClick}
+                className="w-8 h-8 rounded-full flex items-center justify-center bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 cursor-pointer hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                title="Delete shift"
+                aria-label="Delete shift"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </div>
             </div>
@@ -420,6 +477,55 @@ const ShiftCard: React.FC<ShiftCardProps> = ({ shift, isCompact = false }) => {
           </div>
         </div>
       </div>
+      
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={handleCancelDelete}></div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-dark-800 rounded-lg p-6 max-w-md mx-auto relative z-50 shadow-2xl"
+            >
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-3">
+                  <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">Delete Shift</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">This action cannot be undone</p>
+                </div>
+              </div>
+              
+              <p className="text-gray-700 dark:text-gray-300 mb-6">
+                Are you sure you want to delete the shift for <strong>{shift.employeeName}</strong> on{' '}
+                <strong>{new Date(shift.date).toLocaleDateString()}</strong> from{' '}
+                <strong>{shift.timeRange}</strong>?
+              </p>
+              
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={handleCancelDelete}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-dark-700 hover:bg-gray-50 dark:hover:bg-dark-600 border border-gray-300 dark:border-dark-500 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                >
+                  Delete Shift
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
