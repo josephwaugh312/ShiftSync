@@ -311,8 +311,19 @@ const KeyboardShortcuts: React.FC = () => {
   // Register special keyboard event listener for question mark key
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Check for plain ? key (Shift + /)
-      if (event.key === '?' || (event.key === '/' && event.shiftKey)) {
+      // Check if the target is an input field, textarea, or contenteditable element
+      const target = event.target as HTMLElement;
+      const isInputField = target && (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable ||
+        target.getAttribute('contenteditable') === 'true' ||
+        target.closest('input, textarea, select, [contenteditable="true"]')
+      );
+      
+      // Only trigger shortcuts if NOT in an input field
+      if (!isInputField && (event.key === '?' || (event.key === '/' && event.shiftKey))) {
         console.log('Question mark key detected via raw event listener');
         event.preventDefault();
         showKeyboardShortcuts();
@@ -328,20 +339,34 @@ const KeyboardShortcuts: React.FC = () => {
   // Extra event listener for Shift+H to ensure it works
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Extra check for Shift+H
-      if (event.shiftKey && (event.key === 'h' || event.key === 'H')) {
-        console.log('Shift+H detected via raw event listener');
-        event.preventDefault();
-        console.log('Executing shortcut: Go to home/calendar');
-        navigate('/');
-      }
+      // Check if the target is an input field, textarea, or contenteditable element
+      const target = event.target as HTMLElement;
+      const isInputField = target && (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable ||
+        target.getAttribute('contenteditable') === 'true' ||
+        target.closest('input, textarea, select, [contenteditable="true"]')
+      );
       
-      // Extra check for Shift+T
-      if (event.shiftKey && (event.key === 't' || event.key === 'T')) {
-        console.log('Shift+T detected via raw event listener');
-        event.preventDefault();
-        console.log('Executing shortcut: Toggle tutorial');
-        document.dispatchEvent(new CustomEvent('toggleTutorial'));
+      // Only trigger shortcuts if NOT in an input field
+      if (!isInputField) {
+        // Extra check for Shift+H
+        if (event.shiftKey && (event.key === 'h' || event.key === 'H')) {
+          console.log('Shift+H detected via raw event listener');
+          event.preventDefault();
+          console.log('Executing shortcut: Go to home/calendar');
+          navigate('/');
+        }
+        
+        // Extra check for Shift+T
+        if (event.shiftKey && (event.key === 't' || event.key === 'T')) {
+          console.log('Shift+T detected via raw event listener');
+          event.preventDefault();
+          console.log('Executing shortcut: Toggle tutorial');
+          document.dispatchEvent(new CustomEvent('toggleTutorial'));
+        }
       }
     };
 

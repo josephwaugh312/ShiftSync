@@ -240,8 +240,19 @@ const TutorialProviderInternal: React.FC<{
     const handleKeyDown = (e: KeyboardEvent) => {
       console.log('Key pressed:', e.key, 'Shift key:', e.shiftKey);
       
-      // Toggle tutorial with Shift+T
-      if (e.shiftKey && (e.key === 't' || e.key === 'T')) {
+      // Check if the target is an input field, textarea, or contenteditable element
+      const target = e.target as HTMLElement;
+      const isInputField = target && (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable ||
+        target.getAttribute('contenteditable') === 'true' ||
+        target.closest('input, textarea, select, [contenteditable="true"]')
+      );
+      
+      // Only trigger tutorial toggle if NOT in an input field
+      if (!isInputField && e.shiftKey && (e.key === 't' || e.key === 'T')) {
         console.log('Shift+T detected! Toggling tutorial...');
         e.preventDefault();
         toggleTutorial();
