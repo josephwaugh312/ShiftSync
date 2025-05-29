@@ -190,7 +190,7 @@ export const calculateRippleTimeout = (duration: number): number => {
 };
 
 // Export state setter helpers for testing
-export const createStateSetter = <T>(setState: React.Dispatch<React.SetStateAction<T>>) => {
+export const createStateSetter = <T extends unknown>(setState: React.Dispatch<React.SetStateAction<T>>) => {
   return (value: T) => setState(value);
 };
 
@@ -206,21 +206,15 @@ export const getInitialButtonState = () => {
   };
 };
 
-// Export hook extraction logic for testing
-export const extractSoundEffectsHook = (useSoundEffects: typeof import('../../hooks/useSoundEffects').useSoundEffects) => {
-  const { playSound } = useSoundEffects();
-  return { playSound };
-};
-
 // Export ripple handler logic for testing
 export const executeRippleHandler = (
   e: React.MouseEvent<HTMLButtonElement>,
   withRipple: boolean,
-  disabled?: boolean,
-  isLoading?: boolean,
   setRipplePosition: (pos: { x: number; y: number }) => void,
   setShowRipple: (show: boolean) => void,
-  rippleConfig: { duration: number }
+  rippleConfig: { duration: number },
+  disabled?: boolean,
+  isLoading?: boolean
 ) => {
   if (!withRipple || shouldBlockInteraction(disabled, isLoading)) return;
   
@@ -380,14 +374,14 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
   const [ripplePosition, setRipplePosition] = useState(initialState.ripplePosition);
   const [showRipple, setShowRipple] = useState(initialState.showRipple);
   
-  // Extract hook using utility
-  const { playSound } = extractSoundEffectsHook(useSoundEffects);
+  // Use sound effects hook
+  const { playSound } = useSoundEffects();
 
   // Extract computed values using utility
   const computedValues = extractComputedValues(buttonType, variant, className, type, isLoading, disabled, ariaLabel);
 
   const handleRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
-    executeRippleHandler(e, withRipple, disabled, isLoading, setRipplePosition, setShowRipple, computedValues.rippleConfig);
+    executeRippleHandler(e, withRipple, setRipplePosition, setShowRipple, computedValues.rippleConfig, disabled, isLoading);
   };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {

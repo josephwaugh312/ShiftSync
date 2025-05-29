@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { setModalOpen } from '../../store/uiSlice';
 import GestureDetector from '../mobile/GestureDetector';
-import { useSoundEffects } from '../../hooks/useSoundEffects';
+import { useSoundEffects, SoundEffectType } from '../../hooks/useSoundEffects';
 
 const MobileNavbar: React.FC = () => {
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ const MobileNavbar: React.FC = () => {
     }
   };
 
-  const safePlaySound = (sound: string, volume?: number) => {
+  const safePlaySound = (sound: SoundEffectType, volume?: number) => {
     try {
       playSound(sound, volume);
     } catch (error) {

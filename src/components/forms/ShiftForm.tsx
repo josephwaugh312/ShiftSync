@@ -857,7 +857,7 @@ export const findEmployeeByName = (employeeName: string, employees: any[]) => {
 
 // Export form field change handling logic for testing
 export const getFormFieldChangeLogic = (fieldName: string) => {
-  const fieldTypes = {
+  const fieldTypes: { [key: string]: any } = {
     employeeName: {
       hasEmployeeLookup: true,
       autoUpdatesRole: true,

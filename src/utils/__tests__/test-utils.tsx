@@ -2,20 +2,19 @@ import React, { PropsWithChildren } from 'react';
 import { render } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
-import type { PreloadedState } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-import type { AppStore, RootState } from '../store';
-import shiftsSlice from '../store/shiftsSlice';
-import employeeSlice from '../store/employeeSlice';
-import uiSlice from '../store/uiSlice';
+import type { RootState } from '../store';
+import shiftsReducer from '../store/shiftsSlice';
+import employeeReducer from '../store/employeeSlice';
+import uiReducer from '../store/uiSlice';
 
 // This type interface extends the default options for render from RTL, as well
 // as allows the user to specify other things such as initialState, store.
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  preloadedState?: PreloadedState<RootState>;
-  store?: AppStore;
+  preloadedState?: Partial<RootState>;
+  store?: any;
 }
 
 export function renderWithProviders(
@@ -25,11 +24,11 @@ export function renderWithProviders(
     // Automatically create a store instance if no store was passed in
     store = configureStore({
       reducer: {
-        shifts: shiftsSlice,
-        employees: employeeSlice,
-        ui: uiSlice,
+        shifts: shiftsReducer,
+        employees: employeeReducer,
+        ui: uiReducer,
       },
-      preloadedState,
+      preloadedState: preloadedState as any,
     }),
     ...renderOptions
   }: ExtendedRenderOptions = {}
@@ -95,7 +94,7 @@ export const mockEmployees = [
   },
 ];
 
-export const mockInitialState: PreloadedState<RootState> = {
+export const mockInitialState: Partial<RootState> = {
   shifts: {
     shifts: mockShifts,
     templates: [],
@@ -152,14 +151,14 @@ export const mockInitialState: PreloadedState<RootState> = {
 };
 
 // Helper function to create a clean store for each test
-export function createTestStore(preloadedState?: PreloadedState<RootState>) {
+export function createTestStore(preloadedState?: Partial<RootState>) {
   return configureStore({
     reducer: {
-      shifts: shiftsSlice,
-      employees: employeeSlice,
-      ui: uiSlice,
+      shifts: shiftsReducer,
+      employees: employeeReducer,
+      ui: uiReducer,
     },
-    preloadedState: preloadedState || mockInitialState,
+    preloadedState: (preloadedState || mockInitialState) as any,
   });
 }
 

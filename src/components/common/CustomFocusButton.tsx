@@ -126,7 +126,14 @@ const CustomFocusButton = forwardRef<HTMLButtonElement, CustomFocusButtonProps>(
           ? 'inset 0 3px 5px rgba(0, 0, 0, 0.2)'
           : '0 1px 2px rgba(0, 0, 0, 0.1)'
       }}
-      {...rest}
+      {...(Object.fromEntries(
+        Object.entries(rest).filter(([key]) => 
+          !key.startsWith('onAnimation') && 
+          !key.startsWith('whileHover') && 
+          !key.startsWith('whileTap') &&
+          !key.startsWith('animate')
+        )
+      ))}
     >
       <motion.span
         animate={{
