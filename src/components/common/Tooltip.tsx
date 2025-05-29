@@ -17,10 +17,65 @@ const Tooltip: React.FC<TooltipProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const childRef = useRef<HTMLDivElement>(null);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768 || 'ontouchstart' in window);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+
+  // Hide tooltip when clicking/tapping outside on mobile
+  useEffect(() => {
+    if (!isMobile || !isVisible) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (tooltipRef.current && childRef.current) {
+        const target = event.target as Node;
+        if (!tooltipRef.current.contains(target) && !childRef.current.contains(target)) {
+          setIsVisible(false);
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+          }
+        }
+      }
+    };
+
+    // Add both mouse and touch event listeners for broader compatibility
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isMobile, isVisible]);
+
+  // Auto-hide tooltip on mobile after a delay
+  useEffect(() => {
+    if (!isMobile || !isVisible) return;
+
+    const autoHideTimeout = setTimeout(() => {
+      setIsVisible(false);
+    }, 2000); // Hide after 2 seconds on mobile
+
+    return () => {
+      clearTimeout(autoHideTimeout);
+    };
+  }, [isMobile, isVisible]);
 
   // Get position classes based on position prop
   const getPositionClasses = () => {
@@ -97,6 +152,9 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   // Handle mouse enter
   const handleMouseEnter = () => {
+    // On mobile, don't show tooltips immediately on hover simulation
+    if (isMobile) return;
+    
     // Clear any existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -116,6 +174,9 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   // Handle mouse leave
   const handleMouseLeave = () => {
+    // On mobile, let the auto-hide and click-outside handle hiding
+    if (isMobile) return;
+    
     // Clear any existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -124,6 +185,30 @@ const Tooltip: React.FC<TooltipProps> = ({
     
     // Hide the tooltip
     setIsVisible(false);
+  };
+
+  // Handle touch/click events on mobile
+  const handleTouchStart = () => {
+    if (!isMobile) return;
+    
+    // If tooltip is already visible, hide it
+    if (isVisible) {
+      setIsVisible(false);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      return;
+    }
+    
+    // Calculate position before showing
+    const positionCalculated = calculatePosition();
+    if (!positionCalculated) {
+      return;
+    }
+    
+    // Show tooltip immediately on mobile tap
+    setIsVisible(true);
   };
 
   // Cleanup on unmount
@@ -174,7 +259,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   }).join(' + ');
 
   return (
-    <div className="relative inline-block" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} ref={childRef}>
+    <div className="relative inline-block" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onTouchStart={handleTouchStart} ref={childRef}>
       {children}
       
       {isMounted && isVisible && (
