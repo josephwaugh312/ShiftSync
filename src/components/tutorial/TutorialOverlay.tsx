@@ -243,61 +243,8 @@ const TutorialOverlay: React.FC = () => {
       let employeeElement: HTMLElement | null = null;
       
       if (isMobile) {
-        // On mobile, specifically target the bottom navbar employee button
-        console.log('Mobile detected, looking for bottom navbar employee button...');
-        const mobileSelectors = [
-          'a[href="/employees"] .flex.flex-col.items-center', // The inner div in mobile navbar
-          'nav a[href="/employees"]:not(.nav-item-inactive)', // Mobile nav link (exclude desktop)
-          'a[href="/employees"]:not(.nav-item-inactive)', // Any mobile employee link
-          '.bottom-nav a[href="/employees"]', // Bottom nav specific
-          'a[href="/employees"] button', // Button inside the link
-        ];
-        
-        for (const selector of mobileSelectors) {
-          try {
-            const elements = document.querySelectorAll(selector);
-            console.log(`Found ${elements.length} elements with selector: ${selector}`);
-            if (elements.length > 0) {
-              // Find the one that's actually visible (has dimensions)
-              for (let i = 0; i < elements.length; i++) {
-                const el = elements[i] as HTMLElement;
-                const rect = el.getBoundingClientRect();
-                console.log(`Element ${i} rect:`, rect);
-                if (rect.width > 0 && rect.height > 0) {
-                  employeeElement = el;
-                  console.log('Found visible mobile employee element:', el);
-                  break;
-                }
-              }
-              if (employeeElement) break;
-            }
-          } catch (error) {
-            console.log(`Selector error for ${selector}:`, error);
-          }
-        }
-        
-        // If we still haven't found it, look for the parent link and target its child
-        if (!employeeElement) {
-          console.log('Trying to find parent link and target child...');
-          const parentLinks = document.querySelectorAll('a[href="/employees"]');
-          for (const link of Array.from(parentLinks)) {
-            const rect = link.getBoundingClientRect();
-            if (rect.width > 0 && rect.height > 0) {
-              // This link is visible, try to find its inner content
-              const innerContent = link.querySelector('.flex.flex-col.items-center, .flex-col, button');
-              if (innerContent) {
-                employeeElement = innerContent as HTMLElement;
-                console.log('Found employee element via parent link:', employeeElement);
-                break;
-              } else {
-                // Use the link itself if no inner content found
-                employeeElement = link as HTMLElement;
-                console.log('Using parent link as employee element:', employeeElement);
-                break;
-              }
-            }
-          }
-        }
+        // For mobile navbar, don't touch the element at all to avoid flexbox layout issues
+        // We'll handle the visual highlighting through a separate positioned overlay
       } else {
         // Desktop logic (existing)
         const employeeLinks = document.querySelectorAll('a[href="/employees"]');
@@ -313,19 +260,13 @@ const TutorialOverlay: React.FC = () => {
         console.log('Final employee element:', employeeElement);
         
         if (rect.width > 0 && rect.height > 0) {
-          // Apply enhanced highlighting
-          employeeElement.classList.add('tutorial-enhanced', 'tutorial-interactive');
-          
+          // For mobile navbar, don't modify the element's styles directly as it breaks flexbox layout
+          // Instead, just add the tutorial classes and let the highlight overlay handle the visual effect
           if (isMobile) {
-            employeeElement.style.cssText += `
-              box-shadow: 0 0 0 4px rgb(37, 99, 235), 0 0 20px 2px rgba(37, 99, 235, 0.8) !important;
-              border-radius: 12px !important;
-              background-color: rgba(37, 99, 235, 0.15) !important;
-              z-index: 100 !important;
-              position: relative !important;
-              transition: all 0.3s ease !important;
-              border: none !important;
-            `;
+            // For mobile, don't set target element or highlight styles to avoid navbar compression
+            // The special mobile overlay will handle the visual highlighting
+            setTargetElement(null);
+            setHighlightStyles([]);
           } else {
             employeeElement.style.cssText += `
               transform: scale(1.02);
@@ -811,14 +752,14 @@ const TutorialOverlay: React.FC = () => {
             style={{
               ...style,
               border: currentTutorialStep.id === 'add-shift' ? 'none' : // Remove border completely for add-shift
-                     currentTutorialStep.id === 'employee-management' ? 'none' : // Remove border for employee-management
+                     currentTutorialStep.id === 'employee-management' ? '4px solid #2563EB' : // Enhanced border for employee-management
                      currentTutorialStep.id === 'shift-templates' ? '3px solid #2563EB' : 
                      currentTutorialStep.id === 'insights' ? '3px solid #2563EB' : 
                      '2px solid rgba(59, 130, 246, 0.8)',
               boxShadow: currentTutorialStep.id === 'shift-templates' ? '0 0 8px 2px rgba(37, 99, 235, 0.5)' :
                          currentTutorialStep.id === 'insights' ? '0 0 15px 3px rgba(37, 99, 235, 0.7)' :
                          currentTutorialStep.id === 'add-shift' ? 'none' : // Remove shadow completely for add-shift
-                         currentTutorialStep.id === 'employee-management' ? 'none' : // Remove shadow for employee-management
+                         currentTutorialStep.id === 'employee-management' ? '0 0 0 4px rgba(37, 99, 235, 0.3), 0 0 20px 2px rgba(37, 99, 235, 0.8)' : // Enhanced shadow for employee-management
                          '0 0 8px 1px rgba(59, 130, 246, 0.3)'
             }}
             initial={{ opacity: 0 }}
@@ -831,6 +772,35 @@ const TutorialOverlay: React.FC = () => {
             transition={{ duration: 0.3 }}
           />
         ))}
+      </AnimatePresence>
+      
+      {/* Special mobile employee tab highlight that doesn't affect navbar layout */}
+      <AnimatePresence mode="wait">
+        {currentTutorialStep.id === 'employee-management' && 
+         typeof window !== 'undefined' && 
+         window.innerWidth <= 768 && (
+          <motion.div
+            key="mobile-employee-highlight"
+            className="fixed pointer-events-none z-[9100]"
+            style={{
+              bottom: '20px', // Position over the mobile navbar
+              left: '25%', // Position over the employee tab (navbar has 4 items, so 25% is the second one)
+              width: '25%', // Width of one navbar item
+              height: '60px', // Height to cover the navbar item
+              border: '4px solid #2563EB',
+              borderRadius: '12px',
+              backgroundColor: 'rgba(37, 99, 235, 0.15)',
+              boxShadow: '0 0 0 4px rgba(37, 99, 235, 0.3), 0 0 20px 2px rgba(37, 99, 235, 0.8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.3 }}
+          />
+        )}
       </AnimatePresence>
       
       {/* More visible interactive pointer finger - show it on top of everything */}

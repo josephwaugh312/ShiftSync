@@ -241,15 +241,7 @@ export const applyEmployeeElementStyling = (element: HTMLElement, isMobile: bool
   element.classList.add('tutorial-enhanced', 'tutorial-interactive');
   
   if (isMobile) {
-    element.style.cssText += `
-      box-shadow: 0 0 0 4px rgb(37, 99, 235), 0 0 20px 2px rgba(37, 99, 235, 0.8) !important;
-      border-radius: 12px !important;
-      background-color: rgba(37, 99, 235, 0.15) !important;
-      z-index: 100 !important;
-      position: relative !important;
-      transition: all 0.3s ease !important;
-      border: none !important;
-    `;
+    // For mobile, just add classes - don't modify styles to avoid flexbox layout issues
   } else {
     element.style.cssText += `
       transform: scale(1.02);
