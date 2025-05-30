@@ -140,7 +140,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                 <div className="text-lg font-bold">{dayNumber}</div>
               </div>
               
-              <div className="p-3 bg-white dark:bg-dark-800 h-[calc(100%-48px)] min-h-[200px] overflow-y-auto">
+              <div className="p-3 bg-white dark:bg-dark-800">
                 {shiftsByDay[day] && shiftsByDay[day].length > 0 ? (
                   <div className="space-y-2">
                     {shiftsByDay[day].map(shift => (

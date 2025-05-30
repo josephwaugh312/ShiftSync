@@ -30,6 +30,7 @@ import { registerKeyboardShortcuts } from './utils/keyboardShortcuts';
 // Custom hook for responsive sidebar visibility
 const useResponsiveLayout = () => {
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  const [windowHeight, setWindowHeight] = useState(typeof window !== 'undefined' ? window.innerHeight : 800);
   const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
@@ -37,7 +38,20 @@ const useResponsiveLayout = () => {
     
     const handleResize = () => {
       const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight;
       setWindowWidth(newWidth);
+      setWindowHeight(newHeight);
+      
+      // Add/remove class to control mobile navbar visibility
+      if (newWidth >= 1024) {
+        document.body.classList.add('desktop-layout');
+        document.body.classList.remove('mobile-layout');
+        console.log(`Desktop layout: ${newWidth}x${newHeight}`);
+      } else {
+        document.body.classList.add('mobile-layout');
+        document.body.classList.remove('desktop-layout');
+        console.log(`Mobile layout: ${newWidth}x${newHeight}`);
+      }
     };
 
     handleResize();
@@ -54,8 +68,8 @@ const useResponsiveLayout = () => {
     };
   }, []);
   
-  // Only show sidebar on desktop (≥1280px)
-  const shouldShowSidebar = isClient && windowWidth >= 1280;
+  // Only show sidebar on desktop (≥1024px width)
+  const shouldShowSidebar = isClient && windowWidth >= 1024;
   
   return { shouldShowSidebar, isClient };
 };
@@ -188,7 +202,7 @@ const App: React.FC = () => {
             </Routes>
             <NotificationsPanel />
           </main>
-          <div className="xl:hidden">
+          <div>
             <MobileNavbar />
           </div>
         </div>

@@ -411,10 +411,10 @@ const CalendarView: React.FC = () => {
   return (
     <div className="calendar-view w-full flex flex-col">
       <CalendarHeader />
-      <div className="px-4 sm:px-6 lg:px-8 pt-4">
+      <div className="px-4 sm:px-6 lg:px-8 pt-1">
         <ViewToggle />
       </div>
-      <div className="flex-1 px-4 sm:px-6 lg:px-8 md:pb-4 pb-24">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 md:pb-4 pb-2 mobile-calendar-container">
         {renderView()}
       </div>
 

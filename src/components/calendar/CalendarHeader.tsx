@@ -283,7 +283,7 @@ const CalendarHeader: React.FC = () => {
   };
 
   return (
-    <div className="calendar-header px-4 sm:px-6 lg:px-8 pt-4">
+    <div className="calendar-header px-4 sm:px-6 lg:px-8 pt-2">
       <div className="flex justify-between items-center mb-4 md:mb-6 lg:mb-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white max-[320px]:hidden">
           {(() => {
