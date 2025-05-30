@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { setModalOpen } from '../../store/uiSlice';
@@ -9,6 +9,19 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { sidebarOpen } = useSelector((state: RootState) => state.ui);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  // Track window width for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Set initial value
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleAddShift = () => {
     // If not on the calendar page, navigate to it first
@@ -20,8 +33,13 @@ const Sidebar: React.FC = () => {
     dispatch(setModalOpen({ modal: 'addShift', isOpen: true }));
   };
 
+  // Don't render sidebar on tablets (768px - 1279px)
+  if (windowWidth >= 768 && windowWidth < 1280) {
+    return null;
+  }
+
   return (
-    <div className="sidebar bg-white dark:bg-dark-700 shadow-md h-screen overflow-y-auto sticky top-0 w-64 hidden md:block">
+    <div className="sidebar bg-white dark:bg-dark-700 shadow-md h-screen overflow-y-auto sticky top-0 w-64 hidden xl:block">
       <div className="p-4 flex flex-col h-full">
         <div className="flex-grow">
           <div className="space-y-2 mb-8">

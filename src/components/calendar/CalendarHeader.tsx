@@ -2,13 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { RootState } from '../../store';
-import { setModalOpen, addNotification } from '../../store/uiSlice';
+import { setModalOpen } from '../../store/uiSlice';
 import { setSelectedDate } from '../../store/shiftsSlice';
 import Tooltip from '../common/Tooltip';
 import CustomFocusButton from '../common/CustomFocusButton';
 import LoadingButton from '../common/LoadingButton';
 import { useSoundEffects } from '../../hooks/useSoundEffects';
-import { formatDate, formatToISODate, createDateFromISO } from '../../utils/dateUtils';
+import { formatToISODate, createDateFromISO } from '../../utils/dateUtils';
 
 type ShiftsState = {
   selectedDate: string;
@@ -116,11 +116,6 @@ const CalendarHeader: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  
-  // Format date to string - use the shared utility
-  const formatDateToString = (date: Date): string => {
-    return formatToISODate(date);
-  };
   
   // Check if date is today using local date comparison
   const isToday = (date: Date): boolean => {
@@ -243,27 +238,6 @@ const CalendarHeader: React.FC = () => {
     playSound('click');
   };
   
-  const handleCalendarDateSelect = (day: Date) => {
-    // Get the actual day number from the Date object
-    const selectedDay = day.getDate(); // Using local date getDate to preserve the user's intent
-    
-    // Create a date string manually to ensure correct day
-    const year = day.getFullYear();
-    const month = String(day.getMonth() + 1).padStart(2, '0');
-    const dayStr = String(selectedDay).padStart(2, '0');
-    
-    // This ensures the exact date the user clicked is preserved
-    const exactDate = `${year}-${month}-${dayStr}`;
-    
-    console.log('Calendar day selected:', day);
-    console.log('Preserving exact date:', exactDate, 'Day:', selectedDay);
-    
-    // Update Redux with the exact date
-    dispatch(setSelectedDate(exactDate));
-    setShowDatePicker(false);
-    playSound('click');
-  };
-  
   const handlePrevMonth = () => {
     setCalendarMonth(prev => {
       const newDate = new Date(Date.UTC(prev.getUTCFullYear(), prev.getUTCMonth() - 1, 1, 12, 0, 0));
@@ -310,7 +284,7 @@ const CalendarHeader: React.FC = () => {
 
   return (
     <div className="calendar-header px-4 sm:px-6 lg:px-8 pt-4">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 md:mb-6 lg:mb-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white max-[320px]:hidden">
           {(() => {
             try {
@@ -328,18 +302,19 @@ const CalendarHeader: React.FC = () => {
           })()}
         </h1>
         
-        <div className="flex space-x-3 max-[320px]:w-full max-[320px]:justify-center">
+        <div className="flex space-x-2 md:space-x-3 max-[320px]:w-full max-[320px]:justify-center">
           <Tooltip content="Add Shift" shortcut="shift+n" position="top">
             <CustomFocusButton 
               onClick={handleAddShift}
               aria-label="Add shift"
               variant="primary"
               sound="click"
+              className="md:px-3 md:py-2 lg:px-4 lg:py-2"
             >
-              <svg className="h-5 w-5 md:mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-4 w-4 md:h-5 md:w-5 md:mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              <span className="hidden md:inline">Add Shift</span>
+              <span className="hidden lg:inline">Add Shift</span>
             </CustomFocusButton>
           </Tooltip>
 
@@ -349,11 +324,12 @@ const CalendarHeader: React.FC = () => {
               aria-label="Shift templates"
               variant="outline"
               sound="click"
+              className="md:px-3 md:py-2 lg:px-4 lg:py-2"
             >
-              <svg className="h-5 w-5 md:mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-4 w-4 md:h-5 md:w-5 md:mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
               </svg>
-              <span className="hidden md:inline">Templates</span>
+              <span className="hidden lg:inline">Templates</span>
             </CustomFocusButton>
           </Tooltip>
 
@@ -381,47 +357,39 @@ const CalendarHeader: React.FC = () => {
                 onClick={handleToggleInsights}
                 aria-label="View insights"
                 variant="outline"
-                className="relative z-10"
+                className="relative z-10 md:px-3 md:py-2 lg:px-4 lg:py-2"
                 sound="click"
               >
-                <svg className="h-5 w-5 md:mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-4 w-4 md:h-5 md:w-5 md:mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span className="hidden md:inline">Insights</span>
+                <span className="hidden lg:inline">Insights</span>
               </CustomFocusButton>
             </motion.div>
           </Tooltip>
-          
-          <Tooltip content="Publish Schedule" shortcut="Shift+p" position="top">
-            <div className="relative">
-              {/* Checkmark badge */}
-              {!isPublishing && (
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center z-10">
-                  <svg className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              )}
-              <LoadingButton
-                onClick={handlePublishSchedule}
-                isLoading={isPublishing}
-                loadingText="Publishing..."
-                variant="primary"
-                aria-label="Publish schedule"
-                sound="click"
-              >
-                <svg className="h-5 w-5 md:mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-                <span className="hidden md:inline">Publish</span>
-              </LoadingButton>
-            </div>
+
+          <Tooltip content="Publish Schedule" position="top">
+            <LoadingButton
+              onClick={handlePublishSchedule}
+              isLoading={isPublishing}
+              loadingText="Publishing..."
+              aria-label="Publish schedule"
+              variant="primary"
+              sound="click"
+              className="md:px-3 md:py-2 lg:px-4 lg:py-2"
+            >
+              <svg className="h-4 w-4 md:h-5 md:w-5 md:mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+              </svg>
+              <span className="hidden lg:inline">{isPublishing ? 'Publishing...' : 'Publish'}</span>
+            </LoadingButton>
           </Tooltip>
         </div>
       </div>
       
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 space-y-2 md:space-y-0">
-        <div className="flex items-center justify-center md:justify-start space-x-2">
+      {/* Center the navigation controls for better tablet layout */}
+      <div className="flex justify-center items-center mb-4">
+        <div className="flex items-center space-x-3">
           <Tooltip content="Previous Week" shortcut="←" position="top">
             <CustomFocusButton 
               onClick={handlePreviousWeek}

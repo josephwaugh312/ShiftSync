@@ -153,7 +153,7 @@ const App: React.FC = () => {
             </Routes>
             <NotificationsPanel />
           </main>
-          <div className="lg:hidden">
+          <div className="xl:hidden">
             <MobileNavbar />
           </div>
         </div>

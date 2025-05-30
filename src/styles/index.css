@@ -375,4 +375,137 @@ a[href="/employees"].tutorial-interactive {
   to {
     opacity: 0;
   }
+}
+
+/* Tablet-specific improvements (768px - 1279px) */
+@media (min-width: 768px) and (max-width: 1279px) {
+  /* Force hide sidebar completely on tablets - multiple selectors for maximum coverage */
+  .sidebar,
+  div.sidebar,
+  .bg-white.dark\\:bg-dark-700.shadow-md.h-screen.overflow-y-auto.sticky.top-0.w-64.hidden.xl\\:block,
+  [class*="sidebar"] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    opacity: 0 !important;
+  }
+  
+  /* Remove all sidebar-related margins and spacing */
+  .flex.flex-col.md\\:flex-row > .flex-1,
+  .flex.flex-col.md\\:flex-row .flex-1 {
+    margin-left: 0 !important;
+  }
+  
+  /* Full width content layout - target main app container */
+  .h-screen.flex.flex-col.md\\:flex-row {
+    flex-direction: column !important;
+  }
+  
+  /* Full width content layout for specific pages */
+  .calendar-view,
+  .employees-page,
+  .settings-page {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  
+  /* Calendar header improvements */
+  .calendar-header {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  
+  /* Reduce Add Shift button size and add proper spacing */
+  .calendar-header .btn-primary {
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    margin-left: 24px !important;
+  }
+  
+  /* Center navigation controls better */
+  .calendar-header .flex.items-center.justify-center {
+    gap: 16px !important;
+  }
+  
+  /* Improve button spacing in action row */
+  .calendar-header .flex.space-x-3 {
+    gap: 12px !important;
+  }
+  
+  /* Weekly view improvements */
+  .weekly-view .day-column {
+    min-width: 120px !important;
+    padding: 12px !important;
+  }
+  
+  .weekly-view .shift-card {
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+  }
+  
+  /* Content area expansion */
+  .employees-page,
+  .settings-page {
+    padding: 24px !important;
+    margin: 0 !important;
+  }
+  
+  /* Insights panel full width */
+  .insights-panel {
+    left: 16px !important;
+    right: 16px !important;
+    max-width: none !important;
+    /* Better mobile height calculation */
+    height: calc(100vh - 10rem) !important;
+    max-height: calc(100vh - 10rem) !important;
+    min-height: 300px !important;
+  }
+  
+  /* Ensure mobile navbar shows on tablets */
+  .xl\\:hidden {
+    display: block !important;
+  }
+}
+
+/* Mobile-specific insights panel improvements */
+@media (max-width: 767px) {
+  .insights-panel {
+    /* More conservative height on mobile for keyboard space */
+    height: calc(100vh - 12rem) !important;
+    max-height: calc(100vh - 12rem) !important;
+    bottom: 5rem !important; /* Account for mobile navbar */
+  }
+  
+  /* Ensure content scrolling works properly on mobile */
+  .insights-panel .momentum-scroll {
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+  
+  /* Add extra bottom padding for better mobile scrolling */
+  .insights-panel .p-4.pb-8 {
+    padding-bottom: 3rem !important;
+  }
+}
+
+/* Extra small screens (< 375px) optimizations */
+@media (max-width: 374px) {
+  /* For staffing chart - use even more conservative label spacing */
+  .insights-panel .absolute.-bottom-8 {
+    font-size: 10px !important;
+  }
+  
+  /* Only show 12 AM, 6 AM, 12 PM, 6 PM, 12 AM on very small screens */
+  .insights-panel .sm\\:hidden {
+    display: none !important;
+  }
+  
+  /* Custom time label spacing for very small screens */
+  .insights-panel [data-hour="0"],
+  .insights-panel [data-hour="6"],
+  .insights-panel [data-hour="12"],
+  .insights-panel [data-hour="18"] {
+    display: block !important;
+  }
 } 

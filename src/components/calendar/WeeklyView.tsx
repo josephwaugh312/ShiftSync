@@ -2,9 +2,8 @@ import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import { RootState } from '../../store';
-import { setModalOpen } from '../../store/uiSlice';
 import { setSelectedDate } from '../../store/shiftsSlice';
-import { formatDate, formatToISODate, createDateFromISO } from '../../utils/dateUtils';
+import { formatToISODate } from '../../utils/dateUtils';
 import ShiftCard from '../shifts/ShiftCard';
 import EmptyState from '../common/EmptyState';
 
@@ -98,7 +97,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
       initial="hidden"
       animate="visible"
     >
-      <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-7 gap-4 weekly-grid">
         {weekDays.map((day, index) => {
           // Create a date object from the day string
           const dateParts = day.split('-');
@@ -120,7 +119,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
           return (
             <motion.div 
               key={day}
-              className={`rounded-lg border ${
+              className={`rounded-lg border day-column ${
                 isSelectedDay 
                   ? 'border-primary-500 dark:border-primary-400 ring-2 ring-primary-200 dark:ring-primary-900'
                   : 'border-gray-200 dark:border-dark-600'

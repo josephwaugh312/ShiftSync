@@ -20,6 +20,19 @@ const StaffingLevelsView: React.FC = () => {
   const [hourlyData, setHourlyData] = useState<HourlyData[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 768);
+  
+  // Track window width for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Set initial value
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Generate day options based on the selected date in the store
   const dayOptions = [
@@ -218,9 +231,22 @@ const StaffingLevelsView: React.FC = () => {
                     onMouseEnter={() => setTooltip(data)}
                     onMouseLeave={() => setTooltip(null)}
                   >
-                    {/* Horizontal time label */}
-                    <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                      {data.hour % 3 === 0 ? formatHour(data.hour) : ''}
+                    {/* Horizontal time label - responsive display */}
+                    <div 
+                      className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-500 dark:text-gray-400"
+                      data-hour={data.hour}
+                    >
+                      {/* Show every 6 hours on small screens, every 3 hours on larger screens */}
+                      <span className="hidden sm:inline">
+                        {data.hour % 3 === 0 ? formatHour(data.hour) : ''}
+                      </span>
+                      <span className="sm:hidden">
+                        {/* For very small screens (< 375px), show only 4 key times: 12 AM, 6 AM, 12 PM, 6 PM */}
+                        {windowWidth < 375 
+                          ? (data.hour === 0 || data.hour === 6 || data.hour === 12 || data.hour === 18 ? formatHour(data.hour) : '')
+                          : (data.hour % 6 === 0 ? formatHour(data.hour) : '')
+                        }
+                      </span>
                     </div>
                     
                     {/* Stacked bar segments for each role */}

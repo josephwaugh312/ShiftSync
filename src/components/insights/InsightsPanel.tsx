@@ -38,10 +38,14 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.2 }}
-        className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-[calc(16rem+1rem)] md:right-4 bg-white dark:bg-dark-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-dark-600 flex flex-col"
-        style={{ maxHeight: 'calc(100vh - 8rem)' }}
+        className="fixed bottom-20 md:bottom-4 left-4 right-4 xl:left-[calc(16rem+1rem)] xl:right-4 bg-white dark:bg-dark-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-dark-600 flex flex-col insights-panel"
+        style={{ 
+          maxHeight: 'calc(100vh - 9rem)', // Increased from 8rem for mobile navbar space
+          height: 'calc(100vh - 9rem)', // Ensure consistent height
+          minHeight: '300px' // Minimum height for usability
+        }}
       >
-        <div className="p-4 border-b border-gray-200 dark:border-dark-600 flex justify-between items-center sticky top-0 bg-white dark:bg-dark-800 z-20">
+        <div className="p-4 border-b border-gray-200 dark:border-dark-600 flex justify-between items-center flex-shrink-0 bg-white dark:bg-dark-800 z-20">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <svg className="h-5 w-5 mr-2 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -58,7 +62,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
         
-        <div className="flex border-b border-gray-200 dark:border-dark-600 overflow-x-auto sticky top-[4.5rem] bg-white dark:bg-dark-800 z-20 shadow-sm">
+        <div className="flex border-b border-gray-200 dark:border-dark-600 overflow-x-auto flex-shrink-0 bg-white dark:bg-dark-800 z-20 shadow-sm">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -77,7 +81,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
           ))}
         </div>
         
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-hidden relative min-h-0">
           <AnimatePresence mode="wait">
             {activeTab === 'dashboard' && (
               <motion.div
@@ -89,7 +93,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4 pb-6">
+                <div className="p-4 pb-8">
                   <DashboardView />
                 </div>
               </motion.div>
@@ -105,7 +109,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4 pb-6">
+                <div className="p-4 pb-8">
                   <HeatmapView />
                 </div>
               </motion.div>
@@ -121,7 +125,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4 pb-6">
+                <div className="p-4 pb-8">
                   <StaffingLevelsView />
                 </div>
               </motion.div>
@@ -137,7 +141,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4 pb-6">
+                <div className="p-4 pb-8">
                   <EmployeeHoursView />
                 </div>
               </motion.div>
@@ -153,7 +157,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ isOpen, onClose }) => {
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="h-full overflow-y-auto momentum-scroll touch-action-pan-y"
               >
-                <div className="p-4 pb-6">
+                <div className="p-4 pb-8">
                   <TimelineView />
                 </div>
               </motion.div>

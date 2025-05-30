@@ -91,7 +91,7 @@ const MobileNavbar: React.FC = () => {
       onSwipeLeft={handleSwipeLeft}
       onSwipeRight={handleSwipeRight}
     >
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-700 shadow-lg border-t border-gray-200 dark:border-dark-600 h-20 px-4 flex items-start justify-between z-50 pt-2">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-700 shadow-lg border-t border-gray-200 dark:border-dark-600 h-20 px-4 flex items-start justify-between z-50 pt-2 xl:hidden">
         <NavLink
           to="/"
           className={({ isActive }) => 

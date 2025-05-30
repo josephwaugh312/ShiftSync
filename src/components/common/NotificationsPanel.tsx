@@ -230,7 +230,7 @@ const NotificationsPanel: React.FC = () => {
   const styleVariants = getStyleVariants();
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-full max-w-sm">
+    <div className="fixed bottom-20 xl:bottom-4 right-4 z-50 w-full max-w-sm">
       <AnimatePresence>
         {filteredNotifications.map((notification) => (
           <motion.div
