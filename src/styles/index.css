@@ -507,24 +507,32 @@ html {
   }
 }
 
-/* Mobile weekly view - allow natural height and scrolling */
+/* Mobile weekly view - allow scrolling by making parent scrollable */
 @media (max-width: 767px) {
   .daily-view {
     height: calc(100vh - 12rem);
     max-height: calc(100vh - 12rem);
   }
   
+  /* Override the general constraints specifically for mobile weekly view */
   .weekly-view {
     height: auto !important;
     max-height: none !important;
-    overflow: visible;
-    overflow-y: auto;
+    overflow: visible !important;
+    min-height: 100vh;
+    position: relative;
   }
   
   .weekly-view .day-column {
-    min-height: 300px;
+    min-height: 400px;
     max-height: none;
     overflow-y: visible;
+  }
+  
+  /* Make sure the parent container can scroll */
+  .calendar-view .flex-1 {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
