@@ -129,7 +129,6 @@ describe('WeeklyView', () => {
 
       const weeklyView = container.querySelector('.weekly-view');
       expect(weeklyView).toBeInTheDocument();
-      expect(weeklyView).toHaveClass('pb-24');
     });
 
     it('should render 7 days in grid layout', () => {

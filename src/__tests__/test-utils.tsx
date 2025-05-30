@@ -167,4 +167,12 @@ export const mockUserEvent = {
   unhover: jest.fn(),
   tab: jest.fn(),
   keyboard: jest.fn(),
-}; 
+};
+
+// This test prevents Jest from complaining about empty test suites
+// Since this is a utility file, not an actual test file
+describe('test-utils', () => {
+  it('should export renderWithProviders utility', () => {
+    expect(renderWithProviders).toBeDefined();
+  });
+}); 

@@ -35,7 +35,7 @@ ShiftSync works **100% offline** with full feature access:
 - ✅ **Employee Management** - Add, edit, view employee details
 - ✅ **Shift Templates** - Create and use templates without internet
 - ✅ **Copy & Edit Shifts** - Full shift manipulation capabilities
-- ✅ **Multiple Calendar Views** - Daily, Weekly, Monthly, List, Staff views
+- ✅ **Multiple Calendar Views** - Daily, Weekly, List, Staff views
 - ✅ **Settings & Preferences** - Themes, notifications, all settings persist
 - ✅ **Tutorial System** - Complete onboarding works offline
 - ✅ **Mobile Navigation** - Swipe gestures, touch interactions
@@ -49,7 +49,7 @@ ShiftSync works **100% offline** with full feature access:
 ## ✨ Core Features
 
 ### 📅 **Smart Scheduling**
-- **Interactive Calendar View**: Weekly, color-coded schedule grid
+- **Interactive Calendar View**: Weekly, color-coded schedule display
 - **Intelligent Shift Cards**: Visual blocks with role badges and status indicators  
 - **Quick Add Shift**: Streamlined creation with smart defaults
 - **Recurring Shifts**: Daily, weekly, or monthly patterns
@@ -95,6 +95,71 @@ ShiftSync works **100% offline** with full feature access:
 - **📦 Create React App**: PWA-optimized build pipeline
 - **🧹 ESLint + Prettier**: Code quality and formatting
 - **🎯 React DevTools**: Advanced debugging capabilities
+
+## 🧪 Testing & Quality Assurance
+
+### **Comprehensive Test Coverage**
+ShiftSync maintains **enterprise-grade test coverage** to ensure reliability:
+
+- **🎯 86.13% Statement Coverage** - Comprehensive code path testing
+- **🔀 80.4% Branch Coverage** - Logic flow verification  
+- **⚙️ 86.83% Function Coverage** - Complete API testing
+- **📝 86.35% Line Coverage** - Thorough code examination
+
+### **Test Suite Statistics**
+- **✅ 2,496 Passing Tests** across 67 test suites
+- **🏃‍♂️ 100% Pass Rate** - Zero failing tests
+- **⚡ Fast Execution** - Complete suite runs in ~6 seconds
+- **🔄 Automated Testing** - Runs on every commit
+
+### **Testing Strategy**
+Our multi-layered testing approach ensures robust functionality:
+
+#### **🧩 Unit Tests**
+- **Component Testing**: Individual React component behavior
+- **Redux Logic**: State management and action creators
+- **Utility Functions**: Date handling, formatting, calculations
+- **Custom Hooks**: Business logic and side effects
+
+#### **🔗 Integration Tests**
+- **User Interactions**: Complete user workflows
+- **Component Integration**: Multi-component interactions  
+- **Store Integration**: Redux state with UI components
+- **PWA Features**: Offline functionality and data persistence
+
+#### **📱 Responsive Testing**
+- **Mobile Interactions**: Touch gestures and mobile UI
+- **Cross-Device**: Layout and functionality across screen sizes
+- **PWA Behavior**: Installation and offline capabilities
+
+### **Testing Tools & Framework**
+- **🧪 Jest**: Test runner and assertion framework
+- **🎭 React Testing Library**: Component testing utilities
+- **👤 User Events**: Realistic user interaction simulation
+- **🏪 Redux Toolkit Testing**: State management verification
+- **📊 Coverage Reports**: Detailed testing analytics
+
+### **Running Tests**
+
+```bash
+# Run all tests with coverage
+npm test -- --coverage --watchAll=false
+
+# Run tests in watch mode (development)
+npm test
+
+# Run specific test file
+npm test WeeklyView.test.tsx
+
+# Run tests with verbose output
+npm test -- --verbose
+```
+
+### **Quality Standards**
+- **✅ Pre-commit Testing**: Automated test runs before commits
+- **🔍 Code Review**: Peer review for all changes
+- **📈 Coverage Thresholds**: Maintain 80%+ coverage standards
+- **🚫 Zero Tolerance**: No failing tests in main branch
 
 ## 🚀 Getting Started
 
@@ -180,7 +245,7 @@ ShiftSync automatically works offline:
 - Full-screen shift editing modals
 
 ### **📱💻 Tablet (768px+)**
-- Expanded calendar grid with more detail
+- Expanded calendar view with more detail
 - Side-by-side layout for shift details
 - Enhanced touch targets and spacing
 

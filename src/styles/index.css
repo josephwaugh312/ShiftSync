@@ -497,12 +497,35 @@ html {
   max-height: calc(100vh - 12rem);
 }
 
-/* Weekly view specific constraints */
-.weekly-view .day-column {
-  min-height: calc(100vh - 16rem);
-  max-height: calc(100vh - 16rem);
-  overflow-y: auto;
-  scrollbar-width: thin;
+/* Desktop weekly view constraints */
+@media (min-width: 768px) {
+  .weekly-view .day-column {
+    min-height: calc(100vh - 16rem);
+    max-height: calc(100vh - 16rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+/* Mobile weekly view - allow natural height and scrolling */
+@media (max-width: 767px) {
+  .daily-view {
+    height: calc(100vh - 12rem);
+    max-height: calc(100vh - 12rem);
+  }
+  
+  .weekly-view {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible;
+    overflow-y: auto;
+  }
+  
+  .weekly-view .day-column {
+    min-height: 300px;
+    max-height: none;
+    overflow-y: visible;
+  }
 }
 
 .weekly-view .day-column > div:last-child {
