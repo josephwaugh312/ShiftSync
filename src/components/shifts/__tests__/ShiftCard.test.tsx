@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
-import { renderWithProviders } from '../../../utils/test-utils';
+import { renderWithProviders } from '../../../__tests__/test-utils';
 import ShiftCard from '../ShiftCard';
 import { Shift } from '../../../types';
 import { setModalOpen, setSelectedShiftId } from '../../../store/uiSlice';

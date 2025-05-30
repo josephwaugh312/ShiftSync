@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
-import { renderWithProviders } from '../../../utils/test-utils';
+import { renderWithProviders } from '../../../__tests__/test-utils';
 import MobileNavbar from '../MobileNavbar';
 
 // Mock the hooks

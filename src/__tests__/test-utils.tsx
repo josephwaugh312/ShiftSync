@@ -17,25 +17,31 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   store?: any;
 }
 
+// Create a separate function for test store creation
+function createTestStore(preloadedState?: any) {
+  return configureStore({
+    reducer: {
+      shifts: shiftsReducer,
+      ui: uiReducer,
+      employees: employeeReducer,
+    },
+    preloadedState,
+  });
+}
+
 export function renderWithProviders(
   ui: React.ReactElement,
   {
     preloadedState = {},
-    // Automatically create a store instance if no store was passed in
-    store = configureStore({
-      reducer: {
-        shifts: shiftsReducer,
-        employees: employeeReducer,
-        ui: uiReducer,
-      },
-      preloadedState: preloadedState as any,
-    }),
+    store,
     ...renderOptions
   }: ExtendedRenderOptions = {}
 ) {
+  const testStore = store || createTestStore(preloadedState);
+
   function Wrapper({ children }: PropsWithChildren<{}>): JSX.Element {
     return (
-      <Provider store={store}>
+      <Provider store={testStore}>
         <BrowserRouter>
           {children}
         </BrowserRouter>
@@ -44,7 +50,7 @@ export function renderWithProviders(
   }
 
   // Return an object with the store and all of RTL's query functions
-  return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
+  return { store: testStore, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
 }
 
 // Create mock data for testing
@@ -149,18 +155,6 @@ export const mockInitialState: Partial<RootState> = {
     notifications: [],
   },
 };
-
-// Helper function to create a clean store for each test
-export function createTestStore(preloadedState?: Partial<RootState>) {
-  return configureStore({
-    reducer: {
-      shifts: shiftsReducer,
-      employees: employeeReducer,
-      ui: uiReducer,
-    },
-    preloadedState: (preloadedState || mockInitialState) as any,
-  });
-}
 
 // Mock user events helper
 export const mockUserEvent = {

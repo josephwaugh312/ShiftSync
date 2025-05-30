@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../utils/test-utils';
+import { renderWithProviders } from '../../../__tests__/test-utils';
 import CalendarView from '../CalendarView';
 
 // Mock tutorial context
