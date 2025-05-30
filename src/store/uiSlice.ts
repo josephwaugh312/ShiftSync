@@ -60,7 +60,7 @@ interface UiState {
     editTemplate: boolean;
     savedViews: boolean;
   };
-  currentView: 'daily' | 'weekly' | 'staff' | 'list' | 'grid';
+  currentView: 'daily' | 'weekly' | 'staff' | 'list';
   notifications: Notification[];
   selectedShiftId: string | null;
   selectedTemplateId: string | null;

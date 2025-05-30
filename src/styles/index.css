@@ -377,97 +377,6 @@ a[href="/employees"].tutorial-interactive {
   }
 }
 
-/* Tablet-specific improvements (768px - 1279px) */
-@media (min-width: 768px) and (max-width: 1279px) {
-  /* Force hide sidebar completely on tablets - multiple selectors for maximum coverage */
-  .sidebar,
-  div.sidebar,
-  .bg-white.dark\\:bg-dark-700.shadow-md.h-screen.overflow-y-auto.sticky.top-0.w-64.hidden.xl\\:block,
-  [class*="sidebar"] {
-    display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    opacity: 0 !important;
-  }
-  
-  /* Remove all sidebar-related margins and spacing */
-  .flex.flex-col.md\\:flex-row > .flex-1,
-  .flex.flex-col.md\\:flex-row .flex-1 {
-    margin-left: 0 !important;
-  }
-  
-  /* Full width content layout - target main app container */
-  .h-screen.flex.flex-col.md\\:flex-row {
-    flex-direction: column !important;
-  }
-  
-  /* Full width content layout for specific pages */
-  .calendar-view,
-  .employees-page,
-  .settings-page {
-    margin-left: 0 !important;
-    max-width: 100% !important;
-    width: 100% !important;
-  }
-  
-  /* Calendar header improvements */
-  .calendar-header {
-    padding-left: 24px !important;
-    padding-right: 24px !important;
-  }
-  
-  /* Reduce Add Shift button size and add proper spacing */
-  .calendar-header .btn-primary {
-    padding: 10px 16px !important;
-    font-size: 14px !important;
-    margin-left: 24px !important;
-  }
-  
-  /* Center navigation controls better */
-  .calendar-header .flex.items-center.justify-center {
-    gap: 16px !important;
-  }
-  
-  /* Improve button spacing in action row */
-  .calendar-header .flex.space-x-3 {
-    gap: 12px !important;
-  }
-  
-  /* Weekly view improvements */
-  .weekly-view .day-column {
-    min-width: 120px !important;
-    padding: 12px !important;
-  }
-  
-  .weekly-view .shift-card {
-    font-size: 13px !important;
-    padding: 8px 12px !important;
-  }
-  
-  /* Content area expansion */
-  .employees-page,
-  .settings-page {
-    padding: 24px !important;
-    margin: 0 !important;
-  }
-  
-  /* Insights panel full width */
-  .insights-panel {
-    left: 16px !important;
-    right: 16px !important;
-    max-width: none !important;
-    /* Better mobile height calculation */
-    height: calc(100vh - 10rem) !important;
-    max-height: calc(100vh - 10rem) !important;
-    min-height: 300px !important;
-  }
-  
-  /* Ensure mobile navbar shows on tablets */
-  .xl\\:hidden {
-    display: block !important;
-  }
-}
-
 /* Mobile-specific insights panel improvements */
 @media (max-width: 767px) {
   .insights-panel {
@@ -475,6 +384,17 @@ a[href="/employees"].tutorial-interactive {
     height: calc(100vh - 12rem) !important;
     max-height: calc(100vh - 12rem) !important;
     bottom: 5rem !important; /* Account for mobile navbar */
+  }
+  
+  /* Calendar height adjustments for mobile */
+  .weekly-view .day-column {
+    height: calc(100vh - 24rem) !important; /* Account for mobile navbar and extra spacing */
+    max-height: calc(100vh - 24rem) !important;
+  }
+  
+  /* Settings page - Add bottom padding to prevent button overlap with mobile navbar */
+  .settings-page {
+    padding-bottom: 8rem !important; /* 128px to clear mobile navbar */
   }
   
   /* Ensure content scrolling works properly on mobile */
@@ -506,6 +426,110 @@ a[href="/employees"].tutorial-interactive {
   .insights-panel [data-hour="6"],
   .insights-panel [data-hour="12"],
   .insights-panel [data-hour="18"] {
+    display: block !important;
+  }
+}
+
+/* Backup CSS class for tablet sidebar hiding */
+.hidden-tablet {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  z-index: -1 !important;
+}
+
+/* Global overflow prevention - ensure no component causes viewport expansion */
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Prevent horizontal scrolling at viewport level */
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* More specific targeting for desktop layouts */
+@media (min-width: 1280px) {
+  .weekly-view .day-column {
+    min-height: calc(100vh - 12rem);
+    max-height: calc(100vh - 12rem);
+  }
+}
+
+/* Calendar views height constraints to prevent vertical expansion */
+.calendar-view {
+  height: calc(100vh - 8rem);
+  max-height: calc(100vh - 8rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-view > div:last-child {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Apply constraints to all calendar view types */
+.daily-view,
+.weekly-view,
+.staff-view,
+.list-view {
+  height: calc(100vh - 10rem);
+  max-height: calc(100vh - 10rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile-specific adjustments for daily and weekly views */
+.daily-view,
+.weekly-view {
+  height: calc(100vh - 12rem);
+  max-height: calc(100vh - 12rem);
+}
+
+/* Weekly view specific constraints */
+.weekly-view .day-column {
+  min-height: calc(100vh - 16rem);
+  max-height: calc(100vh - 16rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.weekly-view .day-column > div:last-child {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* Tablet-specific rules (sidebar hiding only) */
+@media (min-width: 768px) and (max-width: 1279px) {
+  /* Only hide sidebar elements - don't affect layout */
+  *[class*="w-64"][class*="h-screen"],
+  *[class*="sidebar"],
+  *.hidden.xl\\:block,
+  div.bg-white.shadow-md.h-screen.w-64,
+  div.dark\\:bg-dark-700.shadow-md.h-screen.w-64,
+  .sidebar,
+  div[class*="sidebar"],
+  div[class*="w-64"][class*="h-screen"],
+  div.shadow-md.w-64,
+  div.dark\\:bg-dark-700.w-64 {
+    display: none !important;
+  }
+  
+  /* Ensure mobile navbar shows on tablets */
+  .xl\\:hidden {
     display: block !important;
   }
 } 

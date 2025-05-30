@@ -51,7 +51,6 @@ describe('ViewToggle', () => {
       expect(screen.getByRole('tab', { name: /week/i })).toBeInTheDocument();
       expect(screen.getByRole('tab', { name: /staff/i })).toBeInTheDocument();
       expect(screen.getByRole('tab', { name: /list/i })).toBeInTheDocument();
-      expect(screen.getByRole('tab', { name: /grid/i })).toBeInTheDocument();
     });
 
     it('should render icons for all view options', () => {
@@ -126,15 +125,6 @@ describe('ViewToggle', () => {
       expect(listButton).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('should highlight the current view (grid)', () => {
-      const store = createTestStore({ currentView: 'grid' });
-      renderWithProvider(<ViewToggle />, store);
-      
-      const gridButton = screen.getByRole('tab', { name: /grid/i });
-      expect(gridButton).toHaveClass('bg-primary-100', 'text-primary-600');
-      expect(gridButton).toHaveAttribute('aria-selected', 'true');
-    });
-
     it('should not highlight inactive views', () => {
       const store = createTestStore({ currentView: 'daily' });
       renderWithProvider(<ViewToggle />, store);
@@ -193,7 +183,6 @@ describe('ViewToggle', () => {
         { button: screen.getByRole('tab', { name: /week/i }), view: 'weekly' },
         { button: screen.getByRole('tab', { name: /staff/i }), view: 'staff' },
         { button: screen.getByRole('tab', { name: /list/i }), view: 'list' },
-        { button: screen.getByRole('tab', { name: /grid/i }), view: 'grid' },
       ];
       
       viewOptions.forEach(({ button, view }) => {
@@ -201,7 +190,19 @@ describe('ViewToggle', () => {
         expect(dispatchSpy).toHaveBeenCalledWith(setCurrentView(view));
       });
       
-      expect(mockPlaySound).toHaveBeenCalledTimes(4);
+      expect(mockPlaySound).toHaveBeenCalledTimes(3);
+    });
+
+    it('should dispatch setCurrentView action when view is changed', () => {
+      const store = createTestStore({ currentView: 'daily' });
+      const dispatchSpy = jest.spyOn(store, 'dispatch');
+      
+      renderWithProvider(<ViewToggle />, store);
+      
+      const listButton = screen.getByRole('tab', { name: /list/i });
+      fireEvent.click(listButton);
+      
+      expect(dispatchSpy).toHaveBeenCalledWith(setCurrentView('list'));
     });
   });
 
@@ -225,7 +226,6 @@ describe('ViewToggle', () => {
       expect(screen.getByRole('tab', { name: /week/i })).toHaveAttribute('aria-controls', 'weekly-view');
       expect(screen.getByRole('tab', { name: /staff/i })).toHaveAttribute('aria-controls', 'staff-view');
       expect(screen.getByRole('tab', { name: /list/i })).toHaveAttribute('aria-controls', 'list-view');
-      expect(screen.getByRole('tab', { name: /grid/i })).toHaveAttribute('aria-controls', 'grid-view');
     });
 
     it('should have focus outline styles', () => {

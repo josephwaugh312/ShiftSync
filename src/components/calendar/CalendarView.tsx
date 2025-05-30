@@ -6,7 +6,7 @@ import { RootState } from '../../store';
 import ShiftForm from '../forms/ShiftForm';
 import EmptyState from '../common/EmptyState';
 import NewUserGuidance from '../common/NewUserGuidance';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ShiftCard from '../shifts/ShiftCard';
 import ShiftCardSkeleton from '../shifts/ShiftCardSkeleton';
 import ConfettiCelebration from '../common/ConfettiCelebration';
@@ -20,8 +20,8 @@ import WeeklyView from './WeeklyView';
 import ViewToggle from '../common/ViewToggle';
 import StaffView from '../views/StaffView';
 import ListView from '../views/ListView';
-import GridView from '../views/GridView';
 import { formatDate, formatToISODate, createDateFromISO } from '../../utils/dateUtils';
+import { useSoundEffects } from '../../hooks/useSoundEffects';
 
 const CalendarView: React.FC = () => {
   const dispatch = useDispatch();
@@ -396,8 +396,6 @@ const CalendarView: React.FC = () => {
         return <StaffView />;
       case 'list':
         return <ListView />;
-      case 'grid':
-        return <GridView />;
       default:
         return (
           <WeeklyView 

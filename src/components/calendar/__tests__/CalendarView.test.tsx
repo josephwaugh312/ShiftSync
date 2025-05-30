@@ -90,12 +90,6 @@ jest.mock('../../views/ListView', () => {
   };
 });
 
-jest.mock('../../views/GridView', () => {
-  return function MockGridView() {
-    return <div className="grid-view" data-testid="grid-view">Grid View</div>;
-  };
-});
-
 jest.mock('../../common/ViewToggle', () => {
   return function MockViewToggle() {
     return <div data-testid="view-toggle">View Toggle</div>;
@@ -460,25 +454,6 @@ describe('CalendarView', () => {
       // Wait for the view to render
       await waitFor(() => {
         expect(screen.getByTestId('list-view')).toBeInTheDocument();
-      });
-    });
-
-    it('should handle grid view', async () => {
-      const gridState = {
-        ...defaultState,
-        ui: {
-          ...defaultState.ui,
-          currentView: 'grid' as const,
-        },
-      };
-
-      renderWithProviders(<CalendarView />, { 
-        preloadedState: gridState 
-      });
-
-      // Wait for the view to render
-      await waitFor(() => {
-        expect(screen.getByTestId('grid-view')).toBeInTheDocument();
       });
     });
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
@@ -27,9 +27,43 @@ import DarkModeToggle from './components/common/DarkModeToggle';
 
 import { registerKeyboardShortcuts } from './utils/keyboardShortcuts';
 
+// Custom hook for responsive sidebar visibility
+const useResponsiveLayout = () => {
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  const [isClient, setIsClient] = useState(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+    
+    const handleResize = () => {
+      const newWidth = window.innerWidth;
+      setWindowWidth(newWidth);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    // Also listen for orientation changes on mobile devices
+    window.addEventListener('orientationchange', () => {
+      setTimeout(handleResize, 100); // Delay to ensure proper width detection
+    });
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
+  
+  // Only show sidebar on desktop (≥1280px)
+  const shouldShowSidebar = isClient && windowWidth >= 1280;
+  
+  return { shouldShowSidebar, isClient };
+};
+
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const { darkMode, highContrastMode, dyslexicFontMode, themeColor, modalOpen } = useSelector((state: RootState) => state.ui);
+  const { shouldShowSidebar, isClient } = useResponsiveLayout();
 
   // Set initial theme color CSS variables on first load
   useEffect(() => {
@@ -132,7 +166,8 @@ const App: React.FC = () => {
   return (
     <TutorialProvider>
       <div className={classes}>
-        <Sidebar />
+        {shouldShowSidebar && <Sidebar />}
+        
         <div className="flex-1 flex flex-col min-h-screen">
           <header className="bg-white dark:bg-dark-700 shadow-sm h-16 flex-shrink-0 z-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">

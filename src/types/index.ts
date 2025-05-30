@@ -52,5 +52,5 @@ export interface SavedView {
     sortBy?: string;
     sortDirection?: 'asc' | 'desc';
   };
-  viewType: 'daily' | 'weekly' | 'staff' | 'list' | 'grid';
+  viewType: 'daily' | 'weekly' | 'staff' | 'list';
 } 

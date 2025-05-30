@@ -331,7 +331,7 @@ describe('uiSlice', () => {
 
     describe('view management', () => {
       it('should handle setCurrentView', () => {
-        const viewTypes = ['daily', 'weekly', 'staff', 'list', 'grid'] as const;
+        const viewTypes = ['daily', 'weekly', 'staff', 'list'] as const;
         
         viewTypes.forEach(view => {
           const actual = uiReducer(initialState, setCurrentView(view));

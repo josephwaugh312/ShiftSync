@@ -365,7 +365,7 @@ describe('ShiftForm Component - Comprehensive Branch Coverage Tests', () => {
         expect(formatTime('12')).toBe('12'); // Missing minutes
         expect(formatTime(':30')).toBe(':30'); // Missing hours
         expect(formatTime('12:')).toBe('12:'); // Missing minutes value
-        
+
         consoleSpy.mockRestore();
       });
       it('should handle malformed time strings with error logging', () => {
@@ -409,8 +409,8 @@ describe('ShiftForm Component - Comprehensive Branch Coverage Tests', () => {
         expect(createTimeRange('  09:00  ', '  17:00  ')).toBe('9:00   AM - 5:00   PM'); // Spaces preserved
         expect(createTimeRange('\t09:00\n', '\r17:00\r')).toBe('9:00\n AM - 5:00\r PM'); // Whitespace preserved
         expect(createTimeRange('9:00@am', '5:00@pm')).toBe('9:00@am AM - 5:00@pm AM');
-      });
     });
+  });
   });
   describe('Employee and Role Validation Logic', () => {
     describe('validateEmployeeName function', () => {
