@@ -247,8 +247,8 @@ const TutorialProviderInternal: React.FC<{
         target.tagName === 'TEXTAREA' ||
         target.tagName === 'SELECT' ||
         target.isContentEditable ||
-        target.getAttribute('contenteditable') === 'true' ||
-        target.closest('input, textarea, select, [contenteditable="true"]')
+        (target.getAttribute && target.getAttribute('contenteditable') === 'true') ||
+        (target.closest && target.closest('input, textarea, select, [contenteditable="true"]'))
       );
       
       // Only trigger tutorial toggle if NOT in an input field

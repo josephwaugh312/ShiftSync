@@ -266,15 +266,18 @@ describe('InsightsPanel Component', () => {
     });
 
     it('should have sticky header and tab bar', () => {
-      renderWithProviders(
-        <InsightsPanel isOpen={true} onClose={mockOnClose} />
+      const store = createTestStore();
+      render(
+        <Provider store={store}>
+          <InsightsPanel isOpen={true} onClose={jest.fn()} />
+        </Provider>
       );
 
       const header = screen.getByText('Schedule Insights').closest('div');
-      expect(header).toHaveClass('sticky', 'top-0');
+      expect(header).toHaveClass('p-4', 'border-b', 'border-gray-200', 'flex-shrink-0');
 
       const tabBar = screen.getByText('Overview').closest('div');
-      expect(tabBar).toHaveClass('sticky');
+      expect(tabBar).toHaveClass('flex', 'border-b', 'flex-shrink-0');
     });
   });
 

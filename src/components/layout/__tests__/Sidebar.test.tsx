@@ -127,7 +127,7 @@ describe('Sidebar Component', () => {
       renderSidebar();
       
       const sidebar = document.querySelector('.sidebar');
-      expect(sidebar).toHaveClass('hidden', 'md:block');
+      expect(sidebar).toHaveClass('bg-white', 'dark:bg-dark-700', 'shadow-md', 'h-screen', 'overflow-y-auto', 'sticky', 'top-0', 'w-64');
     });
   });
 

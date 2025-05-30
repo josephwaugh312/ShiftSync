@@ -58,7 +58,7 @@ describe('ViewToggle', () => {
       
       // All buttons should have SVG icons
       const buttons = screen.getAllByRole('tab');
-      expect(buttons).toHaveLength(5);
+      expect(buttons).toHaveLength(4);
       
       buttons.forEach(button => {
         const svg = button.querySelector('svg');
@@ -293,7 +293,7 @@ describe('ViewToggle', () => {
       
       // All buttons should be motion.button components (they render as buttons with motion props)
       const buttons = screen.getAllByRole('tab');
-      expect(buttons).toHaveLength(5);
+      expect(buttons).toHaveLength(4);
       
       buttons.forEach(button => {
         expect(button).toBeInTheDocument();

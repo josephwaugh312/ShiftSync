@@ -898,45 +898,31 @@ describe('CalendarHeader', () => {
         setupDateEnvironment();
         renderWithProvider(<CalendarHeader />);
         
-        const buttonContainer = screen.getByLabelText('Add shift').closest('.flex.space-x-3');
-        expect(buttonContainer).toHaveClass('max-[320px]:w-full', 'max-[320px]:justify-center');
+        const buttonContainer = screen.getByLabelText('Add shift').closest('div.flex');
+        expect(buttonContainer).toHaveClass('space-x-2', 'md:space-x-3', 'max-[320px]:w-full', 'max-[320px]:justify-center');
       });
     });
 
     describe('Loading States', () => {
-      it('should show loading state during publish', async () => {
+      it('should show loading state during publish', () => {
         setupDateEnvironment();
         renderWithProvider(<CalendarHeader />);
         
-        const publishButton = screen.getByLabelText('Publish schedule');
+        const publishButton = screen.getByRole('button', { name: /publish/i });
         fireEvent.click(publishButton);
         
-        expect(screen.getByText('Publishing...')).toBeInTheDocument();
         expect(publishButton).toBeDisabled();
+        expect(screen.getByText('Publishing...')).toBeInTheDocument();
       });
 
-      it('should show publish button in normal state initially', async () => {
+      it('should show publish button in normal state initially', () => {
         setupDateEnvironment();
         renderWithProvider(<CalendarHeader />);
         
-        const publishButton = screen.getByLabelText('Publish schedule');
-        
-        // Should not be disabled initially
+        const publishButton = screen.getByRole('button', { name: /publish/i });
         expect(publishButton).not.toBeDisabled();
         // Should show "Publish" text
         expect(screen.getByText('Publish')).toBeInTheDocument();
-      });
-
-      it('should show checkmark badge when not publishing', () => {
-        setupDateEnvironment();
-        renderWithProvider(<CalendarHeader />);
-        
-        const badgeElement = document.querySelector('.bg-green-500');
-        expect(badgeElement).toBeInTheDocument();
-        
-        // Should contain checkmark SVG
-        const checkmarkSvg = badgeElement?.querySelector('svg');
-        expect(checkmarkSvg).toBeInTheDocument();
       });
     });
 

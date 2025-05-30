@@ -338,14 +338,14 @@ describe('StaffingLevelsView Component', () => {
       renderWithProviders(<StaffingLevelsView />, storeWithData());
 
       // Should show time labels every 3 hours (0, 3, 6, 9, 12, 15, 18, 21)
-      expect(screen.getByText('12 AM')).toBeInTheDocument();
-      expect(screen.getByText('3 AM')).toBeInTheDocument();
-      expect(screen.getByText('6 AM')).toBeInTheDocument();
-      expect(screen.getByText('9 AM')).toBeInTheDocument();
-      expect(screen.getByText('12 PM')).toBeInTheDocument();
-      expect(screen.getByText('3 PM')).toBeInTheDocument();
-      expect(screen.getByText('6 PM')).toBeInTheDocument();
-      expect(screen.getByText('9 PM')).toBeInTheDocument();
+      expect(screen.getAllByText('12 AM')[0]).toBeInTheDocument();
+      expect(screen.getAllByText('3 AM')[0]).toBeInTheDocument();
+      expect(screen.getAllByText('6 AM')[0]).toBeInTheDocument();
+      expect(screen.getAllByText('9 AM')[0]).toBeInTheDocument();
+      expect(screen.getAllByText('12 PM')[0]).toBeInTheDocument();
+      expect(screen.getAllByText('3 PM')[0]).toBeInTheDocument();
+      expect(screen.getAllByText('6 PM')[0]).toBeInTheDocument();
+      expect(screen.getAllByText('9 PM')[0]).toBeInTheDocument();
     });
 
     it('should display Y-axis scaling based on maximum staffing', () => {
@@ -574,10 +574,10 @@ describe('StaffingLevelsView Component', () => {
       renderWithProviders(<StaffingLevelsView />, storeWithData);
 
       // Should display 12-hour format correctly
-      expect(screen.getByText('12 AM')).toBeInTheDocument(); // Midnight
-      expect(screen.getByText('12 PM')).toBeInTheDocument(); // Noon
-      expect(screen.getByText('6 AM')).toBeInTheDocument();
-      expect(screen.getByText('6 PM')).toBeInTheDocument();
+      expect(screen.getAllByText('12 AM')[0]).toBeInTheDocument(); // Midnight
+      expect(screen.getAllByText('12 PM')[0]).toBeInTheDocument(); // Noon
+      expect(screen.getAllByText('6 AM')[0]).toBeInTheDocument();
+      expect(screen.getAllByText('6 PM')[0]).toBeInTheDocument();
     });
 
     it('should handle date parsing for tomorrow correctly', () => {

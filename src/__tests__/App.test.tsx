@@ -360,7 +360,8 @@ describe('App Component', () => {
         renderWithProviders(<App />);
         
         expect(screen.getByTestId('tutorial-provider')).toBeInTheDocument();
-        expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+        // Sidebar is only shown on desktop (≥1280px), not in test environment (1024px)
+        expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
         expect(screen.getByTestId('header')).toBeInTheDocument();
       });
 
@@ -525,7 +526,8 @@ describe('App Component', () => {
       renderWithProviders(<App />);
       
       expect(screen.getByTestId('tutorial-provider')).toBeInTheDocument();
-      expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+      // Sidebar is only shown on desktop (≥1280px), not in test environment (1024px)
+      expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
       expect(screen.getByTestId('header')).toBeInTheDocument();
       expect(screen.getByTestId('dark-mode-toggle')).toBeInTheDocument();
       expect(screen.getByTestId('help-button')).toBeInTheDocument();
@@ -1503,7 +1505,8 @@ describe('App Component', () => {
         
         // Verify all components are rendered
         expect(screen.getByTestId('tutorial-provider')).toBeInTheDocument();
-        expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+        // Sidebar is only shown on desktop (≥1280px), not in test environment (1024px)
+        expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
         expect(screen.getByTestId('header')).toBeInTheDocument();
         expect(screen.getByTestId('calendar-view')).toBeInTheDocument();
         
