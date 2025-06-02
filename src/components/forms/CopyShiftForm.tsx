@@ -1652,7 +1652,7 @@ const CopyShiftForm: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="bg-white dark:bg-dark-800 shadow-xl w-full h-full sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[85vh] sm:rounded-xl flex flex-col"
+          className="bg-white dark:bg-dark-800 shadow-xl w-full h-full sm:w-auto sm:h-auto sm:max-w-4xl sm:max-h-[85vh] sm:rounded-xl flex flex-col"
           style={{ touchAction: 'auto' }}
           onTouchMove={(e) => e.stopPropagation()}
         >
