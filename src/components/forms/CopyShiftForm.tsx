@@ -1974,19 +1974,21 @@ const CopyShiftForm: React.FC = () => {
           
           {/* Fixed footer with submit button */}
           {originalShift && (
-            <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-dark-600 p-4">
-              <LoadingButton
-                type="submit"
-                isLoading={isSubmitting}
-                className="w-full py-3 text-base touch-manipulation"
-                onClick={handleSubmit}
-                disabled={selectedDates.length === 0}
-              >
-                {selectedDates.length === 0 
-                  ? 'Select dates to copy shift' 
-                  : `Copy Shift to ${selectedDates.length} Date${selectedDates.length !== 1 ? 's' : ''}`
-                }
-              </LoadingButton>
+            <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-dark-600 p-4 safe-area-bottom">
+              <div className="max-w-md mx-auto">
+                <LoadingButton
+                  type="submit"
+                  isLoading={isSubmitting}
+                  className="w-full py-4 text-base font-semibold touch-manipulation rounded-xl shadow-lg"
+                  onClick={handleSubmit}
+                  disabled={selectedDates.length === 0}
+                >
+                  {selectedDates.length === 0 
+                    ? 'Select dates to copy shift' 
+                    : `Copy Shift to ${selectedDates.length} Date${selectedDates.length !== 1 ? 's' : ''}`
+                  }
+                </LoadingButton>
+              </div>
             </div>
           )}
         </motion.div>
