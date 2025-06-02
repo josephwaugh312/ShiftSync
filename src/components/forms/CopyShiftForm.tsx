@@ -1625,279 +1625,182 @@ const CopyShiftForm: React.FC = () => {
   
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="bg-white dark:bg-dark-800 rounded-xl shadow-xl overflow-hidden w-full max-w-[95vw] sm:max-w-lg mx-auto max-h-[85vh] flex flex-col"
+          className="bg-white dark:bg-dark-800 rounded-xl shadow-xl overflow-hidden w-full max-w-[98vw] sm:max-w-lg mx-auto flex flex-col"
+          style={{
+            maxHeight: 'calc(100vh - 1rem)', // Mobile: leave 0.5rem top/bottom (total 1rem)
+            height: 'auto',
+            minHeight: '200px'
+          }}
         >
-          <div className="p-4 sm:p-6 flex-1 overflow-y-auto">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
-              Copy Shift
+          {/* Header */}
+          <div className="flex-shrink-0 p-3 sm:p-4 border-b border-gray-200 dark:border-dark-600">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                Copy Shift
+              </h2>
               <button
                 type="button"
                 onClick={handleClose}
-                className="float-right text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none p-1"
                 aria-label="Close"
               >
                 <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
-            </h2>
-            
-            {!originalShift ? (
-              <div className="text-center p-4">
-                <p className="text-gray-600 dark:text-gray-400">Error: Could not find the shift to copy</p>
-              </div>
-            ) : (
-              <form>
-                <div className="mb-4 sm:mb-6">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Original Shift Details
-                  </h3>
-                  <div className="bg-gray-100 dark:bg-dark-700 rounded-lg p-3 sm:p-4">
-                    <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
-                      <div>
-                        <p className="font-bold text-gray-800 dark:text-gray-100 text-sm sm:text-base">
-                          {originalShift.employeeName}
-                        </p>
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                          {originalShift.role}
-                        </p>
-                      </div>
-                      <div className="text-left sm:text-right">
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                          {new Date(originalShift.date).toLocaleDateString()}
-                        </p>
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                          {originalShift.timeRange}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+            </div>
+          </div>
+
+          {/* Scrollable Content */}
+          <div 
+            className="flex-1 overflow-y-auto overscroll-behavior-y-contain"
+            style={{
+              maxHeight: 'calc(100vh - 10rem)', // Reserve space for header and footer
+              minHeight: '100px'
+            }}
+          >
+            <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
+              {!originalShift ? (
+                <div className="text-center p-4">
+                  <p className="text-gray-600 dark:text-gray-400">Error: Could not find the shift to copy</p>
                 </div>
-                
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Copy Mode
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
-                    <button
-                      type="button"
-                      className={`px-3 py-2 rounded-md text-sm ${
-                        copyMode === 'single' 
-                          ? 'bg-primary-500 text-white' 
-                          : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
-                      }`}
-                      onClick={() => setCopyMode('single')}
-                    >
-                      Single Date
-                    </button>
-                    <button
-                      type="button"
-                      className={`px-3 py-2 rounded-md text-sm ${
-                        copyMode === 'multiple' 
-                          ? 'bg-primary-500 text-white' 
-                          : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
-                      }`}
-                      onClick={() => setCopyMode('multiple')}
-                    >
-                      Multiple Dates
-                    </button>
-                    <button
-                      type="button"
-                      className={`px-3 py-2 rounded-md text-sm ${
-                        copyMode === 'recurring' 
-                          ? 'bg-primary-500 text-white' 
-                          : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
-                      }`}
-                      onClick={() => setCopyMode('recurring')}
-                    >
-                      Recurring
-                    </button>
+              ) : (
+                <form className="space-y-4 sm:space-y-6">
+                  {/* Original Shift Details */}
+                  <div>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      Original Shift Details
+                    </h3>
+                    <div className="bg-gray-100 dark:bg-dark-700 rounded-lg p-3 sm:p-4">
+                      <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
+                        <div>
+                          <p className="font-bold text-gray-800 dark:text-gray-100 text-sm sm:text-base">
+                            {originalShift.employeeName}
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                            {originalShift.role}
+                          </p>
+                        </div>
+                        <div className="text-left sm:text-right">
+                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                            {new Date(originalShift.date).toLocaleDateString()}
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                            {originalShift.timeRange}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
-                  {copyMode === 'single' && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Select Date
-                      </label>
-                      <DatePicker
-                        selected={selectedDates[0] || null}
-                        onChange={(date: Date) => setSelectedDates([date])}
-                        inline
-                        className="w-full p-2 border border-gray-300 dark:border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                        filterDate={(date: Date) => formatDate(date) !== (originalShift?.date || '')}
-                      />
+                  {/* Copy Mode Selection */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Copy Mode
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                      <button
+                        type="button"
+                        className={`px-3 py-2 rounded-md text-sm ${
+                          copyMode === 'single' 
+                            ? 'bg-primary-500 text-white' 
+                            : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
+                        }`}
+                        onClick={() => setCopyMode('single')}
+                      >
+                        Single Date
+                      </button>
+                      <button
+                        type="button"
+                        className={`px-3 py-2 rounded-md text-sm ${
+                          copyMode === 'multiple' 
+                            ? 'bg-primary-500 text-white' 
+                            : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
+                        }`}
+                        onClick={() => setCopyMode('multiple')}
+                      >
+                        Multiple Dates
+                      </button>
+                      <button
+                        type="button"
+                        className={`px-3 py-2 rounded-md text-sm ${
+                          copyMode === 'recurring' 
+                            ? 'bg-primary-500 text-white' 
+                            : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
+                        }`}
+                        onClick={() => setCopyMode('recurring')}
+                      >
+                        Recurring
+                      </button>
                     </div>
-                  )}
-                  
-                  {copyMode === 'multiple' && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Select Multiple Dates
-                      </label>
-                      <DatePicker
-                        selected={new Date()}
-                        onChange={(date: Date) => {
-                          // Add date if not already selected, otherwise remove it
-                          const dateString = formatDate(date);
-
-                          // Prevent selecting the original shift's date
-                          if (dateString === originalShift?.date) {
-                            dispatch(addNotification({
-                              message: 'Cannot copy to the original shift date',
-                              type: 'warning',
-                              category: 'general'
-                            }));
-                            return;
-                          }
-
-                          const existingIndex = selectedDates.findIndex(
-                            d => formatDate(d) === dateString
-                          );
-                            
-                          if (existingIndex > -1) {
-                            const newDates = [...selectedDates];
-                            newDates.splice(existingIndex, 1);
-                            setSelectedDates(newDates);
-                          } else {
-                            setSelectedDates([...selectedDates, date]);
-                          }
-                        }}
-                        inline
-                        highlightDates={selectedDates}
-                        className="w-full"
-                        filterDate={(date: Date) => formatDate(date) !== (originalShift?.date || '')}
-                      />
-                      
-                      <div className="mt-4">
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          Selected Dates ({selectedDates.length}):
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedDates.map((date, index) => (
-                            <div 
-                              key={index} 
-                              className="bg-gray-100 dark:bg-dark-700 px-2 py-1 rounded-md text-xs flex items-center"
-                            >
-                              {date.toLocaleDateString()}
-                              <button
-                                type="button"
-                                className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                onClick={() => {
-                                  const newDates = [...selectedDates];
-                                  newDates.splice(index, 1);
-                                  setSelectedDates(newDates);
-                                }}
-                              >
-                                &times;
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {copyMode === 'recurring' && (
-                    <div className="space-y-4">
+                    
+                    {/* Single Date Mode */}
+                    {copyMode === 'single' && (
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Frequency
+                          Select Date
                         </label>
-                        <div className="grid grid-cols-2 gap-2">
-                          <button
-                            type="button"
-                            className={`px-3 py-2 rounded-md text-sm ${
-                              recurringOptions.frequency === 'daily' 
-                                ? 'bg-primary-500 text-white' 
-                                : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
-                            }`}
-                            onClick={() => setRecurringOptions({
-                              ...recurringOptions,
-                              frequency: 'daily'
-                            })}
-                          >
-                            Daily
-                          </button>
-                          <button
-                            type="button"
-                            className={`px-3 py-2 rounded-md text-sm ${
-                              recurringOptions.frequency === 'weekly' 
-                                ? 'bg-primary-500 text-white' 
-                                : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
-                            }`}
-                            onClick={() => setRecurringOptions({
-                              ...recurringOptions,
-                              frequency: 'weekly'
-                            })}
-                          >
-                            Weekly
-                          </button>
-                        </div>
-                      </div>
-                      
-                      {recurringOptions.frequency === 'weekly' && (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Days of Week
-                          </label>
-                          <div className="grid grid-cols-7 gap-1">
-                            {[0, 1, 2, 3, 4, 5, 6].map(dayIndex => (
-                              <button
-                                key={dayIndex}
-                                type="button"
-                                className={`px-2 py-2 rounded-md text-xs font-medium ${
-                                  recurringOptions.daysOfWeek.includes(dayIndex) 
-                                    ? 'bg-primary-500 text-white' 
-                                    : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
-                                }`}
-                                onClick={() => handleDayOfWeekToggle(dayIndex)}
-                              >
-                                {getDayName(dayIndex)}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          {recurringOptions.frequency === 'weekly' ? 'Number of Weeks' : 'Number of Days'}
-                        </label>
-                        <input
-                          type="number"
-                          min="1"
-                          max="12"
-                          value={recurringOptions.occurrences}
-                          onChange={(e) => setRecurringOptions({
-                            ...recurringOptions,
-                            occurrences: parseInt(e.target.value) || 1
-                          })}
-                          className="w-full p-2 border border-gray-300 dark:border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-dark-700 dark:text-white"
+                        <DatePicker
+                          selected={selectedDates[0] || null}
+                          onChange={(date: Date) => setSelectedDates([date])}
+                          inline
+                          className="w-full p-2 border border-gray-300 dark:border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          filterDate={(date: Date) => formatDate(date) !== (originalShift?.date || '')}
                         />
                       </div>
-
+                    )}
+                    
+                    {/* Multiple Dates Mode */}
+                    {copyMode === 'multiple' && (
                       <div>
-                        <button
-                          type="button"
-                          className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
-                          onClick={handleAddRecurringPattern}
-                        >
-                          Generate Dates
-                        </button>
-                      </div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Select Multiple Dates
+                        </label>
+                        <DatePicker
+                          selected={new Date()}
+                          onChange={(date: Date) => {
+                            // Add date if not already selected, otherwise remove it
+                            const dateString = formatDate(date);
 
-                      {selectedDates.length > 0 && (
-                        <div className="mt-4">
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                            Generated Dates ({selectedDates.length}):
-                          </p>
-                          <div className="max-h-40 overflow-y-auto">
+                            // Prevent selecting the original shift's date
+                            if (dateString === originalShift?.date) {
+                              dispatch(addNotification({
+                                message: 'Cannot copy to the original shift date',
+                                type: 'warning',
+                                category: 'general'
+                              }));
+                              return;
+                            }
+
+                            const existingIndex = selectedDates.findIndex(
+                              d => formatDate(d) === dateString
+                            );
+                              
+                            if (existingIndex > -1) {
+                              const newDates = [...selectedDates];
+                              newDates.splice(existingIndex, 1);
+                              setSelectedDates(newDates);
+                            } else {
+                              setSelectedDates([...selectedDates, date]);
+                            }
+                          }}
+                          inline
+                          highlightDates={selectedDates}
+                          className="w-full"
+                          filterDate={(date: Date) => formatDate(date) !== (originalShift?.date || '')}
+                        />
+                        
+                        {selectedDates.length > 0 && (
+                          <div className="mt-4">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                              Selected Dates ({selectedDates.length}):
+                            </p>
                             <div className="flex flex-wrap gap-2">
                               {selectedDates.map((date, index) => (
                                 <div 
@@ -1920,25 +1823,155 @@ const CopyShiftForm: React.FC = () => {
                               ))}
                             </div>
                           </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Recurring Mode */}
+                    {copyMode === 'recurring' && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Frequency
+                          </label>
+                          <div className="grid grid-cols-2 gap-2">
+                            <button
+                              type="button"
+                              className={`px-3 py-2 rounded-md text-sm ${
+                                recurringOptions.frequency === 'daily' 
+                                  ? 'bg-primary-500 text-white' 
+                                  : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
+                              }`}
+                              onClick={() => setRecurringOptions({
+                                ...recurringOptions,
+                                frequency: 'daily'
+                              })}
+                            >
+                              Daily
+                            </button>
+                            <button
+                              type="button"
+                              className={`px-3 py-2 rounded-md text-sm ${
+                                recurringOptions.frequency === 'weekly' 
+                                  ? 'bg-primary-500 text-white' 
+                                  : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
+                              }`}
+                              onClick={() => setRecurringOptions({
+                                ...recurringOptions,
+                                frequency: 'weekly'
+                              })}
+                            >
+                              Weekly
+                            </button>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </form>
-            )}
+                        
+                        {recurringOptions.frequency === 'weekly' && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                              Days of Week
+                            </label>
+                            <div className="grid grid-cols-7 gap-1">
+                              {[0, 1, 2, 3, 4, 5, 6].map(dayIndex => (
+                                <button
+                                  key={dayIndex}
+                                  type="button"
+                                  className={`px-2 py-2 rounded-md text-xs font-medium ${
+                                    recurringOptions.daysOfWeek.includes(dayIndex) 
+                                      ? 'bg-primary-500 text-white' 
+                                      : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
+                                  }`}
+                                  onClick={() => handleDayOfWeekToggle(dayIndex)}
+                                >
+                                  {getDayName(dayIndex)}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            {recurringOptions.frequency === 'weekly' ? 'Number of Weeks' : 'Number of Days'}
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="12"
+                            value={recurringOptions.occurrences}
+                            onChange={(e) => setRecurringOptions({
+                              ...recurringOptions,
+                              occurrences: parseInt(e.target.value) || 1
+                            })}
+                            className="w-full p-2 border border-gray-300 dark:border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-dark-700 dark:text-white"
+                          />
+                        </div>
+
+                        <div>
+                          <button
+                            type="button"
+                            className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                            onClick={handleAddRecurringPattern}
+                          >
+                            Generate Dates
+                          </button>
+                        </div>
+
+                        {selectedDates.length > 0 && (
+                          <div className="mt-4">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                              Generated Dates ({selectedDates.length}):
+                            </p>
+                            <div className="max-h-24 sm:max-h-32 overflow-y-auto border border-gray-200 dark:border-dark-600 rounded-md p-2 bg-gray-50 dark:bg-dark-900">
+                              <div className="flex flex-wrap gap-2">
+                                {selectedDates.map((date, index) => (
+                                  <div 
+                                    key={index} 
+                                    className="bg-gray-100 dark:bg-dark-700 px-2 py-1 rounded-md text-xs flex items-center"
+                                  >
+                                    {date.toLocaleDateString()}
+                                    <button
+                                      type="button"
+                                      className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                      onClick={() => {
+                                        const newDates = [...selectedDates];
+                                        newDates.splice(index, 1);
+                                        setSelectedDates(newDates);
+                                      }}
+                                    >
+                                      &times;
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Add extra padding at bottom to ensure content is scrollable */}
+                  <div className="pb-4"></div>
+                </form>
+              )}
+            </div>
           </div>
           
-          {/* Sticky footer with submit button */}
+          {/* Fixed footer with submit button */}
           {originalShift && (
-            <div className="border-t border-gray-200 dark:border-dark-600 p-4 bg-white dark:bg-dark-800">
+            <div className="flex-shrink-0 border-t border-gray-200 dark:border-dark-600 p-3 sm:p-4 bg-white dark:bg-dark-800 sticky bottom-0">
               <LoadingButton
                 type="submit"
                 isLoading={isSubmitting}
                 className="w-full"
                 onClick={handleSubmit}
+                disabled={selectedDates.length === 0}
               >
-                Copy Shift to {selectedDates.length} Date{selectedDates.length !== 1 ? 's' : ''}
+                {selectedDates.length === 0 
+                  ? 'Select dates to copy shift' 
+                  : `Copy Shift to ${selectedDates.length} Date${selectedDates.length !== 1 ? 's' : ''}`
+                }
               </LoadingButton>
             </div>
           )}

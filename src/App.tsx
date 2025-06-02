@@ -30,17 +30,12 @@ import { registerKeyboardShortcuts } from './utils/keyboardShortcuts';
 // Custom hook for responsive sidebar visibility
 const useResponsiveLayout = () => {
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
-  const [windowHeight, setWindowHeight] = useState(typeof window !== 'undefined' ? window.innerHeight : 800);
-  const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
-    setIsClient(true);
-    
     const handleResize = () => {
       const newWidth = window.innerWidth;
       const newHeight = window.innerHeight;
       setWindowWidth(newWidth);
-      setWindowHeight(newHeight);
       
       // Add/remove class to control mobile navbar visibility
       if (newWidth >= 1024) {
@@ -69,15 +64,27 @@ const useResponsiveLayout = () => {
   }, []);
   
   // Only show sidebar on desktop (≥1024px width)
-  const shouldShowSidebar = isClient && windowWidth >= 1024;
+  const shouldShowSidebar = windowWidth >= 1024;
   
-  return { shouldShowSidebar, isClient };
+  return { shouldShowSidebar };
+};
+
+// Create a wrapper component for InsightsPanel when used as a route
+const InsightsPanelRoute: React.FC = () => {
+  return (
+    <div className="h-full w-full">
+      <InsightsPanel 
+        isOpen={true} 
+        onClose={() => {}} // No-op for route usage
+      />
+    </div>
+  );
 };
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const { darkMode, highContrastMode, dyslexicFontMode, themeColor, modalOpen } = useSelector((state: RootState) => state.ui);
-  const { shouldShowSidebar, isClient } = useResponsiveLayout();
+  const { shouldShowSidebar } = useResponsiveLayout();
 
   // Set initial theme color CSS variables on first load
   useEffect(() => {
@@ -198,6 +205,8 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<CalendarView />} />
               <Route path="/employees" element={<EmployeesPage />} />
+              <Route path="/insights" element={<InsightsPanelRoute />} />
+              <Route path="/templates" element={<TemplatesPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Routes>
             <NotificationsPanel />

@@ -26,7 +26,8 @@ jest.mock('../../../hooks/useSoundEffects', () => ({
 
 // Mock CustomFocusButton
 jest.mock('../../common/CustomFocusButton', () => {
-  return function MockCustomFocusButton({
+  const React = require('react');
+  return React.forwardRef(function MockCustomFocusButton({
     children,
     onClick,
     variant,
@@ -34,9 +35,10 @@ jest.mock('../../common/CustomFocusButton', () => {
     disabled,
     type,
     ...props
-  }: any) {
+  }: any, ref: any) {
     return (
       <button
+        ref={ref}
         onClick={onClick}
         className={`custom-focus-button ${variant} ${className}`}
         disabled={disabled}
@@ -46,7 +48,7 @@ jest.mock('../../common/CustomFocusButton', () => {
         {children}
       </button>
     );
-  };
+  });
 });
 
 // Mock CustomToggle

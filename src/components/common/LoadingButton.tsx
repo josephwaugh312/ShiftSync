@@ -409,62 +409,64 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
   };
   
   return (
-    <motion.div
-      className={computedValues.mainClassName}
-      whileTap={{ scale: getButtonScale(disabled, isLoading) }}
-      animate={{
-        boxShadow: getBoxShadowAnimation(isFocused, isPressed)
-      }}
-    >
-      <button
-        {...computedValues.buttonAttributes}
-        onClick={handleClick}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+    <div className="relative inline-block">
+      <motion.div
+        className={computedValues.mainClassName}
+        whileTap={{ scale: getButtonScale(disabled, isLoading) }}
+        animate={{
+          boxShadow: getBoxShadowAnimation(isFocused, isPressed)
+        }}
       >
-        <motion.span
-          animate={getMotionSpanProps(isPressed)}
-          className="flex items-center justify-center"
+        <button
+          {...computedValues.buttonAttributes}
+          onClick={handleClick}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         >
-          {isInLoadingState(isLoading) ? (
-            <div className="flex items-center">
-              <ButtonLoader 
-                color={computedValues.loaderColor} 
-                size={18} 
-                className="mr-2" 
-              />
-              <span>{getLoadingTextContent(loadingText)}</span>
-            </div>
-          ) : (
-            <>
-              {shouldRenderIcon(icon) && <span className="mr-2">{icon}</span>}
-              {children}
-            </>
-          )}
-        </motion.span>
-      </button>
-      
-      {/* Focus ring */}
-      <motion.span
-        className="absolute inset-0 rounded-md pointer-events-none"
-        initial={{ opacity: 0, scale: 0.85 }}
-        animate={getFocusRingAnimation(isFocused)}
-        transition={getFocusRingTransition()}
-      />
-      
-      {/* Ripple effect */}
-      {shouldShowRipple(showRipple, withRipple) && (
+          <motion.span
+            animate={getMotionSpanProps(isPressed)}
+            className="flex items-center justify-center"
+          >
+            {isInLoadingState(isLoading) ? (
+              <div className="flex items-center">
+                <ButtonLoader 
+                  color={computedValues.loaderColor} 
+                  size={18} 
+                  className="mr-2" 
+                />
+                <span>{getLoadingTextContent(loadingText)}</span>
+              </div>
+            ) : (
+              <>
+                {shouldRenderIcon(icon) && <span className="mr-2">{icon}</span>}
+                {children}
+              </>
+            )}
+          </motion.span>
+        </button>
+        
+        {/* Focus ring */}
         <motion.span
-          className="absolute rounded-full bg-white bg-opacity-30 pointer-events-none"
-          style={getRippleStyles(ripplePosition, computedValues.rippleConfig)}
-          {...getRippleAnimationProps()}
-          transition={{ duration: computedValues.rippleConfig.duration }}
+          className="absolute inset-0 rounded-md pointer-events-none"
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={getFocusRingAnimation(isFocused)}
+          transition={getFocusRingTransition()}
         />
-      )}
-    </motion.div>
+        
+        {/* Ripple effect */}
+        {shouldShowRipple(showRipple, withRipple) && (
+          <motion.span
+            className="absolute rounded-full bg-white bg-opacity-30 pointer-events-none"
+            style={getRippleStyles(ripplePosition, computedValues.rippleConfig)}
+            {...getRippleAnimationProps()}
+            transition={{ duration: computedValues.rippleConfig.duration }}
+          />
+        )}
+      </motion.div>
+    </div>
   );
 };
 

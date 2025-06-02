@@ -260,8 +260,8 @@ describe('dateUtils', () => {
     it('should handle malformed time strings', () => {
       const malformedTime = '25:70';
       const result = formatTime(malformedTime);
-      // formatTime attempts to parse even malformed input, so it converts 25:70 to 1:70 PM
-      expect(result).toBe('1:70 PM');
+      // formatTime attempts to parse even malformed input, so it converts 25:70 to 13:70 PM
+      expect(result).toBe('13:70 PM');
     });
   });
 

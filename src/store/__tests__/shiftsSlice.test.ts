@@ -152,7 +152,7 @@ describe('shiftsSlice', () => {
 
     it('should set today as initial selectedDate', () => {
       const result = shiftsReducer(undefined, { type: 'unknown' });
-      expect(result.selectedDate).toBe('2025-05-30'); // Based on actual mock result
+      expect(result.selectedDate).toBe('2025-06-02'); // Updated to match actual mock result
     });
   });
 

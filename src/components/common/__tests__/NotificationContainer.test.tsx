@@ -1,9 +1,10 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
+import userEvent from '@testing-library/user-event';
 import NotificationContainer from '../NotificationContainer';
-import uiReducer from '../../../store/uiSlice';
+import uiReducer, { addNotification } from '../../../store/uiSlice';
 
 // Mock timers for auto-removal testing
 jest.useFakeTimers();
@@ -204,21 +205,29 @@ describe('NotificationContainer', () => {
   });
 
   describe('auto-removal functionality', () => {
-    it('should automatically remove notification after 6 seconds', async () => {
+    it('should auto-remove notifications after 6 seconds', async () => {
+      const store = createTestStore([]);
+      renderWithStore(store);
+      
       const notification = {
         id: '1',
         message: 'Test notification',
-        type: 'success' as const,
+        type: 'success' as const
       };
       
-      const store = createTestStore([notification]);
-      renderWithStore(store);
+      act(() => {
+        store.dispatch(addNotification(notification));
+      });
       
+      // Check that notification is displayed
       expect(screen.getByText('Test notification')).toBeInTheDocument();
       
-      // Fast-forward time by 6 seconds
-      jest.advanceTimersByTime(6000);
+      // Fast-forward time by 6 seconds and wrap timer execution in act
+      await act(async () => {
+        jest.runOnlyPendingTimers();
+      });
       
+      // Wait for the notification to be removed
       await waitFor(() => {
         expect(screen.queryByText('Test notification')).not.toBeInTheDocument();
       });

@@ -32,15 +32,17 @@ jest.mock('../TemplateForm', () => {
 
 // Mock CustomFocusButton
 jest.mock('../../common/CustomFocusButton', () => {
-  return function MockCustomFocusButton({ 
+  const React = require('react');
+  return React.forwardRef(function MockCustomFocusButton({ 
     children, 
     onClick, 
     variant, 
     className,
     ...props 
-  }: any) {
+  }: any, ref: any) {
     return (
       <button 
+        ref={ref}
         onClick={onClick} 
         className={`custom-focus-button ${variant} ${className}`}
         {...props}
@@ -48,7 +50,7 @@ jest.mock('../../common/CustomFocusButton', () => {
         {children}
       </button>
     );
-  };
+  });
 });
 
 const mockTemplate = {

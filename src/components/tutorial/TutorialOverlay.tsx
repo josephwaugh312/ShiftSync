@@ -245,21 +245,21 @@ const TutorialOverlay: React.FC = () => {
         // Just rely on the special overlay to handle the visual highlighting
         console.log('Mobile detected - skipping element processing, using overlay only');
         return;
-      } else {
+              } else {
         // Desktop logic only
         let employeeElement: HTMLElement | null = null;
         const employeeLinks = document.querySelectorAll('a[href="/employees"]');
         console.log('Found employee links with basic selector:', employeeLinks.length);
         if (employeeLinks.length > 0) {
           employeeElement = employeeLinks[0] as HTMLElement;
-        }
+      }
+      
+      if (employeeElement) {
+        const rect = employeeElement.getBoundingClientRect();
+        console.log('Final employee element rect:', rect);
+        console.log('Final employee element:', employeeElement);
         
-        if (employeeElement) {
-          const rect = employeeElement.getBoundingClientRect();
-          console.log('Final employee element rect:', rect);
-          console.log('Final employee element:', employeeElement);
-          
-          if (rect.width > 0 && rect.height > 0) {
+        if (rect.width > 0 && rect.height > 0) {
             employeeElement.style.cssText += `
               transform: scale(1.02);
               transition: 0.3s;
@@ -267,23 +267,23 @@ const TutorialOverlay: React.FC = () => {
               border: none !important;
               box-shadow: none;
             `;
-            
-            setTargetElement(employeeElement);
-            safeScrollIntoView(employeeElement);
-            
-            const highlightBox: HighlightBox = {
-              top: rect.top,
-              left: rect.left,
-              width: rect.width,
-              height: rect.height,
-            };
-            setHighlightStyles([highlightBox]);
-            console.log('Successfully highlighted employee element!');
-          } else {
-            console.log('Employee element has no dimensions, cannot highlight');
-          }
+          
+          setTargetElement(employeeElement);
+          safeScrollIntoView(employeeElement);
+          
+          const highlightBox: HighlightBox = {
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height,
+          };
+          setHighlightStyles([highlightBox]);
+          console.log('Successfully highlighted employee element!');
         } else {
-          console.log('No employee element found for highlighting');
+          console.log('Employee element has no dimensions, cannot highlight');
+        }
+      } else {
+        console.log('No employee element found for highlighting');
         }
       }
     }

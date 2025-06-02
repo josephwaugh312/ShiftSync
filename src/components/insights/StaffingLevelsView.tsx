@@ -238,7 +238,7 @@ const StaffingLevelsView: React.FC = () => {
                     >
                       {/* Show every 6 hours on small screens, every 3 hours on larger screens */}
                       <span className="hidden sm:inline">
-                        {data.hour % 3 === 0 ? formatHour(data.hour) : ''}
+                      {data.hour % 3 === 0 ? formatHour(data.hour) : ''}
                       </span>
                       <span className="sm:hidden">
                         {/* For very small screens (< 375px), show only 4 key times: 12 AM, 6 AM, 12 PM, 6 PM */}

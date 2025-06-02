@@ -352,20 +352,20 @@ const KeyboardShortcuts: React.FC = () => {
       
       // Only trigger shortcuts if NOT in an input field
       if (!isInputField) {
-        // Extra check for Shift+H
-        if (event.shiftKey && (event.key === 'h' || event.key === 'H')) {
-          console.log('Shift+H detected via raw event listener');
-          event.preventDefault();
-          console.log('Executing shortcut: Go to home/calendar');
-          navigate('/');
-        }
-        
-        // Extra check for Shift+T
-        if (event.shiftKey && (event.key === 't' || event.key === 'T')) {
-          console.log('Shift+T detected via raw event listener');
-          event.preventDefault();
-          console.log('Executing shortcut: Toggle tutorial');
-          document.dispatchEvent(new CustomEvent('toggleTutorial'));
+      // Extra check for Shift+H
+      if (event.shiftKey && (event.key === 'h' || event.key === 'H')) {
+        console.log('Shift+H detected via raw event listener');
+        event.preventDefault();
+        console.log('Executing shortcut: Go to home/calendar');
+        navigate('/');
+      }
+      
+      // Extra check for Shift+T
+      if (event.shiftKey && (event.key === 't' || event.key === 'T')) {
+        console.log('Shift+T detected via raw event listener');
+        event.preventDefault();
+        console.log('Executing shortcut: Toggle tutorial');
+        document.dispatchEvent(new CustomEvent('toggleTutorial'));
         }
       }
     };

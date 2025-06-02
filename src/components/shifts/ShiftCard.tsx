@@ -15,7 +15,7 @@ const ShiftCard: React.FC<ShiftCardProps> = ({ shift, isCompact = false }) => {
   const dispatch = useDispatch();
   const { shifts } = useSelector((state: RootState) => state.shifts);
   const { playSound } = useSoundEffects();
-  
+
   // Log the shift to debug
   console.log('Rendering ShiftCard with shift:', shift);
 

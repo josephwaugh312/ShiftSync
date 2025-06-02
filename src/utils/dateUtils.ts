@@ -116,20 +116,43 @@ export const createDateFromISO = (dateString: string): Date => {
 
 /**
  * Get time in 12-hour format
- * @param timeString - 24h time string (e.g., "14:30")
+ * @param time - 24h time string (e.g., "14:30") or undefined
  * @returns formatted 12h time (e.g., "2:30 PM")
  */
-export const formatTime = (timeString: string): string => {
-  if (timeString.includes('AM') || timeString.includes('PM')) return timeString;
+export const formatTime = (time: string | undefined): string => {
+  if (!time) {
+    console.error('Error formatting time: undefined or empty time provided');
+    return '';
+  }
+
+  // Handle if time is already in 12h format
+  if (time.includes('AM') || time.includes('PM')) {
+    return time;
+  }
   
   try {
-    const [hours, minutes] = timeString.split(':').map(part => parseInt(part, 10));
-    const period = hours >= 12 ? 'PM' : 'AM';
-    const hours12 = hours % 12 || 12;
-    return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+    // Convert from 24h format to 12h format
+    const [hours, minutes] = time.split(':');
+    const hoursNum = parseInt(hours, 10);
+    
+    if (isNaN(hoursNum) || !minutes) {
+      throw new Error('Invalid time format');
+    }
+    
+    const minutesStr = minutes.toString().padStart(2, '0');
+    
+    if (hoursNum === 0) {
+      return `12:${minutesStr} AM`;
+    } else if (hoursNum < 12) {
+      return `${hoursNum}:${minutesStr} AM`;
+    } else if (hoursNum === 12) {
+      return `12:${minutesStr} PM`;
+    } else {
+      return `${hoursNum - 12}:${minutesStr} PM`;
+    }
   } catch (error) {
-    console.error('Error formatting time:', timeString, error);
-    return timeString;
+    console.error(`Error formatting time: ${time}`, error);
+    return time || '';
   }
 };
 

@@ -42,7 +42,6 @@ const DarkModeToggle: React.FC = () => {
           stroke="currentColor"
           variants={sunIconVariants}
           animate={darkMode ? "hidden" : "visible"}
-          initial={false}
           transition={{ duration: 0.7 }}
         >
           <path
@@ -60,7 +59,6 @@ const DarkModeToggle: React.FC = () => {
           stroke="currentColor"
           variants={moonIconVariants}
           animate={darkMode ? "visible" : "hidden"}
-          initial={false}
           transition={{ duration: 0.7 }}
         >
           <path
