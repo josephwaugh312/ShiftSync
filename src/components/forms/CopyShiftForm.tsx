@@ -1975,11 +1975,11 @@ const CopyShiftForm: React.FC = () => {
           {/* Fixed footer with submit button */}
           {originalShift && (
             <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-dark-600 p-4 safe-area-bottom">
-              <div className="max-w-md mx-auto">
+              <div className="flex justify-center">
                 <LoadingButton
                   type="submit"
                   isLoading={isSubmitting}
-                  className="w-full py-4 text-base font-semibold touch-manipulation rounded-xl shadow-lg"
+                  className="w-full max-w-sm py-4 text-base font-semibold touch-manipulation rounded-xl shadow-lg"
                   onClick={handleSubmit}
                   disabled={selectedDates.length === 0}
                 >

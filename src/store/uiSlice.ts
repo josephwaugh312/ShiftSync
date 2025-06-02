@@ -105,7 +105,7 @@ const initialState: UiState = {
     editTemplate: false,
     savedViews: false,
   },
-  currentView: 'weekly',
+  currentView: 'daily',
   notifications: [],
   selectedShiftId: null,
   selectedTemplateId: null,
