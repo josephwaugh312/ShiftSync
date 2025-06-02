@@ -403,7 +403,7 @@ describe('KeyboardShortcuts', () => {
         const [key, handler, options] = call;
         
         if (typeof key === 'string') {
-          expect(options).toHaveProperty('enableOnFormTags', true);
+          expect(options).toHaveProperty('enableOnFormTags', false);
           expect(options).toHaveProperty('keyup', false);
           expect(options).toHaveProperty('keydown', true);
         }

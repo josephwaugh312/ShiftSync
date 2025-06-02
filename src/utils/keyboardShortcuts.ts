@@ -13,6 +13,11 @@ export const isUserTypingInInputField = (event?: Event | KeyboardEvent): boolean
   
   if (!target) return false;
   
+  // Safety check: ensure target has the properties/methods we need
+  if (typeof target.tagName !== 'string' || typeof target.getAttribute !== 'function') {
+    return false;
+  }
+  
   // Check various ways an element could be an input field
   const isInputField = (
     // Direct input elements
@@ -29,7 +34,7 @@ export const isUserTypingInInputField = (event?: Event | KeyboardEvent): boolean
     target.getAttribute('role') === 'combobox' ||
     
     // Elements inside input containers (for complex input components)
-    target.closest('input, textarea, select, [contenteditable="true"], [role="textbox"], [role="combobox"]') !== null ||
+    (target.closest && target.closest('input, textarea, select, [contenteditable="true"], [role="textbox"], [role="combobox"]') !== null) ||
     
     // Specific checks for employee name fields and other form inputs
     target.getAttribute('name')?.includes('employee') ||
@@ -40,11 +45,11 @@ export const isUserTypingInInputField = (event?: Event | KeyboardEvent): boolean
     target.getAttribute('aria-label')?.toLowerCase().includes('name') ||
     
     // Check parent elements for form context
-    target.closest('.employee-form, .shift-form, .template-form, form') !== null
+    (target.closest && target.closest('.employee-form, .shift-form, .template-form, form') !== null)
   );
   
   // Additional check: if we're in a React DatePicker or similar component
-  const isInDatePicker = target.closest('.react-datepicker, .react-datepicker__input-container') !== null;
+  const isInDatePicker = target.closest && target.closest('.react-datepicker, .react-datepicker__input-container') !== null;
   
   return isInputField || isInDatePicker;
 };
