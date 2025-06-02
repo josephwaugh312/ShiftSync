@@ -9,13 +9,20 @@ import shiftsSlice from '../../../store/shiftsSlice';
 import employeeSlice from '../../../store/employeeSlice';
 
 // Mock framer-motion
-jest.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
-  },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
-}));
+jest.mock('framer-motion', () => {
+  const React = require('react');
+  return {
+    motion: {
+      div: React.forwardRef(({ children, ...props }: any, ref: any) => (
+        <div ref={ref} {...props}>{children}</div>
+      )),
+      form: React.forwardRef(({ children, ...props }: any, ref: any) => (
+        <form ref={ref} {...props}>{children}</form>
+      )),
+    },
+    AnimatePresence: ({ children }: any) => <>{children}</>,
+  };
+});
 
 // Mock sound effects hook
 jest.mock('../../../hooks/useSoundEffects', () => ({
@@ -173,7 +180,12 @@ const renderWithProviders = (component: React.ReactElement, initialState = {}) =
   return {
     ...render(
       <Provider store={store}>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
           {component}
         </BrowserRouter>
       </Provider>

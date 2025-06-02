@@ -3,28 +3,49 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Header from '../Header';
 
-// Helper function to render with router
-const renderWithRouter = (component: React.ReactElement) => {
-  return render(
-    <BrowserRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true
-      }}
-    >
-      {component}
-    </BrowserRouter>
-  );
-};
+// Test wrapper with future flags
+const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <BrowserRouter
+    future={{
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }}
+  >
+    {children}
+  </BrowserRouter>
+);
 
 describe('Header', () => {
-  describe('rendering', () => {
-    it('should render without crashing', () => {
-      renderWithRouter(<Header />);
-      
-      expect(screen.getByText('ShiftSync')).toBeInTheDocument();
-    });
+  it('should render without crashing', () => {
+    render(
+      <TestWrapper>
+        <Header />
+      </TestWrapper>
+    );
+  });
 
+  it('should display the app title', () => {
+    render(
+      <TestWrapper>
+        <Header />
+      </TestWrapper>
+    );
+    
+    expect(screen.getByText('ShiftSync')).toBeInTheDocument();
+  });
+
+  it('should have proper structure', () => {
+    render(
+      <TestWrapper>
+        <Header />
+      </TestWrapper>
+    );
+    
+    const header = screen.getByRole('banner');
+    expect(header).toBeInTheDocument();
+  });
+
+  describe('rendering', () => {
     it('should render the logo link', () => {
       renderWithRouter(<Header />);
       

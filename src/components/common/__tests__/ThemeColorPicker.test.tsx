@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import ThemeColorPicker from '../ThemeColorPicker';
@@ -535,7 +535,9 @@ describe('ThemeColorPicker Component', () => {
       expect(selectedButton).toHaveClass('ring-2');
       
       // Change store state
-      store.dispatch(setThemeColor(themeColors[2]));
+      act(() => {
+        store.dispatch(setThemeColor(themeColors[2]));
+      });
       rerender(<Provider store={store}><ThemeColorPicker /></Provider>);
       
       // New color should be selected

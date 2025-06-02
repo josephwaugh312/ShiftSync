@@ -1,6 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { render } from '@testing-library/react';
-import type { RenderOptions } from '@testing-library/react';
+import { render, RenderOptions } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
@@ -29,29 +28,50 @@ function createTestStore(preloadedState?: any) {
   });
 }
 
-export function renderWithProviders(
+// Enhanced test router with future flags
+const TestRouter: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <BrowserRouter
+    future={{
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }}
+  >
+    {children}
+  </BrowserRouter>
+);
+
+// AllTheProviders component with enhanced router
+const AllTheProviders: React.FC<{ children: React.ReactNode; store?: any }> = ({ 
+  children, 
+  store = createTestStore() 
+}) => {
+  return (
+    <Provider store={store}>
+      <TestRouter>
+        {children}
+      </TestRouter>
+    </Provider>
+  );
+};
+
+// Custom render function
+const customRender = (
   ui: React.ReactElement,
-  {
-    preloadedState = {},
-    store,
-    ...renderOptions
-  }: ExtendedRenderOptions = {}
-) {
-  const testStore = store || createTestStore(preloadedState);
+  options?: Omit<RenderOptions, 'wrapper'> & { store?: any }
+) => {
+  const { store, ...renderOptions } = options || {};
+  
+  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <AllTheProviders store={store}>{children}</AllTheProviders>
+  );
 
-  function Wrapper({ children }: PropsWithChildren<{}>): JSX.Element {
-    return (
-      <Provider store={testStore}>
-        <BrowserRouter>
-          {children}
-        </BrowserRouter>
-      </Provider>
-    );
-  }
+  return render(ui, { wrapper: Wrapper, ...renderOptions });
+};
 
-  // Return an object with the store and all of RTL's query functions
-  return { store: testStore, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
-}
+// Re-export everything
+export * from '@testing-library/react';
+export { customRender as render };
+export { TestRouter };
 
 // Create mock data for testing
 export const mockShifts = [
@@ -173,6 +193,6 @@ export const mockUserEvent = {
 // Since this is a utility file, not an actual test file
 describe('test-utils', () => {
   it('should export renderWithProviders utility', () => {
-    expect(renderWithProviders).toBeDefined();
+    expect(customRender).toBeDefined();
   });
 }); 
