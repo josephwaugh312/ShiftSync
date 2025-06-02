@@ -3,6 +3,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { setModalOpen } from '../../store/uiSlice';
+import { shouldPreventKeyboardShortcut, isUserTypingInInputField } from '../../utils/keyboardShortcuts';
 
 interface ShortcutAction {
   key: string;
@@ -135,15 +136,16 @@ const KeyboardShortcuts: React.FC = () => {
     },
   ];
 
-  // Register all hotkeys individually
+  // Register all hotkeys individually with proper input field detection
   useHotkeys(
     shortcuts[0].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[0].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false, // Disable to prevent conflicts with input fields
       keyup: false,
       keydown: true,
     },
@@ -153,11 +155,12 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[1].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[1].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -167,11 +170,12 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[2].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[2].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -181,11 +185,12 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[3].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[3].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -195,11 +200,12 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[4].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[4].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -209,11 +215,12 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[5].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[5].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -223,12 +230,13 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[6].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[6].action();
       console.log('Executing Shift+H shortcut via useHotkeys');
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -238,11 +246,12 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[7].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[7].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -252,11 +261,12 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[8].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[8].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -266,12 +276,13 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[9].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       console.log('Shift+/ shortcut triggered');
       shortcuts[9].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -282,12 +293,13 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     '?',
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       console.log('? shortcut triggered');
       showKeyboardShortcuts();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
@@ -297,33 +309,28 @@ const KeyboardShortcuts: React.FC = () => {
   useHotkeys(
     shortcuts[10].key,
     (event) => {
+      if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[10].action();
     },
     { 
-      enableOnFormTags: true,
+      enableOnFormTags: false,
       keyup: false,
       keydown: true,
     },
     []
   );
 
-  // Register special keyboard event listener for question mark key
+  // Register special keyboard event listener for question mark key with improved input detection
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Check if the target is an input field, textarea, or contenteditable element
-      const target = event.target as HTMLElement;
-      const isInputField = target && (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT' ||
-        target.isContentEditable ||
-        target.getAttribute('contenteditable') === 'true' ||
-        target.closest('input, textarea, select, [contenteditable="true"]')
-      );
+      // Use the comprehensive input field detection
+      if (isUserTypingInInputField(event)) {
+        return; // Don't trigger shortcuts when typing in input fields
+      }
       
       // Only trigger shortcuts if NOT in an input field
-      if (!isInputField && (event.key === '?' || (event.key === '/' && event.shiftKey))) {
+      if (event.key === '?' || (event.key === '/' && event.shiftKey)) {
         console.log('Question mark key detected via raw event listener');
         event.preventDefault();
         showKeyboardShortcuts();
@@ -336,22 +343,14 @@ const KeyboardShortcuts: React.FC = () => {
     };
   }, []);
 
-  // Extra event listener for Shift+H to ensure it works
+  // Extra event listener for Shift+H and Shift+T with improved input detection
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Check if the target is an input field, textarea, or contenteditable element
-      const target = event.target as HTMLElement;
-      const isInputField = target && (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT' ||
-        target.isContentEditable ||
-        target.getAttribute('contenteditable') === 'true' ||
-        target.closest('input, textarea, select, [contenteditable="true"]')
-      );
+      // Use the comprehensive input field detection
+      if (isUserTypingInInputField(event)) {
+        return; // Don't trigger shortcuts when typing in input fields
+      }
       
-      // Only trigger shortcuts if NOT in an input field
-      if (!isInputField) {
       // Extra check for Shift+H
       if (event.shiftKey && (event.key === 'h' || event.key === 'H')) {
         console.log('Shift+H detected via raw event listener');
@@ -366,7 +365,6 @@ const KeyboardShortcuts: React.FC = () => {
         event.preventDefault();
         console.log('Executing shortcut: Toggle tutorial');
         document.dispatchEvent(new CustomEvent('toggleTutorial'));
-        }
       }
     };
 

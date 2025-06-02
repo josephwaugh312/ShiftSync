@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { tutorialSteps } from '../data/tutorialSteps';
 import { useLocation } from 'react-router-dom';
+import { isUserTypingInInputField } from '../utils/keyboardShortcuts';
 
 interface TutorialContextType {
   isActive: boolean;
@@ -240,19 +241,13 @@ const TutorialProviderInternal: React.FC<{
     const handleKeyDown = (e: KeyboardEvent) => {
       console.log('Key pressed:', e.key, 'Shift key:', e.shiftKey);
       
-      // Check if the target is an input field, textarea, or contenteditable element
-      const target = e.target as HTMLElement;
-      const isInputField = target && (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT' ||
-        target.isContentEditable ||
-        (target.getAttribute && target.getAttribute('contenteditable') === 'true') ||
-        (target.closest && target.closest('input, textarea, select, [contenteditable="true"]'))
-      );
+      // Use the comprehensive input field detection
+      if (isUserTypingInInputField(e)) {
+        return; // Don't trigger tutorial toggle when typing in input fields
+      }
       
       // Only trigger tutorial toggle if NOT in an input field
-      if (!isInputField && e.shiftKey && (e.key === 't' || e.key === 'T')) {
+      if (e.shiftKey && (e.key === 't' || e.key === 'T')) {
         console.log('Shift+T detected! Toggling tutorial...');
         e.preventDefault();
         toggleTutorial();
