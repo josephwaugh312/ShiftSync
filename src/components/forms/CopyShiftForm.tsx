@@ -1372,6 +1372,23 @@ const CopyShiftForm: React.FC = () => {
   // Find the original shift to copy
   const originalShift = shifts.find(shift => shift.id === selectedShiftId);
   
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    // Disable background scrolling
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    
+    return () => {
+      // Re-enable background scrolling when modal closes
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    };
+  }, []);
+  
   // Close the modal
   const handleClose = () => {
     dispatch(setModalOpen({ modal: 'copyShift', isOpen: false }));
@@ -1625,73 +1642,75 @@ const CopyShiftForm: React.FC = () => {
   
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50 z-50"
+        style={{ touchAction: 'none' }}
+        onTouchMove={(e) => e.preventDefault()}
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="bg-white dark:bg-dark-800 rounded-xl shadow-xl overflow-hidden w-full max-w-[98vw] sm:max-w-lg mx-auto flex flex-col"
-          style={{
-            maxHeight: 'calc(100vh - 1rem)', // Mobile: leave 0.5rem top/bottom (total 1rem)
-            height: 'auto',
-            minHeight: '200px'
-          }}
+          className="bg-white dark:bg-dark-800 shadow-xl w-full h-full flex flex-col"
+          style={{ touchAction: 'auto' }}
+          onTouchMove={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex-shrink-0 p-3 sm:p-4 border-b border-gray-200 dark:border-dark-600">
+          <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-800">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                 Copy Shift
               </h2>
               <button
                 type="button"
                 onClick={handleClose}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none p-1"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none p-2 touch-manipulation"
                 aria-label="Close"
               >
-                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
           </div>
 
-          {/* Scrollable Content */}
+          {/* Scrollable Content with bottom padding for button */}
           <div 
-            className="flex-1 overflow-y-auto overscroll-behavior-y-contain"
+            className="flex-1 overflow-y-auto"
             style={{
-              maxHeight: 'calc(100vh - 10rem)', // Reserve space for header and footer
-              minHeight: '100px'
+              WebkitOverflowScrolling: 'touch',
+              overscrollBehavior: 'contain',
+              paddingBottom: '100px' // Reserve space for the button
             }}
           >
-            <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
+            <div className="p-4 space-y-4">
               {!originalShift ? (
                 <div className="text-center p-4">
                   <p className="text-gray-600 dark:text-gray-400">Error: Could not find the shift to copy</p>
                 </div>
               ) : (
-                <form className="space-y-4 sm:space-y-6">
+                <form className="space-y-4">
                   {/* Original Shift Details */}
                   <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
                       Original Shift Details
                     </h3>
-                    <div className="bg-gray-100 dark:bg-dark-700 rounded-lg p-3 sm:p-4">
-                      <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
+                    <div className="bg-gray-100 dark:bg-dark-700 rounded-lg p-3">
+                      <div className="space-y-2">
                         <div>
-                          <p className="font-bold text-gray-800 dark:text-gray-100 text-sm sm:text-base">
+                          <p className="font-bold text-gray-800 dark:text-gray-100">
                             {originalShift.employeeName}
                           </p>
-                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
                             {originalShift.role}
                           </p>
                         </div>
-                        <div className="text-left sm:text-right">
-                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                        <div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
                             {new Date(originalShift.date).toLocaleDateString()}
                           </p>
-                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
                             {originalShift.timeRange}
                           </p>
                         </div>
@@ -1701,13 +1720,13 @@ const CopyShiftForm: React.FC = () => {
                   
                   {/* Copy Mode Selection */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-base font-medium text-gray-700 dark:text-gray-300 mb-3">
                       Copy Mode
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                    <div className="grid grid-cols-1 gap-3 mb-4">
                       <button
                         type="button"
-                        className={`px-3 py-2 rounded-md text-sm ${
+                        className={`p-3 rounded-lg text-base touch-manipulation transition-colors ${
                           copyMode === 'single' 
                             ? 'bg-primary-500 text-white' 
                             : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -1718,7 +1737,7 @@ const CopyShiftForm: React.FC = () => {
                       </button>
                       <button
                         type="button"
-                        className={`px-3 py-2 rounded-md text-sm ${
+                        className={`p-3 rounded-lg text-base touch-manipulation transition-colors ${
                           copyMode === 'multiple' 
                             ? 'bg-primary-500 text-white' 
                             : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -1729,28 +1748,28 @@ const CopyShiftForm: React.FC = () => {
                       </button>
                       <button
                         type="button"
-                        className={`px-3 py-2 rounded-md text-sm ${
+                        className={`p-3 rounded-lg text-base touch-manipulation transition-colors ${
                           copyMode === 'recurring' 
                             ? 'bg-primary-500 text-white' 
                             : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
                         }`}
                         onClick={() => setCopyMode('recurring')}
                       >
-                        Recurring
+                        Recurring Pattern
                       </button>
                     </div>
                     
                     {/* Single Date Mode */}
                     {copyMode === 'single' && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label className="block text-base font-medium text-gray-700 dark:text-gray-300 mb-3">
                           Select Date
                         </label>
                         <DatePicker
                           selected={selectedDates[0] || null}
                           onChange={(date: Date) => setSelectedDates([date])}
                           inline
-                          className="w-full p-2 border border-gray-300 dark:border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full"
                           filterDate={(date: Date) => formatDate(date) !== (originalShift?.date || '')}
                         />
                       </div>
@@ -1759,16 +1778,13 @@ const CopyShiftForm: React.FC = () => {
                     {/* Multiple Dates Mode */}
                     {copyMode === 'multiple' && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label className="block text-base font-medium text-gray-700 dark:text-gray-300 mb-3">
                           Select Multiple Dates
                         </label>
                         <DatePicker
                           selected={new Date()}
                           onChange={(date: Date) => {
-                            // Add date if not already selected, otherwise remove it
                             const dateString = formatDate(date);
-
-                            // Prevent selecting the original shift's date
                             if (dateString === originalShift?.date) {
                               dispatch(addNotification({
                                 message: 'Cannot copy to the original shift date',
@@ -1777,11 +1793,9 @@ const CopyShiftForm: React.FC = () => {
                               }));
                               return;
                             }
-
                             const existingIndex = selectedDates.findIndex(
                               d => formatDate(d) === dateString
                             );
-                              
                             if (existingIndex > -1) {
                               const newDates = [...selectedDates];
                               newDates.splice(existingIndex, 1);
@@ -1798,19 +1812,19 @@ const CopyShiftForm: React.FC = () => {
                         
                         {selectedDates.length > 0 && (
                           <div className="mt-4">
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            <p className="text-base text-gray-600 dark:text-gray-400 mb-3">
                               Selected Dates ({selectedDates.length}):
                             </p>
                             <div className="flex flex-wrap gap-2">
                               {selectedDates.map((date, index) => (
                                 <div 
                                   key={index} 
-                                  className="bg-gray-100 dark:bg-dark-700 px-2 py-1 rounded-md text-xs flex items-center"
+                                  className="bg-gray-100 dark:bg-dark-700 px-3 py-2 rounded-lg text-sm flex items-center"
                                 >
                                   {date.toLocaleDateString()}
                                   <button
                                     type="button"
-                                    className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                    className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 touch-manipulation text-lg"
                                     onClick={() => {
                                       const newDates = [...selectedDates];
                                       newDates.splice(index, 1);
@@ -1831,13 +1845,13 @@ const CopyShiftForm: React.FC = () => {
                     {copyMode === 'recurring' && (
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label className="block text-base font-medium text-gray-700 dark:text-gray-300 mb-3">
                             Frequency
                           </label>
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-1 gap-3">
                             <button
                               type="button"
-                              className={`px-3 py-2 rounded-md text-sm ${
+                              className={`p-3 rounded-lg text-base touch-manipulation transition-colors ${
                                 recurringOptions.frequency === 'daily' 
                                   ? 'bg-primary-500 text-white' 
                                   : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -1851,7 +1865,7 @@ const CopyShiftForm: React.FC = () => {
                             </button>
                             <button
                               type="button"
-                              className={`px-3 py-2 rounded-md text-sm ${
+                              className={`p-3 rounded-lg text-base touch-manipulation transition-colors ${
                                 recurringOptions.frequency === 'weekly' 
                                   ? 'bg-primary-500 text-white' 
                                   : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -1868,15 +1882,15 @@ const CopyShiftForm: React.FC = () => {
                         
                         {recurringOptions.frequency === 'weekly' && (
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className="block text-base font-medium text-gray-700 dark:text-gray-300 mb-3">
                               Days of Week
                             </label>
-                            <div className="grid grid-cols-7 gap-1">
+                            <div className="grid grid-cols-7 gap-2">
                               {[0, 1, 2, 3, 4, 5, 6].map(dayIndex => (
                                 <button
                                   key={dayIndex}
                                   type="button"
-                                  className={`px-2 py-2 rounded-md text-xs font-medium ${
+                                  className={`p-3 rounded-lg text-sm font-medium touch-manipulation transition-colors ${
                                     recurringOptions.daysOfWeek.includes(dayIndex) 
                                       ? 'bg-primary-500 text-white' 
                                       : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300'
@@ -1891,7 +1905,7 @@ const CopyShiftForm: React.FC = () => {
                         )}
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label className="block text-base font-medium text-gray-700 dark:text-gray-300 mb-3">
                             {recurringOptions.frequency === 'weekly' ? 'Number of Weeks' : 'Number of Days'}
                           </label>
                           <input
@@ -1903,14 +1917,14 @@ const CopyShiftForm: React.FC = () => {
                               ...recurringOptions,
                               occurrences: parseInt(e.target.value) || 1
                             })}
-                            className="w-full p-2 border border-gray-300 dark:border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-dark-700 dark:text-white"
+                            className="w-full p-3 text-base border border-gray-300 dark:border-dark-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-dark-700 dark:text-white"
                           />
                         </div>
 
                         <div>
                           <button
                             type="button"
-                            className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                            className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-4 rounded-lg transition-colors touch-manipulation text-base"
                             onClick={handleAddRecurringPattern}
                           >
                             Generate Dates
@@ -1919,20 +1933,23 @@ const CopyShiftForm: React.FC = () => {
 
                         {selectedDates.length > 0 && (
                           <div className="mt-4">
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            <p className="text-base text-gray-600 dark:text-gray-400 mb-3">
                               Generated Dates ({selectedDates.length}):
                             </p>
-                            <div className="max-h-24 sm:max-h-32 overflow-y-auto border border-gray-200 dark:border-dark-600 rounded-md p-2 bg-gray-50 dark:bg-dark-900">
+                            <div 
+                              className="max-h-40 overflow-y-auto border border-gray-200 dark:border-dark-600 rounded-lg p-3 bg-gray-50 dark:bg-dark-900"
+                              style={{ WebkitOverflowScrolling: 'touch' }}
+                            >
                               <div className="flex flex-wrap gap-2">
                                 {selectedDates.map((date, index) => (
                                   <div 
                                     key={index} 
-                                    className="bg-gray-100 dark:bg-dark-700 px-2 py-1 rounded-md text-xs flex items-center"
+                                    className="bg-gray-100 dark:bg-dark-700 px-3 py-2 rounded-lg text-sm flex items-center"
                                   >
                                     {date.toLocaleDateString()}
                                     <button
                                       type="button"
-                                      className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                      className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 touch-manipulation text-lg"
                                       onClick={() => {
                                         const newDates = [...selectedDates];
                                         newDates.splice(index, 1);
@@ -1950,9 +1967,6 @@ const CopyShiftForm: React.FC = () => {
                       </div>
                     )}
                   </div>
-
-                  {/* Add extra padding at bottom to ensure content is scrollable */}
-                  <div className="pb-4"></div>
                 </form>
               )}
             </div>
@@ -1960,11 +1974,11 @@ const CopyShiftForm: React.FC = () => {
           
           {/* Fixed footer with submit button */}
           {originalShift && (
-            <div className="flex-shrink-0 border-t border-gray-200 dark:border-dark-600 p-3 sm:p-4 bg-white dark:bg-dark-800 sticky bottom-0">
+            <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-dark-600 p-4">
               <LoadingButton
                 type="submit"
                 isLoading={isSubmitting}
-                className="w-full"
+                className="w-full py-3 text-base touch-manipulation"
                 onClick={handleSubmit}
                 disabled={selectedDates.length === 0}
               >
