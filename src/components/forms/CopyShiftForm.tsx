@@ -1643,7 +1643,7 @@ const CopyShiftForm: React.FC = () => {
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 z-50"
+        className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
         style={{ touchAction: 'none' }}
         onTouchMove={(e) => e.preventDefault()}
       >
@@ -1652,14 +1652,14 @@ const CopyShiftForm: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="bg-white dark:bg-dark-800 shadow-xl w-full h-full flex flex-col"
+          className="bg-white dark:bg-dark-800 shadow-xl w-full h-full sm:w-auto sm:h-auto sm:max-w-lg sm:max-h-[85vh] sm:rounded-xl flex flex-col"
           style={{ touchAction: 'auto' }}
           onTouchMove={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-800">
+          <div className="flex-shrink-0 p-4 sm:p-6 border-b border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-800 sm:rounded-t-xl">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
                 Copy Shift
               </h2>
               <button
@@ -1668,23 +1668,22 @@ const CopyShiftForm: React.FC = () => {
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none p-2 touch-manipulation"
                 aria-label="Close"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
           </div>
 
-          {/* Scrollable Content with bottom padding for button */}
+          {/* Scrollable Content with bottom padding for button on mobile only */}
           <div 
-            className="flex-1 overflow-y-auto"
+            className="flex-1 overflow-y-auto pb-20 sm:pb-0"
             style={{
               WebkitOverflowScrolling: 'touch',
-              overscrollBehavior: 'contain',
-              paddingBottom: '100px' // Reserve space for the button
+              overscrollBehavior: 'contain'
             }}
           >
-            <div className="p-4 space-y-4">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {!originalShift ? (
                 <div className="text-center p-4">
                   <p className="text-gray-600 dark:text-gray-400">Error: Could not find the shift to copy</p>
@@ -1972,14 +1971,14 @@ const CopyShiftForm: React.FC = () => {
             </div>
           </div>
           
-          {/* Fixed footer with submit button */}
+          {/* Footer with submit button - absolute on mobile, normal flow on desktop */}
           {originalShift && (
-            <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-dark-600 p-4 safe-area-bottom">
-              <div className="flex justify-center">
+            <div className="absolute bottom-0 left-0 right-0 sm:relative sm:bottom-auto sm:left-auto sm:right-auto bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-dark-600 p-4 sm:p-6 safe-area-bottom sm:rounded-b-xl">
+              <div className="flex justify-center sm:justify-stretch">
                 <LoadingButton
                   type="submit"
                   isLoading={isSubmitting}
-                  className="w-full max-w-sm py-4 text-base font-semibold touch-manipulation rounded-xl shadow-lg"
+                  className="w-full max-w-sm sm:max-w-none py-4 sm:py-3 text-base font-semibold touch-manipulation rounded-xl sm:rounded-lg shadow-lg sm:shadow-none"
                   onClick={handleSubmit}
                   disabled={selectedDates.length === 0}
                 >
