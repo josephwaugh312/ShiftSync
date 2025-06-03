@@ -54,23 +54,58 @@ const AllTheProviders: React.FC<{ children: React.ReactNode; store?: any }> = ({
   );
 };
 
-// Custom render function
+// Custom render function that returns store
 const customRender = (
   ui: React.ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'> & { store?: any }
+  options?: Omit<RenderOptions, 'wrapper'> & { 
+    store?: any;
+    preloadedState?: Partial<RootState>;
+  }
 ) => {
-  const { store, ...renderOptions } = options || {};
+  const { store, preloadedState, ...renderOptions } = options || {};
+  
+  // Create store with preloaded state or use provided store
+  const testStore = store || createTestStore(preloadedState);
   
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <AllTheProviders store={store}>{children}</AllTheProviders>
+    <AllTheProviders store={testStore}>{children}</AllTheProviders>
   );
 
-  return render(ui, { wrapper: Wrapper, ...renderOptions });
+  return {
+    ...render(ui, { wrapper: Wrapper, ...renderOptions }),
+    store: testStore
+  };
+};
+
+// Enhanced renderWithProviders that maintains backward compatibility
+const renderWithProviders = (
+  ui: React.ReactElement,
+  options?: { 
+    preloadedState?: Partial<RootState>;
+    store?: any;
+  }
+) => {
+  const { preloadedState, store: providedStore } = options || {};
+  
+  // Create store with preloaded state or use provided store
+  const testStore = providedStore || createTestStore(preloadedState);
+  
+  const result = render(
+    <AllTheProviders store={testStore}>
+      {ui}
+    </AllTheProviders>
+  );
+
+  return {
+    ...result,
+    store: testStore
+  };
 };
 
 // Re-export everything
 export * from '@testing-library/react';
 export { customRender as render };
+export { renderWithProviders };
 export { TestRouter };
 
 // Create mock data for testing

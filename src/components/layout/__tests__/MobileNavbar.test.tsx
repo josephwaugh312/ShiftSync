@@ -56,7 +56,10 @@ describe('MobileNavbar', () => {
     // Reset to default location
     mockLocation.pathname = '/';
     
-    // Mock navigator.vibrate with jest.spyOn
+    // Define navigator.vibrate if it doesn't exist, then mock it
+    if (!navigator.vibrate) {
+      (navigator as any).vibrate = jest.fn();
+    }
     vibrateSpy = jest.spyOn(navigator, 'vibrate').mockImplementation(() => true);
   });
 
