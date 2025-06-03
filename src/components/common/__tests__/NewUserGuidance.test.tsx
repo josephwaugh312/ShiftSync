@@ -446,6 +446,8 @@ describe('NewUserGuidance Component', () => {
     });
 
     it('should log debug information about step determination', () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      
       const store = createTestStore({
         ui: { themeColor: { name: 'Blue', value: '#3B82F6' }, darkMode: false, sidebarCollapsed: false, selectedView: 'calendar', notifications: [], tutorialComplete: false, lastCompletedStep: null, modalOpen: { modal: null, isOpen: false } },
         employees: { employees: [] },
@@ -454,12 +456,11 @@ describe('NewUserGuidance Component', () => {
       
       renderWithProviders(<NewUserGuidance />, store);
       
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'NewUserGuidance: Setting current step to',
-        expect.any(Number),
-        'based on shifts:',
-        1
-      );
+      // Debug logging has been removed during cleanup, but component should still work correctly
+      // Since there are shifts in the store, the component shows the advanced features step
+      expect(screen.getByText('Explore Advanced Features')).toBeInTheDocument();
+      
+      consoleSpy.mockRestore();
     });
   });
 

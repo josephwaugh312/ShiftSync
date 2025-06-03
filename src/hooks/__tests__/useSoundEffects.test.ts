@@ -409,7 +409,8 @@ describe('useSoundEffects', () => {
         result.current.playSound('success');
       });
       
-      expect(consoleSpy).toHaveBeenCalledWith('Playing sound: success');
+      // Debug logging has been removed during cleanup, but sound should still attempt to play
+      expect(mockAudioContext.createOscillator).toHaveBeenCalled();
       
       consoleSpy.mockRestore();
     });

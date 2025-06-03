@@ -175,7 +175,6 @@ describe('KeyboardShortcuts', () => {
     });
 
     it('should handle shift+n (Add new shift) correctly', () => {
-      // Find the shift+n handler from the mocked calls
       const shiftNCall = mockUseHotkeys.mock.calls.find(call => call[0] === 'shift+n');
       expect(shiftNCall).toBeDefined();
       
@@ -186,7 +185,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: Add new shift');
+        // Debug logging has been removed during cleanup, but shortcut should still work
       }
     });
 
@@ -201,7 +200,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: Publish schedule');
+        // Debug logging has been removed during cleanup, but event dispatch should still work
         expect(mockDispatchEvent).toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'publishSchedule'
@@ -221,7 +220,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: View insights dashboard');
+        // Debug logging has been removed during cleanup, but shortcut should still work
       }
     });
 
@@ -236,7 +235,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: Open templates');
+        // Debug logging has been removed during cleanup, but shortcut should still work
       }
     });
 
@@ -251,7 +250,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: Go to settings');
+        // Debug logging has been removed during cleanup, but navigation should still work
         expect(mockNavigate).toHaveBeenCalledWith('/settings');
       }
     });
@@ -267,7 +266,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: Go to employees');
+        // Debug logging has been removed during cleanup, but navigation should still work
         expect(mockNavigate).toHaveBeenCalledWith('/employees');
       }
     });
@@ -283,7 +282,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: Go to home/calendar');
+        // Debug logging has been removed during cleanup, but navigation should still work
         expect(mockNavigate).toHaveBeenCalledWith('/');
       }
     });
@@ -299,7 +298,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: Previous week');
+        // Debug logging has been removed during cleanup, but event dispatch should still work
         expect(mockDispatchEvent).toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'navigatePreviousWeek'
@@ -319,7 +318,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: Next week');
+        // Debug logging has been removed during cleanup, but event dispatch should still work
         expect(mockDispatchEvent).toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'navigateNextWeek'
@@ -339,7 +338,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Executing shortcut: Close modals');
+        // Debug logging has been removed during cleanup, but shortcut should still work
       }
     });
 
@@ -354,7 +353,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Dispatching showKeyboardShortcuts event');
+        // Debug logging has been removed during cleanup, but event dispatch should still work
         expect(mockDispatchEvent).toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'showKeyboardShortcuts'
@@ -374,7 +373,7 @@ describe('KeyboardShortcuts', () => {
         handler(mockEvent);
         
         expect(mockEvent.preventDefault).toHaveBeenCalled();
-        expect(consoleSpy.log).toHaveBeenCalledWith('Dispatching showKeyboardShortcuts event');
+        // Debug logging has been removed during cleanup, but shortcut should still work
       }
     });
 
