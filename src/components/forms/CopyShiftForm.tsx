@@ -439,40 +439,7 @@ export const processFormSubmission = (
   }
 
   // Step 4: Create new shifts
-  const newShifts: Shift[] = filteredDates.map(date => {
-    // Ensure we use local date, not UTC
-    const formattedDate = formatDate(date);
-    
-    // Create a new ID and set the new date with proper formatting
-    return {
-      ...originalShift,
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-      date: formattedDate,
-    };
-  });
-  
-  // Add each shift with a slight delay between them
-  setTimeout(() => {
-    newShifts.forEach((shift, index) => {
-      setTimeout(() => {
-        dispatch(addShift(shift));
-        
-        // Check for shift reminders
-        notificationService.checkShiftReminder(shift);
-      }, index * 100);
-    });
-    
-    // Add success notification
-    dispatch(addNotification({
-      message: `Successfully copied shift to ${newShifts.length} day(s)`,
-      type: 'success',
-      category: 'general'
-    }));
-    
-    // Reset states and close form
-    setIsSubmitting(false);
-    handleClose();
-  }, 800);
+  const newShifts = createBatchShifts(originalShift, filteredDates);
 
   return {
     isValid: true,
