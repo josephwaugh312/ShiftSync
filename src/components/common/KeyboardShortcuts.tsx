@@ -18,13 +18,11 @@ const KeyboardShortcuts: React.FC = () => {
 
   // Create a function to show keyboard shortcuts
   const showKeyboardShortcuts = () => {
-    console.log('Dispatching showKeyboardShortcuts event');
     // Try both ways to maximize compatibility
     document.dispatchEvent(new CustomEvent('showKeyboardShortcuts'));
     
     // Also try with a slight delay as a fallback
     setTimeout(() => {
-      console.log('Dispatching delayed showKeyboardShortcuts event');
       document.dispatchEvent(new Event('showKeyboardShortcuts'));
     }, 100);
   };
@@ -35,7 +33,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+n',
       description: 'Add new shift',
       action: () => {
-        console.log('Executing shortcut: Add new shift');
         // Navigate to calendar if not already there
         if (location.pathname !== '/') {
           navigate('/');
@@ -47,7 +44,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+p',
       description: 'Publish schedule',
       action: () => {
-        console.log('Executing shortcut: Publish schedule');
         // This will be used to trigger the publish schedule function
         // Will be implemented through the global event system
         document.dispatchEvent(new CustomEvent('publishSchedule'));
@@ -57,7 +53,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+i',
       description: 'View insights dashboard',
       action: () => {
-        console.log('Executing shortcut: View insights dashboard');
         dispatch(setModalOpen({ modal: 'insights', isOpen: true }));
       },
     },
@@ -65,7 +60,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+m',
       description: 'Open templates',
       action: () => {
-        console.log('Executing shortcut: Open templates');
         dispatch(setModalOpen({ modal: 'templates', isOpen: true }));
       },
     },
@@ -73,7 +67,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+s',
       description: 'Go to settings',
       action: () => {
-        console.log('Executing shortcut: Go to settings');
         navigate('/settings');
       },
     },
@@ -81,7 +74,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+e',
       description: 'Go to employees',
       action: () => {
-        console.log('Executing shortcut: Go to employees');
         navigate('/employees');
       },
     },
@@ -89,7 +81,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+h',
       description: 'Go to home/calendar',
       action: () => {
-        console.log('Executing shortcut: Go to home/calendar');
         navigate('/');
       },
     },
@@ -97,7 +88,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+arrowleft',
       description: 'Previous week',
       action: () => {
-        console.log('Executing shortcut: Previous week');
         document.dispatchEvent(new CustomEvent('navigatePreviousWeek'));
       },
     },
@@ -105,7 +95,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+arrowright',
       description: 'Next week',
       action: () => {
-        console.log('Executing shortcut: Next week');
         document.dispatchEvent(new CustomEvent('navigateNextWeek'));
       },
     },
@@ -113,7 +102,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'esc',
       description: 'Close modal/popup',
       action: () => {
-        console.log('Executing shortcut: Close modals');
         // This will attempt to close any open modal
         dispatch(setModalOpen({ modal: 'addShift', isOpen: false }));
         dispatch(setModalOpen({ modal: 'editShift', isOpen: false }));
@@ -129,7 +117,6 @@ const KeyboardShortcuts: React.FC = () => {
       key: 'shift+t',
       description: 'Toggle tutorial',
       action: () => {
-        console.log('Executing shortcut: Toggle tutorial');
         // Dispatch a custom event that the TutorialContext will listen for
         document.dispatchEvent(new CustomEvent('toggleTutorial'));
       },
@@ -233,7 +220,6 @@ const KeyboardShortcuts: React.FC = () => {
       if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
       shortcuts[6].action();
-      console.log('Executing Shift+H shortcut via useHotkeys');
     },
     { 
       enableOnFormTags: false,
@@ -278,7 +264,6 @@ const KeyboardShortcuts: React.FC = () => {
     (event) => {
       if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
-      console.log('Shift+/ shortcut triggered');
       shortcuts[9].action();
     },
     { 
@@ -295,7 +280,6 @@ const KeyboardShortcuts: React.FC = () => {
     (event) => {
       if (shouldPreventKeyboardShortcut(event)) return;
       event.preventDefault();
-      console.log('? shortcut triggered');
       showKeyboardShortcuts();
     },
     { 
@@ -331,7 +315,6 @@ const KeyboardShortcuts: React.FC = () => {
       
       // Only trigger shortcuts if NOT in an input field
       if (event.key === '?' || (event.key === '/' && event.shiftKey)) {
-        console.log('Question mark key detected via raw event listener');
         event.preventDefault();
         showKeyboardShortcuts();
       }
@@ -353,17 +336,13 @@ const KeyboardShortcuts: React.FC = () => {
       
       // Extra check for Shift+H
       if (event.shiftKey && (event.key === 'h' || event.key === 'H')) {
-        console.log('Shift+H detected via raw event listener');
         event.preventDefault();
-        console.log('Executing shortcut: Go to home/calendar');
         navigate('/');
       }
       
       // Extra check for Shift+T
       if (event.shiftKey && (event.key === 't' || event.key === 'T')) {
-        console.log('Shift+T detected via raw event listener');
         event.preventDefault();
-        console.log('Executing shortcut: Toggle tutorial');
         document.dispatchEvent(new CustomEvent('toggleTutorial'));
       }
     };

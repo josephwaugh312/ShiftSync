@@ -439,7 +439,40 @@ export const processFormSubmission = (
   }
 
   // Step 4: Create new shifts
-  const newShifts = createBatchShifts(originalShift, filteredDates);
+  const newShifts: Shift[] = filteredDates.map(date => {
+    // Ensure we use local date, not UTC
+    const formattedDate = formatDate(date);
+    
+    // Create a new ID and set the new date with proper formatting
+    return {
+      ...originalShift,
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+      date: formattedDate,
+    };
+  });
+  
+  // Add each shift with a slight delay between them
+  setTimeout(() => {
+    newShifts.forEach((shift, index) => {
+      setTimeout(() => {
+        dispatch(addShift(shift));
+        
+        // Check for shift reminders
+        notificationService.checkShiftReminder(shift);
+      }, index * 100);
+    });
+    
+    // Add success notification
+    dispatch(addNotification({
+      message: `Successfully copied shift to ${newShifts.length} day(s)`,
+      type: 'success',
+      category: 'general'
+    }));
+    
+    // Reset states and close form
+    setIsSubmitting(false);
+    handleClose();
+  }, 800);
 
   return {
     isValid: true,
@@ -1488,9 +1521,6 @@ const CopyShiftForm: React.FC = () => {
       // Ensure we use local date, not UTC
       const formattedDate = formatDate(date);
       
-      // Log for debugging
-      console.log(`Creating shift for date: ${date.toLocaleDateString()}, formatted as: ${formattedDate}`);
-      
       // Create a new ID and set the new date with proper formatting
       return {
         ...originalShift,
@@ -1503,7 +1533,6 @@ const CopyShiftForm: React.FC = () => {
     setTimeout(() => {
       newShifts.forEach((shift, index) => {
         setTimeout(() => {
-          console.log(`Adding shift with date: ${shift.date}`);
           dispatch(addShift(shift));
           
           // Check for shift reminders
@@ -1532,12 +1561,10 @@ const CopyShiftForm: React.FC = () => {
     // Start from tomorrow to avoid potential issues with today's date
     const startDate = new Date();
     startDate.setHours(12, 0, 0, 0); // Set to noon to avoid any time-of-day issues
-    console.log(`Starting recurring pattern from date: ${startDate.toLocaleDateString()}`);
     
     // For weekly pattern, we need tomorrow's date
     const tomorrowDate = new Date(startDate);
     tomorrowDate.setDate(startDate.getDate() + 1);
-    console.log(`Tomorrow's date for recurring pattern: ${tomorrowDate.toLocaleDateString()}`);
     
     if (recurringOptions.frequency === 'weekly') {
       // Weekly pattern: add for the selected days of week for the given number of weeks
@@ -1545,21 +1572,11 @@ const CopyShiftForm: React.FC = () => {
         ? recurringOptions.daysOfWeek 
         : [tomorrowDate.getDay()]; // Default to tomorrow's day of week if none selected
       
-      console.log(`Weekly pattern with ${recurringOptions.occurrences} weeks for days: ${daysToAdd.map(d => getDayName(d)).join(', ')}`);
-      
       for (let week = 0; week < recurringOptions.occurrences; week++) {
         for (const dayOfWeek of daysToAdd) {
           const date = new Date(tomorrowDate);
           
           // Calculate the day offset for the current week
-          // Get days until the next occurrence of dayOfWeek
-          // This part is problematic for Saturday (6) which may roll into Sunday
-          // Fix by ensuring we're calculating relative to the current day of week
-          
-          // Current approach can push Saturday to Sunday due to day calculation
-          // const dayDiff = (dayOfWeek - tomorrowDate.getDay() + 7) % 7;
-          
-          // Improved approach using more explicit calculation
           let dayDiff;
           if (dayOfWeek >= tomorrowDate.getDay()) {
             // If target day is later in the week (or same day)
@@ -1572,38 +1589,27 @@ const CopyShiftForm: React.FC = () => {
           // Add days to reach the correct day of week, plus weeks
           date.setDate(tomorrowDate.getDate() + dayDiff + (week * 7));
           
-          console.log(`Generated date for week ${week}, day ${getDayName(dayOfWeek)}: ${date.toLocaleDateString()} (${date.getDay()})`);
-          
           // Skip if it's the original shift date
           if (originalShift && formatDate(date) !== originalShift.date) {
             dates.push(date);
-          } else {
-            console.log(`Skipping date ${date.toLocaleDateString()} because it matches original shift date`);
           }
         }
       }
     } else if (recurringOptions.frequency === 'daily') {
       // Daily pattern: add for the given number of consecutive days
-      console.log(`Daily pattern with ${recurringOptions.occurrences} days`);
-      
       for (let day = 0; day < recurringOptions.occurrences; day++) {
         const date = new Date(tomorrowDate);
         date.setDate(tomorrowDate.getDate() + day);
         
-        console.log(`Generated date for day ${day}: ${date.toLocaleDateString()}`);
-        
         // Skip if it's the original shift date
         if (originalShift && formatDate(date) !== originalShift.date) {
           dates.push(date);
-        } else {
-          console.log(`Skipping date ${date.toLocaleDateString()} because it matches original shift date`);
         }
       }
     }
     
     // Update selected dates - sort chronologically
     dates.sort((a, b) => a.getTime() - b.getTime());
-    console.log(`Generated ${dates.length} dates in total:`, dates.map(d => d.toLocaleDateString()));
     
     setSelectedDates(dates);
     

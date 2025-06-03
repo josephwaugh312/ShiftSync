@@ -24,8 +24,6 @@ const getTodayDateString = (): string => {
 
 // Helper to clean date strings of any spaces and ensure YYYY-MM-DD format
 const cleanDateString = (dateStr: string): string => {
-  console.log(`cleanDateString called with: '${dateStr}'`);
-  
   if (!dateStr) return '';
   
   // Remove any spaces
@@ -34,14 +32,12 @@ const cleanDateString = (dateStr: string): string => {
   // Handle ISO format with time (YYYY-MM-DDTHH:MM:SS.sssZ) - common when using toISOString()
   if (cleanedStr.includes('T')) {
     const datePart = cleanedStr.split('T')[0];
-    console.log(`cleanDateString: extracted date part '${datePart}' from ISO string`);
     return datePart;
   }
   
   // Validate date format (YYYY-MM-DD)
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (dateRegex.test(cleanedStr)) {
-    console.log(`cleanDateString: already formatted correctly '${cleanedStr}'`);
     return cleanedStr;
   }
   
@@ -54,7 +50,6 @@ const cleanDateString = (dateStr: string): string => {
       const month = parts[1].padStart(2, '0');
       const day = parts[2].padStart(2, '0');
       const formatted = `${year}-${month}-${day}`;
-      console.log(`cleanDateString: reformatted from parts to '${formatted}'`);
       return formatted;
     }
     
@@ -62,7 +57,6 @@ const cleanDateString = (dateStr: string): string => {
     const date = new Date(cleanedStr);
     if (!isNaN(date.getTime())) {
       const formatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-      console.log(`cleanDateString: created from Date object: '${formatted}'`);
       return formatted;
     }
   } catch (error) {
@@ -70,7 +64,6 @@ const cleanDateString = (dateStr: string): string => {
   }
   
   // Return the cleaned string as a fallback
-  console.log(`cleanDateString: could not format properly, returning cleaned string: '${cleanedStr}'`);
   return cleanedStr;
 };
 
@@ -130,9 +123,6 @@ const shiftsSlice = createSlice({
   initialState,
   reducers: {
     setSelectedDate: (state, action: PayloadAction<string>) => {
-      // Log the incoming payload for debugging
-      console.log('REDUX: setSelectedDate action received with payload:', action.payload);
-      
       if (!action.payload) {
         console.error('REDUX: Empty date payload received in setSelectedDate!');
         return; // Don't update if empty payload
@@ -140,7 +130,6 @@ const shiftsSlice = createSlice({
       
       // Clean the date string to prevent extra spaces
       const cleanedDate = cleanDateString(action.payload);
-      console.log('REDUX: Setting selected date in store to:', cleanedDate);
       
       // Verify the date format is valid
       const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -152,7 +141,6 @@ const shiftsSlice = createSlice({
           if (!isNaN(date.getTime())) {
             // Use local time to avoid timezone issues
             const fixedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            console.log('REDUX: Fixed invalid date format to:', fixedDate);
             state.selectedDate = fixedDate;
             return;
           }
@@ -180,8 +168,6 @@ const shiftsSlice = createSlice({
         color: action.payload.color
       };
       
-      console.log('Adding shift to store:', newShift);
-      
       // Ensure we don't duplicate shifts with the same ID
       if (!state.shifts.some(shift => shift.id === newShift.id)) {
         state.shifts.push(newShift);
@@ -206,7 +192,6 @@ const shiftsSlice = createSlice({
           color: action.payload.color
         };
         
-        console.log('Updating shift with date:', updatedShift.date);
         state.shifts[index] = updatedShift;
         saveShiftsToStorage(state.shifts);
       }

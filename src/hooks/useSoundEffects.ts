@@ -26,7 +26,6 @@ export const useSoundEffects = () => {
         try {
           // Create new AudioContext
           audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-          console.log('AudioContext initialized successfully');
         } catch (error) {
           console.error('Failed to create AudioContext:', error);
         }
@@ -179,7 +178,6 @@ export const useSoundEffects = () => {
     if (!soundEnabled) return;
     
     try {
-      console.log(`Playing sound: ${type}`);
       generateSound(type, volume);
     } catch (error) {
       console.error('Error playing sound:', error);

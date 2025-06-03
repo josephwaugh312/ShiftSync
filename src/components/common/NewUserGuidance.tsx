@@ -191,7 +191,6 @@ const NewUserGuidance: React.FC = () => {
       shifts && shifts.length > 0
     );
     
-    console.log('NewUserGuidance: Setting current step to', newCurrentStep, 'based on shifts:', shifts?.length);
     setCurrentStep(newCurrentStep);
     
     if (savedDismissed === 'true') {

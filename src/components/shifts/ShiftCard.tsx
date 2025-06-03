@@ -16,9 +16,6 @@ const ShiftCard: React.FC<ShiftCardProps> = ({ shift, isCompact = false }) => {
   const { shifts } = useSelector((state: RootState) => state.shifts);
   const { playSound } = useSoundEffects();
 
-  // Log the shift to debug
-  console.log('Rendering ShiftCard with shift:', shift);
-
   const handleEditClick = () => {
     dispatch(setSelectedShiftId(shift.id));
     dispatch(setModalOpen({ modal: 'editShift', isOpen: true }));
@@ -228,9 +225,6 @@ const ShiftCard: React.FC<ShiftCardProps> = ({ shift, isCompact = false }) => {
   // Calculate shift duration in hours for the visual indicator
   const calculateDuration = (): number => {
     try {
-      // Log shift data to debug
-      console.log('Processing shift for duration bar:', shift);
-      
       if (!shift.startTime || !shift.endTime) {
         console.error('Missing time data in shift:', shift);
         return 2; // Default to 2 hours if invalid
@@ -271,8 +265,6 @@ const ShiftCard: React.FC<ShiftCardProps> = ({ shift, isCompact = false }) => {
       // Add partial hour for minutes
       const partialHour = minuteDiff / 60;
       const totalHours = hourDiff + partialHour;
-      
-      console.log('Calculated duration:', totalHours, 'hours');
       
       // Cap maximum width at 8 hours for visualization
       return Math.min(Math.max(totalHours, 0.5), 8);
